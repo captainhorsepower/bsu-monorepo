@@ -1,33 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
-void main() => runApp(MyMaterialApp());
 
-class MyMaterialApp extends StatelessWidget {
+void main() {
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+  return runApp(CupertinoTimeTableApp());
+}
+
+class CupertinoTimeTableApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'New Flutter App',
-      home: MyHomePage(),
+    return CupertinoApp(
+      home: AppHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({Key key}) : super(key: key);
-
+class AppHomePage extends StatelessWidget {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("New Flutter App"),
-      ),
-      body: Center(
-        child: Container(
-          child: Text(
-            'I am Groot',
-            textScaleFactor: 3,
+    return CupertinoTabScaffold(
+
+      tabBar: CupertinoTabBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.bell),
+            title: Text('Timetable'),
           ),
-        ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.settings),
+            title: Text('Settings'),
+          ),
+        ],
       ),
+      tabBuilder: (context, index) {
+        switch (index) {
+          case 0:
+            return CupertinoTabView(builder: (context) {
+              return CupertinoPageScaffold(
+                child: Container(),
+              );
+            });
+          case 1:
+            return CupertinoTabView(builder: (context) {
+              return CupertinoPageScaffold(
+                child: Container(),
+              );
+            });
+        }
+        return Container(
+          child: Center(child: Text('Fallback Page')),
+        );
+      },
     );
   }
 }
