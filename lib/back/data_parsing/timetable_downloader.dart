@@ -5,7 +5,8 @@ import 'package:path_provider/path_provider.dart';
 class TimetableDonwloader {
   static const String thirdYearFAMCSScheldueUrl = 'http://fpmi.bsu.by/sm_full.aspx?guid=58093';
 
-  static ValueNotifier<String> lastDownloadedFilePath = ValueNotifier<String>('nothing downloaded yet');
+  static ValueNotifier<String> lastDownloadedFilePath =
+      ValueNotifier<String>('nothing downloaded yet');
 
   static Future<void> download({void Function(String, DownloadTaskStatus, int) callback}) async {
     // get path to donwloads directory
@@ -31,8 +32,16 @@ class TimetableDonwloader {
           final tasks = await FlutterDownloader.loadTasks();
           final lastTask = tasks.last;
 
+          if (lastTask.filename.contains('<null>')) return;
+
           final filePath = '${lastTask.savedDir.replaceAll('(null)', '')}${lastTask.filename}';
-          lastDownloadedFilePath.value = filePath;
+          
+          //TODO: remove this garbage
+          if (lastDownloadedFilePath.value == filePath) {
+            lastDownloadedFilePath.notifyListeners();
+          } else {
+            lastDownloadedFilePath.value = filePath;
+          }
         }
       },
     );

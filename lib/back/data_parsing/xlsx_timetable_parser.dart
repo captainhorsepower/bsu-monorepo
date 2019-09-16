@@ -1,7 +1,11 @@
 import 'dart:collection';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
+import 'package:timetable/back/class_model.dart';
+import 'package:timetable/back/day_model.dart';
+import 'package:timetable/back/week_model.dart';
 
 class _Pair {
   final int left;
@@ -35,6 +39,8 @@ class XlsxTimetableParser {
   final int dayOfWeekCol = 0;
   final int timeCol = 1;
 
+  final int minimumValidClassDataItems = 3;
+
   int mondayRow;
   int tuesdayRow;
   int wednesdayRow;
@@ -43,14 +49,14 @@ class XlsxTimetableParser {
   int saturdayRow;
 
   Map<String, _Pair> _specialitiesMapInternal = HashMap();
+  Map<String, _Pair> _groupsMapInternal = HashMap();
 
   List<String> getSpecialties() {
     List<String> specialitiesList = List<String>();
 
+    Queue helper = Queue();
     // find row where specialities are listed
     for (int row = 0; row < table.maxRows; row++) {
-      Queue helper = Queue();
-
       for (int col = 0; col < table.maxCols; col++) {
         String value = table.rows[row][col]?.toString() ?? null;
 
@@ -71,57 +77,209 @@ class XlsxTimetableParser {
 
       // I assume that all specialities fit in one row, according to structure of the timetable
       // so if I already found row with them, I can stop.
-      if (helper.isNotEmpty) {
-        while (helper.isNotEmpty) {
-          final int left = helper.removeFirst();
-          final String value = helper.removeFirst();
-          final int right = helper.isEmpty ? table.maxCols : helper.first;
+      if (helper.isNotEmpty) break;
+    }
 
-          final specs = value.split(', ');
-          specs.forEach(
-              (speciality) {
-                specialitiesList.add(speciality);
-                _specialitiesMapInternal[speciality] = _Pair(left, right);
-              });
+    if (helper.isNotEmpty) {
+      while (helper.isNotEmpty) {
+        final int left = helper.removeFirst();
+        final String value = helper.removeFirst();
+        final int right = helper.isEmpty ? table.maxCols : helper.first;
+
+        final specs = value.split(', ');
+        specs.forEach((speciality) {
+          specialitiesList.add(speciality);
+          _specialitiesMapInternal[speciality] = _Pair(left, right);
+        });
+      }
+    }
+
+    return specialitiesList;
+  }
+
+  List<String> getGroups(final String speciality) {
+    assert(
+        _specialitiesMapInternal.containsKey(speciality), "speciality '$speciality' is not found");
+
+    final edges = _specialitiesMapInternal[speciality];
+
+    Queue helper = Queue();
+    for (int row = 0; row < table.maxRows; row++) {
+      for (int col = edges.left; col < edges.right; col++) {
+        String value = table.rows[row][col]?.toString() ?? null;
+
+        if (value == null) continue;
+
+        if (value.contains('группа')) {
+          var group = value.trim();
+
+          if (row != 0 && table.rows[row - 1][col] != null) {
+            final val1 = table.rows[row - 1][col].toString();
+            final val2 = table.rows[row - 1][col + 1]?.toString() ?? null;
+            final kafedra = '$val1${val2 == null ? "" : ", $val2"}';
+
+            group = '$group ($kafedra)';
+          }
+
+          // queue contains data: l1, val1, r1 = l2, val2, r2 = l3, val3 ...
+          helper.addLast(col);
+          helper.addLast(group);
+        }
+      }
+      if (helper.isNotEmpty) break;
+    }
+    List<String> groupsList = List<String>();
+
+    while (helper.isNotEmpty) {
+      final int left = helper.removeFirst();
+      final String group = helper.removeFirst();
+      final int right = helper.isEmpty ? table.maxCols : helper.first;
+
+      _groupsMapInternal[group] = _Pair(left, right);
+      groupsList.add(group);
+    }
+
+    return groupsList;
+  }
+
+  WeekModel getWeekModel(final String speciality, final String group) {
+    final weekModel = WeekModel();
+
+    for (int row = 0; row < table.maxRows; row++) {
+      final value = table.rows[row][dayOfWeekCol]?.toString()?.toLowerCase() ?? null;
+      if (value == null) continue;
+
+      if (value.contains('пон') || value.contains('пн')) {
+        weekModel.days[DayOfWeek.monday] = parseDay(speciality, group, row);
+      } else if (value.contains('вт')) {
+        weekModel.days[DayOfWeek.tuesday] = parseDay(speciality, group, row);
+      } else if (value.contains('сре')) {
+        weekModel.days[DayOfWeek.wednesday] = parseDay(speciality, group, row);
+      } else if (value.toLowerCase().contains('чт') || value.contains('четв')) {
+        weekModel.days[DayOfWeek.thursday] = parseDay(speciality, group, row);
+      } else if (value.toLowerCase().contains('пт') || value.contains('пятн')) {
+        weekModel.days[DayOfWeek.friday] = parseDay(speciality, group, row);
+      } else if (value.toLowerCase().contains('сб') || value.contains('субб')) {
+        weekModel.days[DayOfWeek.saturday] = parseDay(speciality, group, row);
+      }
+    }
+  }
+
+  DayModel parseDay(final String speciality, final String group, final int dayStartRow) {
+    final int lectureCol = _specialitiesMapInternal[speciality].left;
+    final int groupCol = _groupsMapInternal[group].left;
+
+    final dayModel = DayModel();
+
+    for (int row = dayStartRow; row < table.maxRows; row++) {
+      // if reached the next day, break;
+      if (row != dayStartRow && table.rows[row][dayOfWeekCol] != null) break;
+
+      // when found new class
+      if (table.rows[row][timeCol] != null) {
+        final foundClass = parseClass(row, group, speciality);
+
+        if (foundClass != null) dayModel.classes.add(foundClass);
+      }
+    }
+  }
+
+  parseClass(final int classStartRow, final String group, final String speciality) {
+    final int lectureCol = _specialitiesMapInternal[speciality].left;
+    final int lectureColRight = _specialitiesMapInternal[speciality].right;
+    final int groupCol = _groupsMapInternal[group].left;
+    final int groupColRight = _groupsMapInternal[group].right;
+    Queue<String> classData = Queue<String>();
+
+    final String classTime = table.rows[classStartRow][timeCol].toString();
+
+    // try to parse group class
+    for (int row = classStartRow;
+        row < table.maxRows && (row == classStartRow || table.rows[row][timeCol] == null);
+        row++) {
+      final value = table.rows[row][groupCol]?.toString() ?? null;
+      if (value != null) {
+        classData.add(value);
+
+        final secondValue = table.rows[row][groupColRight - 1]?.toString() ?? null;
+        if (secondValue != null) classData.add(secondValue);
+      }
+    }
+
+    if (classData.length == 1) {
+      final String title = classData.removeFirst();
+      return ClassModel(
+        title: title,
+        classTime: classTime,
+      );
+    } else if (classData.length >= minimumValidClassDataItems) {
+      final String title = classData.removeFirst();
+
+      // parse class with subgroups
+      if (classData.length >= minimumValidClassDataItems) {
+        final tutorLeft = classData.removeFirst();
+        final tutorRight = classData.removeFirst();
+        final roomLeft = classData.removeFirst();
+        final roomRight = classData.removeFirst();
+
+        final classLeft = ClassModel(
+          title: title,
+          tutor: tutorLeft,
+          classRoom: roomLeft,
+          classTime: classTime,
+        );
+
+        final classRigth = ClassModel(
+          title: title,
+          tutor: tutorRight,
+          classRoom: roomRight,
+          classTime: classTime,
+        );
+
+        return null;
+      } else {
+        // parse normal class
+        final tutor = classData.removeFirst();
+        final room = classData.removeFirst();
+
+        if (room.contains(RegExp(r'\d{3}'))) {
+          return ClassModel(
+            title: title,
+            tutor: tutor,
+            classRoom: room,
+            classTime: classTime,
+          );
         }
       }
     }
 
-    print(_specialitiesMapInternal.toString());
-    return specialitiesList;
-  }
+    classData.clear();
+    for (int row = classStartRow;
+        row < table.maxRows && (row == classStartRow || table.rows[row][timeCol] == null);
+        row++) {
+      if (classData.length >= 2) {
+        Queue<String> helper = Queue<String>();
+        for (int col = lectureCol; col < lectureColRight; col++) {
+          final roomValue = table.rows[row][col]?.toString() ?? null;
+          if (roomValue != null) helper.add(roomValue);
+        }
 
-  void _setWeekDayRows() {
-    // get day mapping for this exact table;
-    for (int i = 0; i < table.maxRows; i++) {
-      String value = table.rows[i][dayOfWeekCol];
-      if (value == null) continue;
-      value = value.toLowerCase();
-
-      if (value.contains('пон') || value.contains('пн')) {
-        mondayRow = i;
-        continue;
-      }
-      if (value.contains('вт')) {
-        tuesdayRow = i;
-        continue;
-      }
-      if (value.contains('сре')) {
-        wednesdayRow = i;
-        continue;
-      }
-      if (value.toLowerCase().contains('чт') || value.contains('четв')) {
-        thursdayRow = i;
-        continue;
-      }
-      if (value.toLowerCase().contains('пт') || value.contains('пятн')) {
-        fridayRow = i;
-        continue;
-      }
-      if (value.toLowerCase().contains('сб') || value.contains('субб')) {
-        saturdayRow = i;
-        continue;
+        if (helper.isNotEmpty) {
+          final roomValue = helper.join(' ');
+          classData.add(roomValue);
+        }
+        break;
+      } else {
+        final value = table.rows[row][lectureCol]?.toString() ?? null;
+        if (value != null) classData.add(value);
       }
     }
+
+    //TODO: parse lecture
+
+    print('--------------');
+    classData.forEach((data) => print('data: $data'));
+
+    return null;
   }
 }

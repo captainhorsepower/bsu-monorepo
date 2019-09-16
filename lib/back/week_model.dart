@@ -1,7 +1,9 @@
+import 'dart:collection';
+
 import 'package:timetable/back/day_model.dart';
 
 class WeekModel {
-  Map<String, DayModel> days;
+  Map<String, DayModel> days = HashMap();
 }
 
 class DayOfWeek {
