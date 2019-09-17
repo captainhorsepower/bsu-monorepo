@@ -1,8 +1,6 @@
 import 'dart:collection';
 import 'dart:io';
-import 'dart:math';
 
-import 'package:flutter/rendering.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 import 'package:timetable/back/class_model.dart';
 import 'package:timetable/back/day_model.dart';
@@ -134,7 +132,7 @@ class XlsxTimetableParser {
     while (helper.isNotEmpty) {
       final int left = helper.removeFirst();
       final String group = helper.removeFirst();
-      final int right = helper.isEmpty ? (left + 1) : helper.first;
+      final int right = helper.isEmpty ? (left + 2) : helper.first;
 
       _groupsMapInternal[group] = _Pair(left, right);
       groupsList.add(group);
