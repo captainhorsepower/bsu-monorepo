@@ -4,6 +4,10 @@ import 'package:timetable/back/day_model.dart';
 
 class WeekModel {
   Map<String, DayModel> days = HashMap();
+  @override
+  String toString() {
+    return days.toString();
+  }
 }
 
 class DayOfWeek {

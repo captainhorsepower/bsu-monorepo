@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/rendering.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 import 'package:timetable/back/class_model.dart';
 import 'package:timetable/back/day_model.dart';
@@ -133,7 +134,7 @@ class XlsxTimetableParser {
     while (helper.isNotEmpty) {
       final int left = helper.removeFirst();
       final String group = helper.removeFirst();
-      final int right = helper.isEmpty ? table.maxCols : helper.first;
+      final int right = helper.isEmpty ? (left + 1) : helper.first;
 
       _groupsMapInternal[group] = _Pair(left, right);
       groupsList.add(group);
@@ -163,12 +164,12 @@ class XlsxTimetableParser {
         weekModel.days[DayOfWeek.saturday] = parseDay(speciality, group, row);
       }
     }
+
+    print(weekModel.toString());
+    return weekModel;
   }
 
   DayModel parseDay(final String speciality, final String group, final int dayStartRow) {
-    final int lectureCol = _specialitiesMapInternal[speciality].left;
-    final int groupCol = _groupsMapInternal[group].left;
-
     final dayModel = DayModel();
 
     for (int row = dayStartRow; row < table.maxRows; row++) {
@@ -178,108 +179,133 @@ class XlsxTimetableParser {
       // when found new class
       if (table.rows[row][timeCol] != null) {
         final foundClass = parseClass(row, group, speciality);
-
-        if (foundClass != null) dayModel.classes.add(foundClass);
+        dayModel.classes.addAll(foundClass);
       }
     }
+
+    return dayModel;
   }
 
-  parseClass(final int classStartRow, final String group, final String speciality) {
+  List<ClassModel> parseClass(
+    final int classStartRow,
+    final String group,
+    final String speciality,
+  ) {
     final int lectureCol = _specialitiesMapInternal[speciality].left;
     final int lectureColRight = _specialitiesMapInternal[speciality].right;
     final int groupCol = _groupsMapInternal[group].left;
     final int groupColRight = _groupsMapInternal[group].right;
     Queue<String> classData = Queue<String>();
+    Queue<String> classDataRight = Queue<String>();
 
-    final String classTime = table.rows[classStartRow][timeCol].toString();
+    final String classTimeRaw = table.rows[classStartRow][timeCol].toString();
 
     // try to parse group class
     for (int row = classStartRow;
         row < table.maxRows && (row == classStartRow || table.rows[row][timeCol] == null);
         row++) {
       final value = table.rows[row][groupCol]?.toString() ?? null;
-      if (value != null) {
-        classData.add(value);
+      if (value != null) classData.add(value);
 
-        final secondValue = table.rows[row][groupColRight - 1]?.toString() ?? null;
-        if (secondValue != null) classData.add(secondValue);
-      }
+      final secondValue = table.rows[row][groupColRight - 1]?.toString() ?? null;
+      if (secondValue != null) classDataRight.add(secondValue);
     }
 
-    if (classData.length == 1) {
-      final String title = classData.removeFirst();
-      return ClassModel(
-        title: title,
-        classTime: classTime,
-      );
-    } else if (classData.length >= minimumValidClassDataItems) {
-      final String title = classData.removeFirst();
+    if (classData.length + classDataRight.length >= 3) {
+      final classes = List<ClassModel>();
 
-      // parse class with subgroups
-      if (classData.length >= minimumValidClassDataItems) {
-        final tutorLeft = classData.removeFirst();
-        final tutorRight = classData.removeFirst();
-        final roomLeft = classData.removeFirst();
-        final roomRight = classData.removeFirst();
+      final String title = classData.isEmpty ? 'smth wrong' : classData.removeFirst();
 
-        final classLeft = ClassModel(
-          title: title,
-          tutor: tutorLeft,
-          classRoom: roomLeft,
-          classTime: classTime,
-        );
+      var kostylRoom = '666-ад';
 
-        final classRigth = ClassModel(
-          title: title,
-          tutor: tutorRight,
-          classRoom: roomRight,
-          classTime: classTime,
-        );
+      if (classData.isNotEmpty) {
+        final String tutuor = classData.removeFirst();
+        final String room = classData.removeFirst();
 
-        return null;
-      } else {
-        // parse normal class
-        final tutor = classData.removeFirst();
-        final room = classData.removeFirst();
+        kostylRoom = room;
 
         if (room.contains(RegExp(r'\d{3}'))) {
-          return ClassModel(
+          classes.add(ClassModel(
             title: title,
-            tutor: tutor,
+            tutor: tutuor,
             classRoom: room,
-            classTime: classTime,
-          );
+            classTime: classTimeRaw,
+            type: ClassType.practos,
+          ));
         }
       }
+
+      if (classDataRight.isNotEmpty) {
+        final titleRight = classDataRight.length < 3 ? title : classDataRight.removeFirst();
+        final tutorRight = classDataRight.removeFirst();
+        final roomRight = classDataRight.isEmpty ? kostylRoom : classDataRight.removeFirst();
+
+        if (roomRight.contains(RegExp(r'\d{3}'))) {
+          classes.add(ClassModel(
+            title: titleRight,
+            tutor: tutorRight,
+            classRoom: roomRight,
+            classTime: classTimeRaw,
+            type: ClassType.practos,
+          ));
+        }
+      }
+
+      if (classes.isNotEmpty) return classes;
     }
 
     classData.clear();
     for (int row = classStartRow;
         row < table.maxRows && (row == classStartRow || table.rows[row][timeCol] == null);
         row++) {
-      if (classData.length >= 2) {
+      if (classData.length < 2) {
+        final value = table.rows[row][lectureCol]?.toString() ?? null;
+        if (value != null) classData.add(value);
+      } else {
+        final kostylFlag = table.rows[row][lectureCol]?.toString()?.contains(RegExp(r'\d{3}')) ?? false;
+        if (kostylFlag) return List();
+
         Queue<String> helper = Queue<String>();
+
         for (int col = lectureCol; col < lectureColRight; col++) {
-          final roomValue = table.rows[row][col]?.toString() ?? null;
-          if (roomValue != null) helper.add(roomValue);
+          final value = table.rows[row][col]?.toString() ?? null;
+          if (value != null) helper.add(value);
         }
 
         if (helper.isNotEmpty) {
           final roomValue = helper.join(' ');
           classData.add(roomValue);
         }
-        break;
-      } else {
-        final value = table.rows[row][lectureCol]?.toString() ?? null;
-        if (value != null) classData.add(value);
       }
     }
 
-    //TODO: parse lecture
+    if (classData.isEmpty) return List();
 
-    print('--------------');
-    classData.forEach((data) => print('data: $data'));
+    if (classData.length == 1) {
+      final String title = classData.removeFirst();
+      return List.of({
+        ClassModel(
+          title: title,
+          classTime: classTimeRaw,
+          type: ClassType.phizra,
+        )
+      });
+    }
 
-    return null;
+    if (classData.length < 3) return List();
+
+    final title = classData.removeFirst();
+    final tutor = classData.removeFirst();
+    final room = classData.removeFirst();
+
+    return List.of({
+      ClassModel(
+        title: title,
+        tutor: tutor,
+        classRoom: room,
+        classTime: classTimeRaw,
+        type: ClassType.lecture,
+      )
+    });
   }
 }
