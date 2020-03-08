@@ -25,7 +25,7 @@ public class ToolsPanel extends JPanel {
             "Rhombus"};
 
     public ToolsPanel() {
-        this.setLayout(new GridLayout(6, 1));
+        this.setLayout(new GridLayout(12, 1));
         this.setSize(50, 200);
 
         Label label = new Label("Figures");
