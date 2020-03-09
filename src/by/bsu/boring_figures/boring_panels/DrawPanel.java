@@ -1,7 +1,6 @@
 package by.bsu.boring_figures.boring_panels;
 
 import by.bsu.boring_figures.actually_figures.Figure;
-import by.bsu.boring_figures.actually_figures.Line;
 import by.bsu.boring_figures.actually_figures.Point;
 import by.bsu.boring_figures.actually_figures.RegularPolygon;
 
@@ -9,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -40,38 +40,50 @@ public class DrawPanel extends JPanel {
                     return;
                 }
 
-                if ((e.getModifiers() & ALT_MASK) != 0 || SwingUtilities.isRightMouseButton(e)) {
-                    Figure d = new Line(
-                            new Point(e.getX() - 50, e.getY() - 50),
-                            new Point(e.getX() + 50, e.getY() + 50)
-                    );
-                    addFigure(d);
+
+                if (selected != null && (e.getModifiers() & ALT_MASK) != 0) {
+                    System.out.println("move " + selected.getClass().getSimpleName());
+                    selected.move(new Point(e.getX(), e.getY()));
+                    repaint();
                     return;
                 }
 
                 Point p = new Point(e.getX(), e.getY());
-                figures.stream()
+                setSelected(figures.stream()
                         .filter(f -> f.contains(p))
                         .findFirst()
-                        .ifPresent(DrawPanel.this::setSelected);
+                        .orElse(null));
+            }
+        });
+
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                if ((e.getModifiers() & ALT_MASK) != 0) {
+                    DrawPanel.this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+                } else {
+                    DrawPanel.this.setCursor(Cursor.getDefaultCursor());
+                }
             }
         });
     }
 
     public void addFigure(Figure figure) {
         this.figures.add(figure);
+        setSelected(figure);
         repaint();
     }
 
     public void setSelected(Figure figure) {
-//        System.out.println("selected " + figure.getClass().getSimpleName());
         if (figure != this.selected) {
             if (this.selected != null) this.selected.deselect();
-            if (figure != null && figures.contains(figure)) {
+            if (figure == null || !figures.contains(figure)) {
+                this.selected = null;
+            } else {
                 this.selected = figure;
-                figure.select();
-                repaint();
+                this.selected.select();
             }
+            repaint();
         }
     }
 
