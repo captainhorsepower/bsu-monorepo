@@ -9,7 +9,7 @@ import java.util.List;
  * @version 1.0
  * @created 02-Mar-2020 3:52:17 PM
  */
-public abstract class Figure implements Drawable {
+public abstract class Figure implements Drawable, Selectable {
 
     private Point center;
     private Color borderColor = Color.BLACK;

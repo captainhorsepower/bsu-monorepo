@@ -22,17 +22,6 @@ public class Polygon extends Figure2D {
         return points;
     }
 
-    @Override
-    public void draw(Graphics2D graphics2D) {
-        int[] xPoints = points.stream().mapToInt(Point::getX).toArray();
-        int[] yPoints = points.stream().mapToInt(Point::getY).toArray();
-        java.awt.Polygon p = new java.awt.Polygon(xPoints, yPoints, points.size());
-        graphics2D.setColor(getBorderColor());
-        graphics2D.drawPolygon(p);
-        graphics2D.setColor(getFillColor());
-        graphics2D.fillPolygon(p);
-    }
-
     /**
      * @param newLocation newCenter
      */
@@ -41,4 +30,10 @@ public class Polygon extends Figure2D {
         // FIXME: 3/9/20
     }
 
+    @Override
+    protected Shape getShape() {
+        int[] xPoints = points.stream().mapToInt(Point::getX).toArray();
+        int[] yPoints = points.stream().mapToInt(Point::getY).toArray();
+        return new java.awt.Polygon(xPoints, yPoints, points.size());
+    }
 }

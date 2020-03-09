@@ -35,4 +35,18 @@ public abstract class Figure2D extends Figure {
         return fillColor;
     }
 
+    @Override
+    public void draw(Graphics2D graphics2D) {
+        graphics2D.setColor(getBorderColor());
+        graphics2D.draw(getShape());
+        graphics2D.setColor(getFillColor());
+        graphics2D.fill(getShape());
+    }
+
+    @Override
+    public boolean contains(Point point) {
+        return getShape().contains(point.getX(), point.getY());
+    }
+
+    protected abstract Shape getShape();
 }
