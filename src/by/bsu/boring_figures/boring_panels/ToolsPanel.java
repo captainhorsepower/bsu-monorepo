@@ -13,7 +13,6 @@ public class ToolsPanel extends JPanel {
             "Line",
             "Line segment",
             "Polyline",
-
             "Circle",
             "Ellipse",
             "Parallelogram",
