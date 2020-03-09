@@ -54,11 +54,12 @@ public class LineSegment extends Figure1D {
 
     @Override
     public boolean contains(Point point) {
+        final int magicNumber = 5;
         Polygon pseudoLine = new Polygon(Arrays.asList(
-                new Point(firstPoint.getX(), firstPoint.getY() - 3),
-                new Point(secondPoint.getX(), secondPoint.getY() - 3),
-                new Point(secondPoint.getX(), secondPoint.getY() + 3),
-                new Point(firstPoint.getX(), firstPoint.getY() + 3)
+                new Point(firstPoint.getX(), firstPoint.getY() - magicNumber),
+                new Point(secondPoint.getX(), secondPoint.getY() - magicNumber),
+                new Point(secondPoint.getX(), secondPoint.getY() + magicNumber),
+                new Point(firstPoint.getX(), firstPoint.getY() + magicNumber)
         ));
 
         return pseudoLine.contains(point);

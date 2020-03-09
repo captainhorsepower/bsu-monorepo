@@ -1,7 +1,7 @@
 package by.bsu.boring_figures.boring_panels;
 
 import by.bsu.boring_figures.actually_figures.Figure;
-import by.bsu.boring_figures.actually_figures.LineSegment;
+import by.bsu.boring_figures.actually_figures.Line;
 import by.bsu.boring_figures.actually_figures.Point;
 import by.bsu.boring_figures.actually_figures.RegularPolygon;
 
@@ -41,7 +41,7 @@ public class DrawPanel extends JPanel {
                 }
 
                 if ((e.getModifiers() & ALT_MASK) != 0 || SwingUtilities.isRightMouseButton(e)) {
-                    Figure d = new LineSegment(
+                    Figure d = new Line(
                             new Point(e.getX() - 50, e.getY() - 50),
                             new Point(e.getX() + 50, e.getY() + 50)
                     );
