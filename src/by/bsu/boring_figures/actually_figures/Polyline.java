@@ -30,6 +30,15 @@ public class Polyline extends Figure1D {
         graphics2D.drawPolyline(xPoints, yPoints, points.size());
     }
 
+    @Override
+    public boolean contains(Point point) {
+        for (int i = 1; i < points.size(); i++) {
+            LineSegment lineSegment = new LineSegment(points.get(i - 1), points.get(i));
+            if (lineSegment.contains(point)) return true;
+        }
+        return false;
+    }
+
     /**
      * @param newLocation
      */

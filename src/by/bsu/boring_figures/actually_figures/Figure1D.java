@@ -12,9 +12,4 @@ public abstract class Figure1D extends Figure {
     public Figure1D(List<Point> points) {
         super(points);
     }
-
-    @Override
-    public boolean contains(Point point) {
-        return false;
-    }
 }

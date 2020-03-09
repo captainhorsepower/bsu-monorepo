@@ -2,7 +2,7 @@ package by.bsu.boring_figures.boring_panels;
 
 import by.bsu.boring_figures.actually_figures.Figure;
 import by.bsu.boring_figures.actually_figures.Point;
-import by.bsu.boring_figures.actually_figures.RegularPolygon;
+import by.bsu.boring_figures.actually_figures.Polyline;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,8 +10,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import static java.awt.event.InputEvent.ALT_MASK;
 import static java.awt.event.InputEvent.CTRL_MASK;
@@ -31,11 +31,12 @@ public class DrawPanel extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 if ((e.getModifiers() & CTRL_MASK) != 0 || SwingUtilities.isRightMouseButton(e)) {
-                    Figure d = new RegularPolygon(
+                    Figure d = new Polyline(Arrays.asList(
                             new Point(e.getX() - 50, e.getY() - 50),
                             new Point(e.getX() + 50, e.getY() + 50),
-                            3 + new Random().nextInt(7)
-                    );
+                            new Point(e.getX() + 150, e.getY() + 250),
+                            new Point(e.getX() + 250, e.getY() + 150)
+                    ));
                     addFigure(d);
                     return;
                 }
