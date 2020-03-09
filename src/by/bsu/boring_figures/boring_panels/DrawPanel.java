@@ -12,7 +12,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static java.awt.event.InputEvent.ALT_MASK;
 import static java.awt.event.InputEvent.CTRL_MASK;
@@ -21,6 +20,7 @@ import static java.awt.event.InputEvent.CTRL_MASK;
 public class DrawPanel extends JPanel {
 
     private List<Figure> figures;
+    private Figure selected;
 
     public DrawPanel() {
         super(true);
@@ -50,13 +50,10 @@ public class DrawPanel extends JPanel {
                 }
 
                 Point p = new Point(e.getX(), e.getY());
-                List<Figure> fs = figures.stream()
+                figures.stream()
                         .filter(f -> f.contains(p))
-                        .collect(Collectors.toList());
-
-                figures.removeAll(fs);
-                repaint();
-
+                        .findFirst()
+                        .ifPresent(DrawPanel.this::setSelected);
             }
         });
     }
@@ -64,6 +61,18 @@ public class DrawPanel extends JPanel {
     public void addFigure(Figure figure) {
         this.figures.add(figure);
         repaint();
+    }
+
+    public void setSelected(Figure figure) {
+//        System.out.println("selected " + figure.getClass().getSimpleName());
+        if (figure != this.selected) {
+            if (this.selected != null) this.selected.deselect();
+            if (figure != null && figures.contains(figure)) {
+                this.selected = figure;
+                figure.select();
+                repaint();
+            }
+        }
     }
 
     @Override

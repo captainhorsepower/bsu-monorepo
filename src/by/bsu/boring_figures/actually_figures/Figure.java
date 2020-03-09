@@ -12,7 +12,8 @@ import java.util.List;
 public abstract class Figure implements Drawable, Selectable {
 
     private Point center;
-    private Color borderColor = Color.BLACK;
+    private Color fillColor = Color.BLACK;
+    private boolean selected;
 
     /**
      * @param points center is mean of given points
@@ -37,11 +38,16 @@ public abstract class Figure implements Drawable, Selectable {
     }
 
     public Color getBorderColor() {
-        return this.borderColor;
+        return new Color(
+                1f * fillColor.getRed() / 255,
+                1f * fillColor.getGreen() / 255,
+                1f * fillColor.getBlue() / 255,
+                selected ? 1.0f : 0.7f
+        );
     }
 
     public void setBorderColor(Color borderColor) {
-        this.borderColor = borderColor;
+        this.fillColor = borderColor;
     }
 
     /**
@@ -50,5 +56,24 @@ public abstract class Figure implements Drawable, Selectable {
     public Point location() {
         return this.center;
     }
+
+    @Override
+    public void select() {
+        this.selected = true;
+    }
+
+    @Override
+    public void deselect() {
+        this.selected = false;
+    }
+
+    protected boolean isSelected() {
+        return selected;
+    }
+
+    protected void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
 
 }

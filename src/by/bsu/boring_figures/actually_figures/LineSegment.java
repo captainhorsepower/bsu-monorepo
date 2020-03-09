@@ -36,6 +36,7 @@ public class LineSegment extends Figure1D {
 
     @Override
     public void draw(Graphics2D g2d) {
+        g2d.setColor(getBorderColor());
         g2d.drawLine(
                 firstPoint.getX(), firstPoint.getY(),
                 secondPoint.getX(), secondPoint.getY()

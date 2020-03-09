@@ -32,7 +32,12 @@ public abstract class Figure2D extends Figure {
     }
 
     public Color getFillColor() {
-        return fillColor;
+        return new Color(
+                1f * fillColor.getRed() / 255,
+                1f * fillColor.getGreen() / 255,
+                1f * fillColor.getBlue() / 255,
+                isSelected() ? 1.0f : 0.8f
+        );
     }
 
     @Override
