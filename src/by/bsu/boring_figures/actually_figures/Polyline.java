@@ -3,6 +3,7 @@ package by.bsu.boring_figures.actually_figures;
 
 import java.awt.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author shchors_vs
@@ -44,6 +45,12 @@ public class Polyline extends Figure1D {
      */
     @Override
     public void move(Point newLocation) {
-        // FIXME: 3/9/20
+        int shiftX = newLocation.getX() - location().getX();
+        int shiftY = newLocation.getY() - location().getY();
+        this.points = this.getPoints().stream()
+                .map(p -> new Point(p.getX() + shiftX, p.getY() + shiftY))
+                .collect(Collectors.toList());
+
+        initCenter(points);
     }
 }
