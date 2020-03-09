@@ -40,12 +40,14 @@ public class Ellipse extends Figure2D {
      */
     @Override
     public void move(Point newCenter) {
-        // FIXME: 3/9/20
-    }
+        int shiftX = newCenter.getX() - location().getX();
+        int shiftY = newCenter.getY() - location().getY();
+        topLeft.setX(topLeft.getX() + shiftX);
+        topLeft.setX(topLeft.getX() + shiftX);
+        bottomRight.setX(bottomRight.getX() + shiftX);
+        bottomRight.setY(bottomRight.getY() + shiftY);
 
-    @Override
-    public boolean contains(Point point) {
-        return false;
+        initCenter(Arrays.asList(topLeft, bottomRight));
     }
 
     @Override
