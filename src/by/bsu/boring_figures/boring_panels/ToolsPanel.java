@@ -1,6 +1,6 @@
-package by.bsu.boring_panels;
+package by.bsu.boring_figures.boring_panels;
 
-import by.bsu.boring_components.ColorChooserButton;
+import by.bsu.boring_figures.boring_components.ColorChooserButton;
 
 import javax.swing.*;
 import java.awt.*;

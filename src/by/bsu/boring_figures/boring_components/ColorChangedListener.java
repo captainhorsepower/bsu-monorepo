@@ -1,4 +1,4 @@
-package by.bsu.boring_components;
+package by.bsu.boring_figures.boring_components;
 
 import java.awt.*;
 

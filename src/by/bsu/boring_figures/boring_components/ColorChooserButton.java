@@ -1,14 +1,10 @@
-package by.bsu.boring_components;
+package by.bsu.boring_figures.boring_components;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
 
 public class ColorChooserButton extends JButton {
 
