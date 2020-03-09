@@ -1,14 +1,18 @@
 package by.bsu.boring_figures.boring_panels;
 
 import by.bsu.boring_figures.actually_figures.Figure;
+import by.bsu.boring_figures.actually_figures.*;
 import by.bsu.boring_figures.actually_figures.Point;
 import by.bsu.boring_figures.actually_figures.Polyline;
+import by.bsu.boring_figures.actually_figures.Polygon;
+import by.bsu.boring_figures.actually_figures.Rectangle;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,10 +21,13 @@ import static java.awt.event.InputEvent.ALT_MASK;
 import static java.awt.event.InputEvent.CTRL_MASK;
 
 
+import static java.awt.event.ActionEvent.SHIFT_MASK;
+
 public class DrawPanel extends JPanel {
 
     private List<Figure> figures;
     private Figure selected;
+    private List<Point> points;
 
     public DrawPanel() {
         super(true);
@@ -30,17 +37,6 @@ public class DrawPanel extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if ((e.getModifiers() & CTRL_MASK) != 0 || SwingUtilities.isRightMouseButton(e)) {
-                    Figure d = new Polyline(Arrays.asList(
-                            new Point(e.getX() - 50, e.getY() - 50),
-                            new Point(e.getX() + 50, e.getY() + 50),
-                            new Point(e.getX() + 150, e.getY() + 250),
-                            new Point(e.getX() + 250, e.getY() + 150)
-                    ));
-                    addFigure(d);
-                    return;
-                }
-
 
                 if (selected != null && (e.getModifiers() & ALT_MASK) != 0) {
                     System.out.println("move " + selected.getClass().getSimpleName());
@@ -49,22 +45,72 @@ public class DrawPanel extends JPanel {
                     return;
                 }
 
-                Point p = new Point(e.getX(), e.getY());
-                setSelected(figures.stream()
-                        .filter(f -> f.contains(p))
-                        .findFirst()
-                        .orElse(null));
-            }
-        });
-
-        addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                if ((e.getModifiers() & ALT_MASK) != 0) {
-                    DrawPanel.this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+                if ((e.getModifiers() & SHIFT_MASK) != 0) {
+                    points.clear();
                 } else {
-                    DrawPanel.this.setCursor(Cursor.getDefaultCursor());
+                    points.add(new Point(e.getX(), e.getY()));
+
+                    switch (ToolsPanel.figureList.getSelectedIndex()) {
+                        case 6: {
+                            if (points.size() >= 3) {
+                                Drawable f = new Parallelogram(
+                                        points.get(points.size() - 1),
+                                        points.get(points.size() - 2),
+                                        points.get(points.size() - 3));
+                                addFigure(f);
+                            }
+                            break;
+                        }
+                        case 7:{
+                            if (points.size() >= 2) {
+                                Drawable f = new Rectangle(
+                                        points.get(points.size() - 1),
+                                        points.get(points.size() - 2));
+                                addFigure(f);
+                            }
+                            break;
+                        }
+                        case 8: {
+                            Drawable f = new Polygon(points);
+                            addFigure(f);
+                            break;
+                        }
+                        case 9:{
+                            if (points.size() >= 2) {
+                                Drawable f = new RegularPolygon(
+                                        points.get(points.size() - 1),
+                                        points.get(points.size() - 2),
+                                        7
+                                        );
+                                addFigure(f);
+                            }
+                            break;
+                        }
+                        case 10:{
+                            if (points.size() >= 2) {
+                                Drawable f = new Rhombus(
+                                        points.get(points.size() - 1),
+                                        points.get(points.size() - 2));
+                                addFigure(f);
+                            }
+                            break;
+                        }
+                    }
+
+
+                    Drawable d = new Circle(
+                            new Point(e.getX() - 1, e.getY() - 1),
+                            new Point(e.getX() + 1, e.getY() + 1)
+                    );
+                    addFigure(d);
+
+                    Point p = new Point(e.getX(), e.getY());
+                    setSelected(figures.stream()
+                            .filter(f -> f.contains(p))
+                            .findFirst()
+                            .orElse(null));
                 }
+
             }
         });
     }

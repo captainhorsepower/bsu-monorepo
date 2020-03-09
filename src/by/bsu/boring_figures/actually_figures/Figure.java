@@ -1,6 +1,8 @@
 package by.bsu.boring_figures.actually_figures;
 
 
+import by.bsu.boring_figures.boring_panels.ToolsPanel;
+
 import java.awt.*;
 import java.util.List;
 
@@ -31,6 +33,7 @@ public abstract class Figure implements Drawable, Selectable {
                         p.getX() / points.size(),
                         p.getY() / points.size()))
                 .get();
+        this.borderColor = ToolsPanel.borderColorChooser.getSelectedColor();
     }
 
     public Point getCenter() {

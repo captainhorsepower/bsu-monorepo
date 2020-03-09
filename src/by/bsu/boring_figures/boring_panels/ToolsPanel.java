@@ -19,10 +19,12 @@ public class ToolsPanel extends JPanel {
             "Parallelogram",
             "Rectangle",
             "Polygon",
-            "Rectangle",
-            "Polyline",
             "Regular polygon",
             "Rhombus"};
+
+    static public JComboBox<String> figureList;
+    static public ColorChooserButton borderColorChooser;
+    static public ColorChooserButton fillColorChooser;
 
     public ToolsPanel() {
         this.setLayout(new GridLayout(12, 1));
@@ -31,24 +33,26 @@ public class ToolsPanel extends JPanel {
         Label label = new Label("Figures");
         add(label);
 
-        JComboBox<String> figureList = new JComboBox<>(figures);
+        figureList = new JComboBox<>(figures);
         add(figureList);
 
         label = new Label("Border color");
         add(label);
 
-        ColorChooserButton colorChooser = new ColorChooserButton(Color.WHITE);
-        colorChooser.addColorChangedListener(newColor -> {
+        borderColorChooser = new ColorChooserButton(Color.WHITE);
+        borderColorChooser.addColorChangedListener(newColor -> {
         });
-        add(colorChooser);
+        add(borderColorChooser);
 
         label = new Label("Fill color");
         add(label);
 
-        colorChooser = new ColorChooserButton(Color.WHITE);
-        colorChooser.addColorChangedListener(newColor -> {
+        fillColorChooser = new ColorChooserButton(Color.WHITE);
+        fillColorChooser.addColorChangedListener(newColor -> {
         });
-        add(colorChooser);
+        add(fillColorChooser);
+
+        repaint();
     }
 
 }

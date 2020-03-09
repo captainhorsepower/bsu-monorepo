@@ -1,6 +1,9 @@
 package by.bsu.boring_figures.actually_figures;
 
 
+import by.bsu.boring_figures.boring_components.ColorChangedListener;
+import by.bsu.boring_figures.boring_panels.ToolsPanel;
+
 import java.awt.*;
 import java.util.List;
 import java.util.Random;
@@ -10,7 +13,7 @@ import java.util.Random;
  * @version 1.0
  * @created 02-Mar-2020 3:52:17 PM
  */
-public abstract class Figure2D extends Figure {
+public abstract class Figure2D extends Figure{
 
     private final Color fillColor;
 
@@ -23,12 +26,7 @@ public abstract class Figure2D extends Figure {
     protected Figure2D(List<Point> points) {
         // FIXME: 3/9/20 
         super(points);
-        Random random = new Random();
-        this.fillColor = new Color(
-                random.nextInt(256),
-                random.nextInt(256),
-                random.nextInt(256)
-        );
+        this.fillColor = ToolsPanel.fillColorChooser.getSelectedColor();
     }
 
     public Color getFillColor() {
