@@ -1,6 +1,7 @@
 package by.bsu.boring_figures.boring_panels;
 
 import by.bsu.boring_figures.actually_figures.Figure;
+import by.bsu.boring_figures.actually_figures.LineSegment;
 import by.bsu.boring_figures.actually_figures.Point;
 import by.bsu.boring_figures.actually_figures.RegularPolygon;
 
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static java.awt.event.InputEvent.ALT_MASK;
 import static java.awt.event.InputEvent.CTRL_MASK;
 
 
@@ -33,6 +35,15 @@ public class DrawPanel extends JPanel {
                             new Point(e.getX() - 50, e.getY() - 50),
                             new Point(e.getX() + 50, e.getY() + 50),
                             3 + new Random().nextInt(7)
+                    );
+                    addFigure(d);
+                    return;
+                }
+
+                if ((e.getModifiers() & ALT_MASK) != 0 || SwingUtilities.isRightMouseButton(e)) {
+                    Figure d = new LineSegment(
+                            new Point(e.getX() - 50, e.getY() - 50),
+                            new Point(e.getX() + 50, e.getY() + 50)
                     );
                     addFigure(d);
                     return;
