@@ -17,12 +17,6 @@ public abstract class Figure2D extends Figure{
 
     private final Color fillColor;
 
-    protected Figure2D(Color fillColor) {
-        // FIXME: 3/9/20 
-        super(null);
-        this.fillColor = fillColor;
-    }
-
     protected Figure2D(List<Point> points) {
         // FIXME: 3/9/20 
         super(points);
