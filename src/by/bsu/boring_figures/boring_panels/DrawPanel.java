@@ -25,7 +25,6 @@ import static java.awt.event.InputEvent.CTRL_MASK;
 
 public class DrawPanel extends JPanel {
 
-    public static List<Point> points;
     private final int MOVE_MASK = ALT_MASK;
     private final int ADD_POINT_MASK = CTRL_MASK;
     private final int CLEAR_POINTS_MASK = SHIFT_MASK;
@@ -54,6 +53,8 @@ public class DrawPanel extends JPanel {
     };
 
     private final MouseListener drawFigureMouseListener = new MouseAdapter() {
+
+        private final List<Point> points = new LinkedList<>();
 
         @Override
         public void mousePressed(MouseEvent e) {
@@ -119,7 +120,6 @@ public class DrawPanel extends JPanel {
 
     public DrawPanel() {
         super(true);
-        points = new ArrayList<>();
         this.figures = new LinkedList<>();
         this.builder = new FiguresBuilder();
         this.figurePoints = new ArrayList<>();

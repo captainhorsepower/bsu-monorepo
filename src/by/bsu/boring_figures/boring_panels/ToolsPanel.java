@@ -10,8 +10,6 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static by.bsu.boring_figures.boring_panels.DrawPanel.points;
-
 
 public class ToolsPanel extends JPanel {
 
@@ -57,7 +55,6 @@ public class ToolsPanel extends JPanel {
 
         figuresComboBox = new JComboBox<>();
         figuresBinding.forEach((e1, e2) -> figuresComboBox.addItem(e1));
-        figuresComboBox.addActionListener(e -> points.clear());
         add(figuresComboBox);
 
         label = new Label("Border color");
