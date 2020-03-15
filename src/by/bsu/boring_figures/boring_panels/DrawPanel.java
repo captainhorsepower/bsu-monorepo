@@ -117,6 +117,7 @@ public class DrawPanel extends JPanel {
 
                 if (matchesOnly(e.getModifiers(), CLEAR_POINTS_MASK)) {
                     points.clear();
+                    repaint();
                     return;
                 }
             }
@@ -148,7 +149,6 @@ public class DrawPanel extends JPanel {
     public void addFigure(Figure figure) {
         this.figures.addFirst(figure);
         setSelected(figure);
-        repaint();
     }
 
     public void setSelected(Figure figure) {
