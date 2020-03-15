@@ -3,6 +3,7 @@ package by.bsu.boring_figures.service;
 import by.bsu.boring_figures.actually_figures.Figure;
 import by.bsu.boring_figures.actually_figures.Point;
 import by.bsu.boring_figures.actually_figures.Rectangle;
+import by.bsu.boring_figures.boring_panels.DrawPanel;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -29,24 +30,25 @@ public class FiguresBuilder {
 
 
     public Figure build() throws IllegalAccessException, InvocationTargetException, InstantiationException, PointsShortageException {
-        Constructor<?> constr = Arrays
-                .stream(clazz.getConstructors())
-                .filter(c -> c.getParameterTypes().length > 0)
-                .collect(Collectors.toList())
-                .get(0);
+        Constructor<?> constr = clazz.getConstructors()[0];
         List<String> paramsNames = new ArrayList<>();
-        for (Class<?> a : constr.getParameterTypes()) {
-            paramsNames.add(a.getSimpleName());
-        }
+        Arrays.stream(constr.getParameterTypes())
+                .forEach(e->paramsNames.add(e.getSimpleName()));
         try {
             if (paramsNames.size() == 1) {
                 return (Figure) constr.newInstance(points);
             } else if (paramsNames.size() == 2) {
-                return (Figure) constr.newInstance(points.get(points.size() - 2), points.get(points.size() - 1));
+                Figure f = (Figure) constr.newInstance(points.get(points.size() - 2), points.get(points.size() - 1));
+                DrawPanel.points.clear();
+                return f;
             } else if (Collections.frequency(paramsNames, "Point") == 3) {
-                return (Figure) constr.newInstance(points.get(points.size() - 3), points.get(points.size() - 2), points.get(points.size() - 1));
+                Figure f = (Figure) constr.newInstance(points.get(points.size() - 3), points.get(points.size() - 2), points.get(points.size() - 1));
+                DrawPanel.points.clear();
+                return f;
             } else {
-                return (Figure) constr.newInstance(points.get(points.size() - 2), points.get(points.size() - 1), verticesNumber);
+                Figure f = (Figure) constr.newInstance(points.get(points.size() - 2), points.get(points.size() - 1), verticesNumber);
+                DrawPanel.points.clear();
+                return f;
             }
         } catch (IndexOutOfBoundsException e) {
             throw new PointsShortageException();

@@ -7,8 +7,12 @@ import by.bsu.boring_figures.boring_components.ColorChooserButton;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+
+import static by.bsu.boring_figures.boring_panels.DrawPanel.points;
 
 
 public class ToolsPanel extends JPanel {
@@ -55,6 +59,12 @@ public class ToolsPanel extends JPanel {
 
         figuresComboBox = new JComboBox<>();
         figuresBinding.forEach((e1, e2) -> figuresComboBox.addItem(e1));
+        figuresComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                points.clear();
+            }
+        });
         add(figuresComboBox);
 
         label = new Label("Border color");
@@ -71,7 +81,7 @@ public class ToolsPanel extends JPanel {
         });
         add(fillColorChooser);
 
-        label = new Label("Vertices number for regular polygon");
+        label = new Label("Vertices number");
         add(label);
 
         verticesSpinner = new JSpinner();

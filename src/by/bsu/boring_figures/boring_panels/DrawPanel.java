@@ -1,11 +1,14 @@
 package by.bsu.boring_figures.boring_panels;
 
+import by.bsu.boring_figures.actually_figures.Circle;
 import by.bsu.boring_figures.actually_figures.Figure;
+import by.bsu.boring_figures.actually_figures.Line;
 import by.bsu.boring_figures.actually_figures.Point;
 import by.bsu.boring_figures.service.FiguresBuilder;
 import by.bsu.boring_figures.service.PointsShortageException;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -24,18 +27,24 @@ import static java.awt.event.ActionEvent.SHIFT_MASK;
 
 public class DrawPanel extends JPanel {
 
+    public static List<Point> points;
+
     private List<Figure> figures;
     private Figure selected;
-    private List<Point> points;
     private FiguresBuilder builder;
+    private List<Figure> figurePoints;
 
     public DrawPanel() {
         super(true);
+        points = new ArrayList<>();
         this.figures = new ArrayList<>();
-        this.points = new ArrayList<>();
         this.builder = new FiguresBuilder();
+        this.figurePoints = new ArrayList<>();
+
+        setBorder(new BevelBorder(BevelBorder.RAISED));
 
         addMouseListener(new MouseAdapter() {
+
             @Override
             public void mousePressed(MouseEvent e) {
 
@@ -50,24 +59,20 @@ public class DrawPanel extends JPanel {
                     points.clear();
                 } else if ((e.getModifiers() & CTRL_MASK) != 0) {
                     points.add(new Point(e.getX(), e.getY()));
+                    figurePoints.add(new Circle(
+                            new Point(e.getX()-1, e.getY()-1),
+                            new Point(e.getX()+1, e.getY()+1)));
+                    repaint();
 
-                    //FIXME clear points when the new figure is chosen
-                    Class<?> clazz = figuresBinding.get(ToolsPanel.figuresComboBox.getSelectedItem());
+                    Class<?> clazzNew = figuresBinding.get(ToolsPanel.figuresComboBox.getSelectedItem());
 
-                    builder.setClazz(clazz);
+                    builder.setClazz(clazzNew);
                     builder.setPoints(points);
                     builder.setVerticesNumber((int) verticesSpinner.getValue());
 
                     try {
                         Figure f = builder.build();
                         addFigure(f);
-
-                        //FIXME clear points when the figure is done
-                        if (!f.getClass().getSimpleName().startsWith("Poly")) {
-                            points.clear();
-                            System.out.println("nice");
-                        }
-
                     } catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
                         System.out.println("can't bulid");
                     } catch (PointsShortageException ex) {
@@ -88,6 +93,7 @@ public class DrawPanel extends JPanel {
 
     public void addFigure(Figure figure) {
         this.figures.add(figure);
+        this.figurePoints.clear();
         setSelected(figure);
         repaint();
     }
@@ -112,5 +118,6 @@ public class DrawPanel extends JPanel {
         g2d.setStroke(new BasicStroke(5));
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         figures.forEach(drawable -> drawable.draw(g2d));
+        figurePoints.forEach(drawable -> drawable.draw(g2d));
     }
 }
