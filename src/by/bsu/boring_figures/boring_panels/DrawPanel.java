@@ -1,22 +1,21 @@
 package by.bsu.boring_figures.boring_panels;
 
 import by.bsu.boring_figures.actually_figures.Figure;
-import by.bsu.boring_figures.actually_figures.*;
 import by.bsu.boring_figures.actually_figures.Point;
-import by.bsu.boring_figures.actually_figures.Polyline;
-import by.bsu.boring_figures.actually_figures.Polygon;
-import by.bsu.boring_figures.actually_figures.Rectangle;
+import by.bsu.boring_figures.service.FiguresBuilder;
+import by.bsu.boring_figures.service.PointsShortageException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import static by.bsu.boring_figures.boring_panels.ToolsPanel.figuresBinding;
+import static by.bsu.boring_figures.boring_panels.ToolsPanel.verticesSpinner;
 import static java.awt.event.InputEvent.ALT_MASK;
 import static java.awt.event.InputEvent.CTRL_MASK;
 
@@ -28,13 +27,14 @@ public class DrawPanel extends JPanel {
     private List<Figure> figures;
     private Figure selected;
     private List<Point> points;
+    private FiguresBuilder builder;
 
     public DrawPanel() {
         super(true);
         this.figures = new ArrayList<>();
         this.points = new ArrayList<>();
+        this.builder = new FiguresBuilder();
 
-        //TODO 3/9/20: remove cuz it's just for debug and fun purposes
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -48,66 +48,39 @@ public class DrawPanel extends JPanel {
 
                 if ((e.getModifiers() & SHIFT_MASK) != 0) {
                     points.clear();
-                } else if ((e.getModifiers() & CTRL_MASK) != 0){
+                } else if ((e.getModifiers() & CTRL_MASK) != 0) {
                     points.add(new Point(e.getX(), e.getY()));
-                    switch (ToolsPanel.figureList.getSelectedIndex()) {
-                        case 6: {
-                            if (points.size() == 3) {
-                                Figure f = new Parallelogram(
-                                        points.get(points.size() - 1),
-                                        points.get(points.size() - 2),
-                                        points.get(points.size() - 3));
-                                addFigure(f);
-                                points.clear();
-                            }
-                            return;
+
+                    //FIXME clear points when the new figure is chosen
+                    Class<?> clazz = figuresBinding.get(ToolsPanel.figuresComboBox.getSelectedItem());
+
+                    builder.setClazz(clazz);
+                    builder.setPoints(points);
+                    builder.setVerticesNumber((int) verticesSpinner.getValue());
+
+                    try {
+                        Figure f = builder.build();
+                        addFigure(f);
+
+                        //FIXME clear points when the figure is done
+                        if (!f.getClass().getSimpleName().startsWith("Poly")) {
+                            points.clear();
+                            System.out.println("nice");
                         }
-                        case 7:{
-                            if (points.size() >= 2) {
-                                Figure f = new Rectangle(
-                                        points.get(points.size() - 1),
-                                        points.get(points.size() - 2));
-                                addFigure(f);
-                                points.clear();
-                            }
-                            return;
-                        }
-                        case 8: {
-                            Figure f = new Polygon(points);
-                            addFigure(f);
-                            return;
-                        }
-                        case 9:{
-                            if (points.size() >= 2) {
-                                Figure f = new RegularPolygon(
-                                        points.get(points.size() - 1),
-                                        points.get(points.size() - 2),
-                                        7
-                                        );
-                                addFigure(f);
-                                points.clear();
-                            }
-                            return;
-                        }
-                        case 10:{
-                            if (points.size() >= 2) {
-                                Figure f = new Rhombus(
-                                        points.get(points.size() - 1),
-                                        points.get(points.size() - 2));
-                                addFigure(f);
-                                points.clear();
-                            }
-                            return;
-                        }
+
+                    } catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
+                        System.out.println("can't bulid");
+                    } catch (PointsShortageException ex) {
+                        System.out.println("need more points");
                     }
                     return;
 
                 }
-                    Point p = new Point(e.getX(), e.getY());
-                    setSelected(figures.stream()
-                            .filter(f -> f.contains(p))
-                            .findFirst()
-                            .orElse(null));
+                Point p = new Point(e.getX(), e.getY());
+                setSelected(figures.stream()
+                        .filter(f -> f.contains(p))
+                        .findFirst()
+                        .orElse(null));
 
             }
         });
