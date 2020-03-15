@@ -38,7 +38,7 @@ public class DrawPanel extends JPanel {
     private List<Consumer<Graphics2D>> repaintListeners;
 
     public DrawPanel() {
-        super(true);
+        super(false);
         this.figures = new LinkedList<>();
         this.builder = new FiguresBuilder();
         this.repaintListeners = new LinkedList<>();
@@ -176,6 +176,8 @@ public class DrawPanel extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(5));
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setColor(Color.cyan);
+        g2d.drawRect(0,0,1000,1000);
         repaintListeners.forEach(l -> l.accept(g2d));
     }
 }

@@ -35,19 +35,25 @@ public class FiguresBuilder {
                 if (points.size() < 3) throw new PointsShortageException();
                 return (Figure) constr.newInstance(new ArrayList<>(points));
             } else if (paramsNames.size() == 2) {
-                assert points.size() < 3;
+                if(points.size() < 3){
+                    throw new PointsOverflowException();
+                }
                 Figure f = (Figure) constr.newInstance(points.get(0), points.get(1));
                 return f;
             } else if (Collections.frequency(paramsNames, "Point") == 3) {
-                assert points.size() < 4;
+                if(points.size() < 4){
+                    throw new PointsOverflowException();
+                }
                 Figure f = (Figure) constr.newInstance(points.get(0), points.get(1), points.get(2));
                 return f;
             } else {
-                assert points.size() < 3;
+                if(points.size() < 3){
+                    throw new PointsOverflowException();
+                }
                 Figure f = (Figure) constr.newInstance(points.get(0), points.get(1), verticesNumber);
                 return f;
             }
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | PointsOverflowException e) {
             throw new PointsShortageException();
         }
     }
