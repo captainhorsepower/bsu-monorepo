@@ -43,10 +43,9 @@ public class Ellipse extends Figure2D {
         int shiftX = newCenter.getX() - location().getX();
         int shiftY = newCenter.getY() - location().getY();
         topLeft.setX(topLeft.getX() + shiftX);
-        topLeft.setX(topLeft.getX() + shiftX);
+        topLeft.setY(topLeft.getY() + shiftY);
         bottomRight.setX(bottomRight.getX() + shiftX);
         bottomRight.setY(bottomRight.getY() + shiftY);
-
         initCenter(Arrays.asList(topLeft, bottomRight));
     }
 
