@@ -28,8 +28,7 @@ public class DrawPanel extends JPanel {
     private final int MOVE_MASK = ALT_MASK;
     private final int ADD_POINT_MASK = CTRL_MASK;
     private final int CLEAR_POINTS_MASK = SHIFT_MASK;
-    private final int DRAW_FIGURE_MASK = CTRL_MASK | CLEAR_POINTS_MASK;
-    private final int COMBINED_MASK = MOVE_MASK | ADD_POINT_MASK | CLEAR_POINTS_MASK | DRAW_FIGURE_MASK;
+    private final int DRAW_FIGURE_MASK = ADD_POINT_MASK | CLEAR_POINTS_MASK;
 
     private LinkedList<Figure> figures;
     private Figure selected;
@@ -47,6 +46,7 @@ public class DrawPanel extends JPanel {
         setBorder(new BevelBorder(BevelBorder.RAISED));
 
         // move figure listener
+        //TODO 3/15/20: extract to standalone class for readability
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -68,8 +68,9 @@ public class DrawPanel extends JPanel {
 
         });
 
+        // draw figure listener
+        //TODO 3/15/20: extract to standalone class for readability
         addMouseListener(new MouseAdapter() {
-
             private final List<Point> points = new LinkedList<>();
 
             {
@@ -140,6 +141,7 @@ public class DrawPanel extends JPanel {
     }
 
     private boolean matchesOnly(int modifiers, int mask) {
+        final int COMBINED_MASK = MOVE_MASK | ADD_POINT_MASK | CLEAR_POINTS_MASK | DRAW_FIGURE_MASK;
         return (modifiers & COMBINED_MASK) == mask;
     }
 
