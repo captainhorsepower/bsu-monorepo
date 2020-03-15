@@ -9,19 +9,7 @@ package by.bsu.boring_figures.actually_figures;
 public class Line extends Ray {
 
     public Line(Point firstPoint, Point secondPoint) {
-        super(firstPoint(firstPoint, secondPoint), secondPoint(firstPoint, secondPoint));
-    }
-
-    public static Point firstPoint(Point firstPoint, Point secondPoint) {
-        int shiftX = (secondPoint.getX() - firstPoint.getX()) * MAGIC_SCALE_FACTOR;
-        int shiftY = (secondPoint.getY() - firstPoint.getY()) * MAGIC_SCALE_FACTOR;
-        return new Point(firstPoint.getX() - shiftX, firstPoint.getY() - shiftY);
-    }
-
-    public static Point secondPoint(Point firstPoint, Point secondPoint) {
-        int shiftX = (secondPoint.getX() - firstPoint.getX()) * MAGIC_SCALE_FACTOR;
-        int shiftY = (secondPoint.getY() - firstPoint.getY()) * MAGIC_SCALE_FACTOR;
-        return new Point(firstPoint.getX() + shiftX, firstPoint.getY() + shiftY);
+        super(extrapolatedOutOfScreen(secondPoint, firstPoint), extrapolatedOutOfScreen(firstPoint, secondPoint));
     }
 
 }

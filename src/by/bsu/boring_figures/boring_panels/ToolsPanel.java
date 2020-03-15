@@ -1,8 +1,8 @@
 package by.bsu.boring_figures.boring_panels;
 
-import by.bsu.boring_figures.actually_figures.*;
 import by.bsu.boring_figures.actually_figures.Polygon;
 import by.bsu.boring_figures.actually_figures.Rectangle;
+import by.bsu.boring_figures.actually_figures.*;
 import by.bsu.boring_figures.boring_components.ColorChooserButton;
 
 import javax.swing.*;
@@ -12,7 +12,12 @@ import java.util.Map;
 
 
 public class ToolsPanel extends JPanel {
+
     static final Map<String, Class<?>> figuresBinding = new HashMap<>();
+    static public JComboBox<String> figuresComboBox;
+    static public ColorChooserButton borderColorChooser;
+    static public ColorChooserButton fillColorChooser;
+    static public JSpinner verticesSpinner;
 
     static {
         figuresBinding.put("Ray", Ray.class);
@@ -27,11 +32,6 @@ public class ToolsPanel extends JPanel {
         figuresBinding.put("Regular polygon", RegularPolygon.class);
         figuresBinding.put("Rhombus", Rhombus.class);
     }
-
-    static public JComboBox<String> figuresComboBox;
-    static public ColorChooserButton borderColorChooser;
-    static public ColorChooserButton fillColorChooser;
-    static public JSpinner verticesSpinner;
 
     public ToolsPanel() {
         this.setLayout(new GridLayout(15, 1));

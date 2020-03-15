@@ -11,8 +11,8 @@ import java.util.Arrays;
  */
 public class LineSegment extends Figure1D {
 
-    private Point firstPoint;
-    private Point secondPoint;
+    private Point start;
+    private Point fini;
 
     /**
      * @param firstPoint
@@ -20,24 +20,24 @@ public class LineSegment extends Figure1D {
      */
     public LineSegment(Point firstPoint, Point secondPoint) {
         super(Arrays.asList(firstPoint, secondPoint));
-        this.firstPoint = firstPoint;
-        this.secondPoint = secondPoint;
+        this.start = firstPoint;
+        this.fini = secondPoint;
     }
 
-    public Point getFirstPoint() {
-        return firstPoint;
+    public Point getStart() {
+        return start;
     }
 
     public Point getSecondPoint() {
-        return secondPoint;
+        return fini;
     }
 
     @Override
     public void draw(Graphics2D g2d) {
         g2d.setColor(getBorderColor());
         g2d.drawLine(
-                firstPoint.getX(), firstPoint.getY(),
-                secondPoint.getX(), secondPoint.getY()
+                start.getX(), start.getY(),
+                fini.getX(), fini.getY()
         );
     }
 
@@ -48,21 +48,21 @@ public class LineSegment extends Figure1D {
     public void move(Point newCenter) {
         int shiftX = newCenter.getX() - location().getX();
         int shiftY = newCenter.getY() - location().getY();
-        for (Point p : Arrays.asList(firstPoint, secondPoint)) {
+        for (Point p : Arrays.asList(start, fini)) {
             p.setX(p.getX() + shiftX);
             p.setY(p.getY() + shiftY);
         }
-        initCenter(Arrays.asList(firstPoint, secondPoint));
+        initCenter(Arrays.asList(start, fini));
     }
 
     @Override
     public boolean contains(Point point) {
         final int magicNumber = 5;
         Polygon pseudoLine = new Polygon(Arrays.asList(
-                new Point(firstPoint.getX(), firstPoint.getY() - magicNumber),
-                new Point(secondPoint.getX(), secondPoint.getY() - magicNumber),
-                new Point(secondPoint.getX(), secondPoint.getY() + magicNumber),
-                new Point(firstPoint.getX(), firstPoint.getY() + magicNumber)
+                new Point(start.getX(), start.getY() - magicNumber),
+                new Point(fini.getX(), fini.getY() - magicNumber),
+                new Point(fini.getX(), fini.getY() + magicNumber),
+                new Point(start.getX(), start.getY() + magicNumber)
         ));
 
         return pseudoLine.contains(point);
