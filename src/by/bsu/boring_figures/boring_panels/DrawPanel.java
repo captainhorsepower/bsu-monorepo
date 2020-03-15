@@ -29,8 +29,9 @@ public class DrawPanel extends JPanel {
     public static List<Point> points;
     private final int MOVE_MASK = ALT_MASK;
     private final int ADD_POINT_MASK = CTRL_MASK;
-    private final int COMBINED_MASK = MOVE_MASK | ADD_POINT_MASK;
-    private MouseListener moveFigureListener = new MouseAdapter() {
+    private final int CLEAR_POINTS_MASK = SHIFT_MASK | CTRL_MASK;
+    private final int COMBINED_MASK = MOVE_MASK | ADD_POINT_MASK | CLEAR_POINTS_MASK;
+    private final MouseListener moveFigureListener = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
             if (matchesOnly(e.getModifiers(), MOVE_MASK)) {
@@ -51,6 +52,41 @@ public class DrawPanel extends JPanel {
 
     };
 
+    private final MouseListener drawFigureMouseListener = new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (matchesOnly(e.getModifiers(), ADD_POINT_MASK)) {
+                points.add(new Point(e.getX(), e.getY()));
+                int pointRadius = 3;
+                figurePoints.add(new Circle(
+                        new Point(e.getX() - pointRadius, e.getY() - pointRadius),
+                        new Point(e.getX() + pointRadius, e.getY() + pointRadius)));
+                repaint();
+
+                Class<?> clazzNew = figuresBinding.get(ToolsPanel.figuresComboBox.getSelectedItem());
+
+                builder.setClazz(clazzNew);
+                builder.setPoints(points);
+                builder.setVerticesNumber((int) verticesSpinner.getValue());
+
+                try {
+                    Figure f = builder.build();
+                    addFigure(f);
+                } catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
+                    System.out.println("can't bulid");
+                } catch (PointsShortageException ex) {
+                    System.out.println("need more points");
+                }
+                return;
+            }
+
+            if (matchesOnly(e.getModifiers(), CLEAR_POINTS_MASK)) {
+                points.clear();
+                return;
+            }
+        }
+    };
+
     private LinkedList<Figure> figures;
     private Figure selected;
     private FiguresBuilder builder;
@@ -66,41 +102,7 @@ public class DrawPanel extends JPanel {
         setBorder(new BevelBorder(BevelBorder.RAISED));
 
         addMouseListener(moveFigureListener);
-
-        addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-                if ((e.getModifiers() & SHIFT_MASK) != 0) {
-                    points.clear();
-                } else if ((e.getModifiers() & CTRL_MASK) != 0) {
-                    points.add(new Point(e.getX(), e.getY()));
-                    figurePoints.add(new Circle(
-                            new Point(e.getX() - 1, e.getY() - 1),
-                            new Point(e.getX() + 1, e.getY() + 1)));
-                    repaint();
-
-                    Class<?> clazzNew = figuresBinding.get(ToolsPanel.figuresComboBox.getSelectedItem());
-
-                    builder.setClazz(clazzNew);
-                    builder.setPoints(points);
-                    builder.setVerticesNumber((int) verticesSpinner.getValue());
-
-                    try {
-                        Figure f = builder.build();
-                        addFigure(f);
-                    } catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
-                        System.out.println("can't bulid");
-                    } catch (PointsShortageException ex) {
-                        System.out.println("need more points");
-                    }
-                    return;
-
-                }
-
-            }
-        });
+        addMouseListener(drawFigureMouseListener);
     }
 
     private boolean matches(int modifiers, int mask) {
