@@ -63,6 +63,7 @@ public class DrawPanel extends JPanel {
                 points.add(selectedPoint);
                 drawSelectedPoint(selectedPoint);
 
+                boolean needMorePoints = false;
                 if (matchesOnly(e.getModifiers(), DRAW_FIGURE_MASK)) {
                     Class<?> clazzNew = figuresBinding.get(ToolsPanel.figuresComboBox.getSelectedItem());
 
@@ -76,13 +77,16 @@ public class DrawPanel extends JPanel {
                     } catch (PointsShortageException ex) {
                         JOptionPane.showMessageDialog(DrawPanel.this, "Need more points");
                         System.out.println("need more points");
+                        needMorePoints = true;
                     } catch (Error | Exception ex) {
                         JOptionPane.showMessageDialog(DrawPanel.this, "Too much points. Selection cleared.");
                         System.out.println("can't bulid");
                     } finally {
-                        figurePoints.clear();
-                        points.clear();
-                        repaint();
+                        if (!needMorePoints) {
+                            figurePoints.clear();
+                            points.clear();
+                            repaint();
+                        }
                     }
                 }
                 return;

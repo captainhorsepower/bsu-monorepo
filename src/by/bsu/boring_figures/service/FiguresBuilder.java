@@ -2,7 +2,6 @@ package by.bsu.boring_figures.service;
 
 import by.bsu.boring_figures.actually_figures.Figure;
 import by.bsu.boring_figures.actually_figures.Point;
-import by.bsu.boring_figures.boring_panels.DrawPanel;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +25,6 @@ public class FiguresBuilder {
         this.verticesNumber = verticesNumber;
     }
 
-
     public Figure build() throws IllegalAccessException, InvocationTargetException, InstantiationException, PointsShortageException {
         Constructor<?> constr = clazz.getConstructors()[0];
         List<String> paramsNames = new ArrayList<>();
@@ -34,22 +32,19 @@ public class FiguresBuilder {
                 .forEach(e -> paramsNames.add(e.getSimpleName()));
         try {
             if (paramsNames.size() == 1) {
-                assert points.size() > 2;
+                if (points.size() < 3) throw new PointsShortageException();
                 return (Figure) constr.newInstance(new ArrayList<>(points));
             } else if (paramsNames.size() == 2) {
+                assert points.size() < 3;
                 Figure f = (Figure) constr.newInstance(points.get(0), points.get(1));
-                assert points.size() == 2;
-                DrawPanel.points.clear();
                 return f;
             } else if (Collections.frequency(paramsNames, "Point") == 3) {
+                assert points.size() < 4;
                 Figure f = (Figure) constr.newInstance(points.get(0), points.get(1), points.get(2));
-                assert points.size() == 3;
-                DrawPanel.points.clear();
                 return f;
             } else {
+                assert points.size() < 3;
                 Figure f = (Figure) constr.newInstance(points.get(0), points.get(1), verticesNumber);
-                assert points.size() == 2;
-                DrawPanel.points.clear();
                 return f;
             }
         } catch (IndexOutOfBoundsException e) {
