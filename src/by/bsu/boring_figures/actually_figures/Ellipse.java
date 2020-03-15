@@ -4,6 +4,7 @@ package by.bsu.boring_figures.actually_figures;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author shchors_vs
@@ -22,9 +23,22 @@ public class Ellipse extends Figure2D {
      * @param bottomRight
      */
     public Ellipse(Point topLeft, Point bottomRight) {
-        super(Arrays.asList(topLeft, bottomRight));
+        super(manipulateCoords(topLeft, bottomRight));
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
+    }
+
+    protected static List<Point> manipulateCoords(Point topLeft, Point bottomRight) {
+        int leftX = Math.min(topLeft.getX(), bottomRight.getX());
+        int rightX = Math.max(topLeft.getX(), bottomRight.getX());
+        int topY = Math.min(topLeft.getY(), bottomRight.getY());
+        int botY = Math.max(topLeft.getY(), bottomRight.getY());
+
+        topLeft.setX(leftX);
+        topLeft.setY(topY);
+        bottomRight.setX(rightX);
+        bottomRight.setY(botY);
+        return Arrays.asList(topLeft, bottomRight);
     }
 
     public Point getTopLeft() {
