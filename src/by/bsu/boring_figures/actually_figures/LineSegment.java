@@ -1,8 +1,6 @@
 package by.bsu.boring_figures.actually_figures;
 
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.awt.*;
 import java.util.Arrays;
 
@@ -48,8 +46,13 @@ public class LineSegment extends Figure1D {
      */
     @Override
     public void move(Point newCenter) {
-        // FIXME: 3/9/20
-        throw new NotImplementedException();
+        int shiftX = newCenter.getX() - location().getX();
+        int shiftY = newCenter.getY() - location().getY();
+        for (Point p : Arrays.asList(firstPoint, secondPoint)) {
+            p.setX(p.getX() + shiftX);
+            p.setY(p.getY() + shiftY);
+        }
+        initCenter(Arrays.asList(firstPoint, secondPoint));
     }
 
     @Override
