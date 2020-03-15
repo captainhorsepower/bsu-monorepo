@@ -12,7 +12,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -29,8 +28,10 @@ public class DrawPanel extends JPanel {
     public static List<Point> points;
     private final int MOVE_MASK = ALT_MASK;
     private final int ADD_POINT_MASK = CTRL_MASK;
-    private final int CLEAR_POINTS_MASK = SHIFT_MASK | CTRL_MASK;
-    private final int COMBINED_MASK = MOVE_MASK | ADD_POINT_MASK | CLEAR_POINTS_MASK;
+    private final int CLEAR_POINTS_MASK = SHIFT_MASK;
+    private final int DRAW_FIGURE_MASK = CTRL_MASK | CLEAR_POINTS_MASK;
+    private final int COMBINED_MASK = MOVE_MASK | ADD_POINT_MASK | CLEAR_POINTS_MASK | DRAW_FIGURE_MASK;
+
     private final MouseListener moveFigureListener = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
@@ -53,29 +54,36 @@ public class DrawPanel extends JPanel {
     };
 
     private final MouseListener drawFigureMouseListener = new MouseAdapter() {
+
         @Override
         public void mousePressed(MouseEvent e) {
-            if (matchesOnly(e.getModifiers(), ADD_POINT_MASK)) {
-                points.add(new Point(e.getX(), e.getY()));
-                int pointRadius = 3;
-                figurePoints.add(new Circle(
-                        new Point(e.getX() - pointRadius, e.getY() - pointRadius),
-                        new Point(e.getX() + pointRadius, e.getY() + pointRadius)));
-                repaint();
 
-                Class<?> clazzNew = figuresBinding.get(ToolsPanel.figuresComboBox.getSelectedItem());
+            if (matchesOnly(e.getModifiers(), ADD_POINT_MASK) || matchesOnly(e.getModifiers(), DRAW_FIGURE_MASK)) {
+                Point selectedPoint = new Point(e.getX(), e.getY());
+                points.add(selectedPoint);
+                drawSelectedPoint(selectedPoint);
 
-                builder.setClazz(clazzNew);
-                builder.setPoints(points);
-                builder.setVerticesNumber((int) verticesSpinner.getValue());
+                if (matchesOnly(e.getModifiers(), DRAW_FIGURE_MASK)) {
+                    Class<?> clazzNew = figuresBinding.get(ToolsPanel.figuresComboBox.getSelectedItem());
 
-                try {
-                    Figure f = builder.build();
-                    addFigure(f);
-                } catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
-                    System.out.println("can't bulid");
-                } catch (PointsShortageException ex) {
-                    System.out.println("need more points");
+                    builder.setClazz(clazzNew);
+                    builder.setPoints(points);
+                    builder.setVerticesNumber((int) verticesSpinner.getValue());
+
+                    try {
+                        Figure f = builder.build();
+                        addFigure(f);
+                    } catch (PointsShortageException ex) {
+                        JOptionPane.showMessageDialog(DrawPanel.this, "Need more points");
+                        System.out.println("need more points");
+                    } catch (Error | Exception ex) {
+                        JOptionPane.showMessageDialog(DrawPanel.this, "Too much points. Selection cleared.");
+                        System.out.println("can't bulid");
+                    } finally {
+                        figurePoints.clear();
+                        points.clear();
+                        repaint();
+                    }
                 }
                 return;
             }
@@ -84,6 +92,19 @@ public class DrawPanel extends JPanel {
                 points.clear();
                 return;
             }
+        }
+
+        private void drawSelectedPoint(Point point) {
+            figurePoints.add(selectedPointMarker(point));
+            repaint();
+        }
+
+        private Figure selectedPointMarker(Point point) {
+            int pointRadius = 3;
+            return new Circle(
+                    new Point(point.getX() - pointRadius, point.getY() - pointRadius),
+                    new Point(point.getX() + pointRadius, point.getY() + pointRadius)
+            );
         }
     };
 
