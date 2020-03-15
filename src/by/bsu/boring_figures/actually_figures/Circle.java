@@ -19,11 +19,13 @@ public class Circle extends Ellipse {
     }
 
     private static Point bottomRight(Point topLeft, Point bottomRight) {
-        int d = Math.min(
-                bottomRight.getX() - topLeft.getX(),
-                bottomRight.getY() - topLeft.getY()
+        int a = Math.min(
+                Math.abs(bottomRight.getX() - topLeft.getX()),
+                Math.abs(bottomRight.getY() - topLeft.getY())
         );
-        return new Point(topLeft.getX() + d, topLeft.getY() + d);
+        int w = bottomRight.getX() - topLeft.getX() > 0 ? a : -a;
+        int h = bottomRight.getY() - topLeft.getY() > 0 ? a : -a;
+        return new Point(topLeft.getX() + w, topLeft.getY() + h);
     }
 
     public int getRadius() {
