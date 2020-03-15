@@ -1,12 +1,10 @@
 package by.bsu.boring_figures.actually_figures;
 
 
-import by.bsu.boring_figures.boring_components.ColorChangedListener;
 import by.bsu.boring_figures.boring_panels.ToolsPanel;
 
 import java.awt.*;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @author shchors_vs
@@ -28,7 +26,7 @@ public abstract class Figure2D extends Figure{
                 1f * fillColor.getRed() / 255,
                 1f * fillColor.getGreen() / 255,
                 1f * fillColor.getBlue() / 255,
-                isSelected() ? 1.0f : 0.8f
+                isSelected() ? 1.0f : 0.55f
         );
     }
 

@@ -45,7 +45,7 @@ public abstract class Figure implements Drawable, Selectable {
                 1f * borderColor.getRed() / 255,
                 1f * borderColor.getGreen() / 255,
                 1f * borderColor.getBlue() / 255,
-                selected ? 1.0f : 0.7f
+                selected ? 1.0f : 0.4f
         );
     }
 
