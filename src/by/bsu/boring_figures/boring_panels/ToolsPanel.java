@@ -34,10 +34,23 @@ public class ToolsPanel extends JPanel {
     static public JSpinner verticesSpinner;
 
     public ToolsPanel() {
-        this.setLayout(new GridLayout(12, 1));
+        this.setLayout(new GridLayout(15, 1));
         this.setSize(50, 200);
 
-        Label label = new Label("Figures");
+        Label label = new Label("Interaction mode");
+        add(label);
+
+        JRadioButton draw = new JRadioButton("draw", true);
+        JRadioButton move = new JRadioButton("move");
+
+        ButtonGroup modesButtons = new ButtonGroup();
+        modesButtons.add(draw);
+        modesButtons.add(move);
+        add(draw);
+        add(move);
+
+
+        label = new Label("Figures");
         add(label);
 
         figuresComboBox = new JComboBox<>();
