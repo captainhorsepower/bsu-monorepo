@@ -36,31 +36,31 @@ public class FiguresBuilder {
                 return (Figure) constr.newInstance(new ArrayList<>(points));
             } else if (paramsNames.size() == 2) {
                 if (points.size() > 2) throw new PointsOverflowException();
-                Figure f = (Figure) constr.newInstance(points.get(0), points.get(1));
-                return f;
+                return (Figure) constr.newInstance(points.get(0), points.get(1));
             } else if (Collections.frequency(paramsNames, "Point") == 3) {
                 if (points.size() > 3) throw new PointsOverflowException();
-                Figure f = (Figure) constr.newInstance(points.get(0), points.get(1), points.get(2));
-                return f;
+                return (Figure) constr.newInstance(points.get(0), points.get(1), points.get(2));
             } else {
                 if (points.size() > 2) throw new PointsOverflowException();
-                Figure f = (Figure) constr.newInstance(points.get(0), points.get(1), verticesNumber);
-                return f;
+                return (Figure) constr.newInstance(points.get(0), points.get(1), verticesNumber);
             }
-        } catch (IndexOutOfBoundsException | PointsOverflowException e) {
+        } catch (IndexOutOfBoundsException e) {
             throw new PointsShortageException();
         }
     }
 
-    public void setClazz(Class<?> clazz) {
+    public FiguresBuilder setClazz(Class<?> clazz) {
         this.clazz = clazz;
+        return this;
     }
 
-    public void setPoints(List<Point> points) {
+    public FiguresBuilder setPoints(List<Point> points) {
         this.points = points;
+        return this;
     }
 
-    public void setVerticesNumber(int verticesNumber) {
+    public FiguresBuilder setVerticesNumber(int verticesNumber) {
         this.verticesNumber = verticesNumber;
+        return this;
     }
 }

@@ -91,12 +91,12 @@ public class DrawPanel extends JPanel {
                     if (matchesOnly(e.getModifiers(), DRAW_FIGURE_MASK)) {
                         Class<?> clazzNew = figuresBinding.get(ToolsPanel.figuresComboBox.getSelectedItem());
 
-                        builder.setClazz(clazzNew);
-                        builder.setPoints(points);
-                        builder.setVerticesNumber((int) verticesSpinner.getValue());
-
                         try {
-                            Figure f = builder.build();
+                            Figure f = builder
+                                    .setClazz(clazzNew)
+                                    .setPoints(points)
+                                    .setVerticesNumber((int) verticesSpinner.getValue())
+                                    .build();
                             addFigure(f);
                         } catch (PointsShortageException ex) {
                             JOptionPane.showMessageDialog(DrawPanel.this, "Need more points");
