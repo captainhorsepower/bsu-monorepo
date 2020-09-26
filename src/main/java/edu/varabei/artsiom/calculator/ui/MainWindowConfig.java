@@ -1,4 +1,4 @@
-package edu.varabei.artsiom.calculator;
+package edu.varabei.artsiom.calculator.ui;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

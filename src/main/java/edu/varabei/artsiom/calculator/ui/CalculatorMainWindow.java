@@ -1,6 +1,5 @@
 package edu.varabei.artsiom.calculator.ui;
 
-import edu.varabei.artsiom.calculator.MainWindowConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
