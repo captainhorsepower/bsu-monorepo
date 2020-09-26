@@ -10,16 +10,18 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class Calculator {
 
-//    private final StringIsValidNumberValidator validator;
+    private final DecimalParser parser;
 
     public String add(String left, String right) {
-        BigDecimal add = new BigDecimal(left).add(new BigDecimal(right));
-        return add.toString();
+        return parser.parse(left)
+                .add(parser.parse(right))
+                .toString();
     }
 
     public String sub(String left, String right) {
-        BigDecimal sub = new BigDecimal(left).subtract(new BigDecimal(right));
-        return sub.toString();
+        return parser.parse(left)
+                .subtract(parser.parse(right))
+                .toString();
     }
 
 }

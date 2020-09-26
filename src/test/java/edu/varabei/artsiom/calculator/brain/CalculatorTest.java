@@ -8,7 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CalculatorTest implements CompareDecimalsMixin {
 
-    Calculator calc = new Calculator();
+    DecimalParser parser = new DecimalParser();
+    Calculator calc = new Calculator(parser);
 
     @Test
     public void addSimpleCases() {
@@ -16,6 +17,7 @@ class CalculatorTest implements CompareDecimalsMixin {
         assertEquals("1.1", calc.add("0.3", "0.8"));
         assertEquals("1.1", calc.add("000.3", "000000.8"));
         assertEquals("1.1", calc.add("2.6", "-1.5"));
+        assertEquals("1.1", calc.add("+2,6", "-1,5"));
     }
 
     @Test
@@ -27,7 +29,12 @@ class CalculatorTest implements CompareDecimalsMixin {
 
     @Test
     public void subLongCases() {
-        assertTrue(decimalsEqual("110", calc.sub("87654321098765432.1", "87654321098765322.1")));
+        assertTrue(decimalsEqual(
+                "110",
+                calc.sub("87654321098765432.1", "87654321098765322.1")));
+        assertTrue(decimalsEqual(
+                "999_999_999_998",
+                calc.sub("1_000_000_000_000", "2.0000000000000")));
     }
 
 }
