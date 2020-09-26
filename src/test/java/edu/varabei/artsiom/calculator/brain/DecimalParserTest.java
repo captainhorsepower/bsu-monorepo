@@ -1,6 +1,5 @@
 package edu.varabei.artsiom.calculator.brain;
 
-import com.sun.tools.javac.util.List;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -61,7 +60,14 @@ class DecimalParserTest {
                 parser.parse("123_456_987.1230000")));
         assertEquals("1", parser.parse(
                 parser.parse("00001.000000")));
+
+        assertEquals("-1", parser.parse(
+                parser.parse("-00001.000000")));
+        assertEquals("-123 456 987.123", parser.parse(
+                parser.parse("-123_456_987.1230000")));
+        assertEquals("-2 465", parser.parse(new BigDecimal("-2465")));
     }
+
 
     @Test
     public void onlyOneSplit() {

@@ -16,37 +16,41 @@ import java.util.stream.Collectors;
 public class DecimalParser {
 
     public BigDecimal parse(String input) {
-        input = handleWhitespace(input.replaceAll("[\\-+]\\s?", ""));
-        input = input.replaceAll(",", ".");
-        return new BigDecimal(input);
+        String parsed = handleWhitespace(input.replaceAll("[\\-+]\\s?", "")); // lose sign
+        if (input.substring(0, 1).matches("[\\-+]")) {
+            parsed = input.charAt(0) + parsed;
+        }
+        parsed = parsed.replaceAll(",", ".");
+        return new BigDecimal(parsed);
     }
 
     private String handleWhitespace(String input) {
         final int spaceCount = StringUtils.countOccurrencesOf(input, " ");
-        final List<String> splits = Arrays.stream(input.split(" "))
-                .filter(arr -> arr.length() > 0)
-                .collect(Collectors.toList());
-        if (spaceCount != splits.size() - 1) {
-            throw new RuntimeException("too much spaces");
-        }
-        // one split => 123.123123123 // short just last
-        // two 12 123.123123123 // first and last
-        // three or more 12 123 123.12312312312 // first, middle train, last
-        switch (splits.size()) {
-            case 1:
-                onlyOneSplit(splits.get(0));
-                break;
-            case 2:
-                checkFirst(splits.get(0));
-                checkLast(splits.get(1));
-                break;
-            default:
-                checkFirst(splits.get(0));
-                checkMiddleTrain(splits);
-                checkLast(splits.get(splits.size() - 1));
-        }
+        if (spaceCount != 0) {
+            final List<String> splits = Arrays.stream(input.split(" "))
+                    .filter(arr -> arr.length() > 0)
+                    .collect(Collectors.toList());
 
-
+            if (spaceCount != splits.size() - 1) {
+                throw new RuntimeException("too much spaces");
+            }
+            // one split => 123.123123123 // short just last
+            // two 12 123.123123123 // first and last
+            // three or more 12 123 123.12312312312 // first, middle train, last
+            switch (splits.size()) {
+                case 1:
+                    onlyOneSplit(splits.get(0));
+                    break;
+                case 2:
+                    checkFirst(splits.get(0));
+                    checkLast(splits.get(1));
+                    break;
+                default:
+                    checkFirst(splits.get(0));
+                    checkMiddleTrain(splits);
+                    checkLast(splits.get(splits.size() - 1));
+            }
+        }
         return input.replaceAll("[\\s_]", "");
     }
 
@@ -93,16 +97,17 @@ public class DecimalParser {
 
     String formattedIntegerPart(BigDecimal decimal) {
         StringBuilder result = new StringBuilder();
-        BigInteger intPart = decimal.toBigInteger();
+        BigInteger intPart = decimal.toBigInteger().abs();
         while (intPart.compareTo(BigInteger.ZERO) > 0) {
             final BigInteger[] divideAndRemainder = intPart.divideAndRemainder(BigInteger.valueOf(1000));
             intPart = divideAndRemainder[0];
             BigInteger remainder = divideAndRemainder[1];
             result.insert(0, String.format("%03d ", divideAndRemainder[1].intValue()));
         }
-        return result.toString().trim()
-                .replaceAll("^0+", "")
-                .replaceAll("^$", "0");
+        return (decimal.compareTo(BigDecimal.ZERO) < 0 ? "-" : "")
+               + result.toString().trim()
+                       .replaceAll("^0+", "")
+                       .replaceAll("^$", "0");
     }
 
     @Value

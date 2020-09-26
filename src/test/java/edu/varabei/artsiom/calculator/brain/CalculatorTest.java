@@ -21,6 +21,12 @@ class CalculatorTest implements CompareDecimalsMixin {
     }
 
     @Test
+    public void broken() {
+        assertEquals("3", calc.add("- 1 231", "+ 1 234"));
+        assertEquals("-2 465", calc.sub("- 1 231", "+ 1 234"));
+    }
+
+    @Test
     public void addLongCases() {
         assertTrue(decimalsEqual(
                 "1_000_000_000_000",

@@ -6,7 +6,8 @@ public interface CompareDecimalsMixin {
 
     default boolean decimalsEqual(String expected, String actual) {
         expected = expected.replaceAll("_", "");
-        return 0 == new BigDecimal(expected).compareTo(new BigDecimal(actual));
+        return 0 == new BigDecimal(expected)
+                .compareTo(new BigDecimal(actual.replaceAll(" ", "")));
     }
 
     default boolean decimalsEqual(String expected, BigDecimal actual) {
