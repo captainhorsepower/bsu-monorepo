@@ -14,4 +14,8 @@ public class Calculator {
         return "result will be here";
     }
 
+    public String sub(String left, String right) {
+        return "result will be here";
+    }
+
 }
