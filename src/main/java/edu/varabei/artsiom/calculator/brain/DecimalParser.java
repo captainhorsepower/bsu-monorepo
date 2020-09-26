@@ -17,21 +17,20 @@ public class DecimalParser {
         return new BigDecimal(input);
     }
 
-    public String parse(BigDecimal decimal) {
-        String str = decimal.toString();
-        str = str.replaceAll("\\.?0+$", "");
-
-        BigDecimal scale = new BigDecimal(1000);
-        BigDecimal scaleStep = new BigDecimal(1000);
-
-//        decimal.divideToIntegralValue(BigDecimal.ONE)
-//                .divideAndRemainder()
-
-
-        return str;
+    public String parse(BigDecimal input) {
+        return formattedIntegerPart(input) + fromattedDecimalPart(input);
     }
 
-    public String formattedIntegerPart(BigDecimal decimal) {
+    String fromattedDecimalPart(BigDecimal decimal) {
+        String str = decimal.toString();
+        final int ind = str.indexOf('.');
+        if (ind == -1) return "";
+        return str. substring(ind)
+                .replaceAll("0*$", "")
+                .replaceAll("^.$", "");
+    }
+
+    String formattedIntegerPart(BigDecimal decimal) {
         StringBuilder result = new StringBuilder();
         BigInteger intPart = decimal.toBigInteger();
         while (intPart.compareTo(BigInteger.ZERO) > 0) {

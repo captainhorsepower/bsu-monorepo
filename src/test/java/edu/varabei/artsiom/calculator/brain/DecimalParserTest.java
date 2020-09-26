@@ -31,19 +31,35 @@ class DecimalParserTest {
     }
 
     @Test
-    public void removeTrailingZeros() {
-        assertEquals("1", parser.parse(new BigDecimal("1.00000")));
-        assertEquals("1.01", parser.parse(new BigDecimal("1.01000")));
+    public void formattedDecimalPart() {
+        assertEquals("", parser.fromattedDecimalPart(new BigDecimal("1.00000")));
+        assertEquals("", parser.fromattedDecimalPart(new BigDecimal("100000")));
+        assertEquals(".1", parser.fromattedDecimalPart(new BigDecimal("1.1")));
+        assertEquals(".01", parser.fromattedDecimalPart(new BigDecimal("1.01000")));
     }
 
     @Test
     public void formattedIntegerPart() {
         assertEquals("1 000", parser.formattedIntegerPart(
                 parser.parse("1_000")));
+        assertEquals("1", parser.formattedIntegerPart(
+                parser.parse("00001")));
         assertEquals("1 234 567 000", parser.formattedIntegerPart(
                 parser.parse("1_234_567_000")));
+        assertEquals("10 234 567 000", parser.formattedIntegerPart(
+                parser.parse("10_234_567_000")));
         assertEquals("0", parser.formattedIntegerPart(
                 parser.parse("0000000")));
+    }
+
+    @Test
+    public void parseDecimalToString() {
+        assertEquals("1 000.123", parser.parse(
+                parser.parse("1_000.123")));
+        assertEquals("123 456 987.123", parser.parse(
+                parser.parse("123_456_987.1230000")));
+        assertEquals("1", parser.parse(
+                parser.parse("00001.000000")));
     }
 
     @Test
