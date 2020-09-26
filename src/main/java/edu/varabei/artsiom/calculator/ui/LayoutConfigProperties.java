@@ -15,10 +15,13 @@ import java.awt.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LayoutConfigProperties {
 
+    ComponentProperties identity;
     ComponentProperties leftNumber;
     ComponentProperties rightNumber;
     ButtonProperties addButton;
     ButtonProperties subButton;
+    ButtonProperties multButton;
+    ButtonProperties divButton;
     ResultProperties result;
 
     @Data

@@ -1,23 +1,28 @@
 calculator:
   title: Smart Pants Calculator
-  width: 500
-  height: 200
+  width: 400
+  height: 250
   components:
+    identity:
+      x: ${calculator.components.left-number.x}
+      y: 25
+      width: 300
+      height: 50
     left-number:
       label: 'left:'
       x: 25
-      y: 25
-      width: 250
+      y: 95
+      width: 225
       height: 25
     right-number:
       label: 'right:'
       x: ${calculator.components.left-number.x}
-      y: 75
+      y: 125
       width: ${calculator.components.left-number.width}
       height: ${calculator.components.left-number.height}
     add-button:
       title: add
-      x: 300
+      x: 250
       y: ${calculator.components.left-number.y}
       width: 60
       height: ${calculator.components.left-number.height}
@@ -28,13 +33,21 @@ calculator:
       width: ${calculator.components.add-button.width}
       height: ${calculator.components.add-button.height}
     mult-button:
-      x: 300
+      title: mult
+      x: 315
+      y: ${calculator.components.left-number.y}
+      width: ${calculator.components.add-button.width}
+      height: ${calculator.components.add-button.height}
     div-button:
-      x: 300
+      title: div
+      x: ${calculator.components.mult-button.x}
+      y: ${calculator.components.right-number.y}
+      width: ${calculator.components.add-button.width}
+      height: ${calculator.components.add-button.height}
     result:
       label: 'result:'
       init-value: 'will be here...'
       x: ${calculator.components.left-number.x}
-      y: 125
+      y: 170
       width: ${calculator.components.left-number.width}
       height: ${calculator.components.left-number.height}

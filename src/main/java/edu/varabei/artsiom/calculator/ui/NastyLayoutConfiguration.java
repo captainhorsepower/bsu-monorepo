@@ -17,6 +17,11 @@ public class NastyLayoutConfiguration {
     private final DecimalParser decimalParser;
 
     @Bean
+    public UIElement identity() {
+        return new IdentityComponent(layoutConfig.getIdentity());
+    }
+
+    @Bean
     public NumberInputTextField leftNumField() {
         return new NumberInputTextField(layoutConfig.getLeftNumber(), decimalParser);
     }
@@ -41,6 +46,30 @@ public class NastyLayoutConfiguration {
     UIElement substrButton() {
         return ArithmeticButton.builder()
                 .props(layoutConfig.getSubButton())
+                .operation(calculator::sub)
+                .leftNum(leftNumField()::getText)
+                .rightNum(rightNumField()::getText)
+                .resultConsumer(resultLabel()::setResultText)
+                .build();
+    }
+
+    @Bean
+    UIElement multButton() {
+        return ArithmeticButton.builder()
+                .props(layoutConfig.getMultButton())
+                .operation(calculator::add)
+                // FIXME: 9/26/20
+                .leftNum(leftNumField()::getText)
+                .rightNum(rightNumField()::getText)
+                .resultConsumer(resultLabel()::setResultText)
+                .build();
+    }
+
+    @Bean
+    UIElement divButton() {
+        return ArithmeticButton.builder()
+                .props(layoutConfig.getDivButton())
+                // FIXME: 9/26/20
                 .operation(calculator::sub)
                 .leftNum(leftNumField()::getText)
                 .rightNum(rightNumField()::getText)
