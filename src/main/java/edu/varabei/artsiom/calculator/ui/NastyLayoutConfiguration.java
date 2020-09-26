@@ -1,6 +1,7 @@
 package edu.varabei.artsiom.calculator.ui;
 
 import edu.varabei.artsiom.calculator.brain.Calculator;
+import edu.varabei.artsiom.calculator.brain.DecimalParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
@@ -15,21 +16,18 @@ public class NastyLayoutConfiguration {
 
     private final Calculator calculator;
     private final LayoutConfigProperties layoutConfig;
+    private final DecimalParser decimalParser;
 
     @Bean
     public NumberInputTextField inputTextField() {
         LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getLeftNumber();
-        NumberInputTextField textField = new NumberInputTextField();
-        textField.setBounds(layoutProps.bounds());
-        return textField;
+        return new NumberInputTextField(layoutProps, decimalParser);
     }
 
     @Bean
     public NumberInputTextField input2TextField() {
         LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getRightNumber();
-        NumberInputTextField textField = new NumberInputTextField();
-        textField.setBounds(layoutProps.bounds());
-        return textField;
+        return new NumberInputTextField(layoutProps, decimalParser);
     }
 
     @Bean

@@ -1,49 +1,68 @@
 package edu.varabei.artsiom.calculator.ui;
 
+import edu.varabei.artsiom.calculator.brain.DecimalParser;
+import edu.varabei.artsiom.calculator.ui.util.DL;
 import edu.varabei.artsiom.calculator.ui.util.KL;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
 @Log4j2
 @RequiredArgsConstructor
-public class NumberInputTextField extends JTextField implements UIElement {
+public class NumberInputTextField implements UIElement {
+
+    private final JTextField textField = new JTextField();
+    private final LayoutConfigProperties.ComponentProperties props;
+    private final DecimalParser parser;
 
     @PostConstruct
     public void configure() {
-        this.addKeyListener((KL) this::keyTyped);
+        textField.setBounds(props.bounds());
+        textField.addKeyListener((KL) this::keyTyped);
+        textField.getDocument().addDocumentListener((DL) this::onDocumentChange);
     }
 
     @Override
     public JComponent getDrawableComponent() {
-        return this;
+        return textField;
     }
 
-    //TODO 9/26/20: extract it somewhere
-    private void keyTyped(KeyEvent keyEvent) {
-        NumberInputTextField textField = NumberInputTextField.this;
-        final String textBefore = textField.getText();
-        final int pos = textField.getCaretPosition();
-        String textAfter = textBefore.substring(0, pos)
-                           + keyEvent.getKeyChar()
-                           + textBefore.substring(pos);
-        if (keyEvent.getExtendedKeyCode() == KeyEvent.VK_BACK_SPACE) {
-            textAfter = textBefore.substring(0, pos) + textBefore.substring(pos);
-            log.info("[text field] backspace: {} -> {}", textBefore, textAfter);
-        } else if (keyEvent.getExtendedKeyCode() == KeyEvent.VK_DELETE) {
-            textAfter = textBefore.substring(0, pos + 1) + textBefore.substring(pos + 1);
-            log.info("[text field] delete: {} -> {}", textBefore, textAfter);
-        } else if (!("" + keyEvent.getKeyChar()).matches("[0-9\\-+.,]")) {
-            keyEvent.consume();
-            return;
-        }
+    public String getText() {
+        return textField.getText();
+    }
 
-        boolean isNumber = textAfter.matches("[-+]?\\d*([.,]\\d+)?");
-        log.info("[text field] {} [{}] isNumber: {}", textAfter, keyEvent.getKeyChar(), isNumber);
+    private void keyTyped(KeyEvent keyEvent) {
+        if (keyEvent.getExtendedKeyCode() != KeyEvent.VK_BACK_SPACE
+            && keyEvent.getExtendedKeyCode() != KeyEvent.VK_DELETE
+            && !("" + keyEvent.getKeyChar()).matches("[0-9\\-+.,\\s_]")) {
+            log.trace("[key listener] suppressed key press");
+            keyEvent.consume();
+        }
+    }
+
+    @SneakyThrows
+    private void onDocumentChange(DocumentEvent documentEvent) {
+        Document document = documentEvent.getDocument();
+        String textAfter = document.getText(0, document.getLength());
+        boolean isNumber = isNumber(textAfter);
+        log.trace("[document listener] {} {} isNumber: {}", documentEvent.getType(), textAfter, isNumber);
         textField.setBackground(isNumber ? Color.GREEN : Color.RED);
+    }
+
+    private boolean isNumber(String text) {
+        try {
+            parser.parse(text);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 }
