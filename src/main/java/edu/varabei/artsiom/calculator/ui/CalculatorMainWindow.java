@@ -15,7 +15,7 @@ import java.util.List;
 public class CalculatorMainWindow extends JFrame {
 
     private final MainWindowProperties config;
-    private final List<JComponent> innerComponents;
+    private final List<UIElement> innerComponents;
 
     @PostConstruct
     public void applyConfig() {
@@ -24,7 +24,9 @@ public class CalculatorMainWindow extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         setLayout(null);
-        innerComponents.forEach(this::add);
+        innerComponents.stream()
+                .map(UIElement::getDrawableComponent)
+                .forEach(this::add);
 
         setVisible(true);
     }

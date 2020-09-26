@@ -11,11 +11,16 @@ import java.awt.event.KeyEvent;
 
 @Log4j2
 @RequiredArgsConstructor
-public class NumberInputTextField extends JTextField {
+public class NumberInputTextField extends JTextField implements UIElement {
 
     @PostConstruct
     public void configure() {
         this.addKeyListener((KL) this::keyTyped);
+    }
+
+    @Override
+    public JComponent getDrawableComponent() {
+        return this;
     }
 
     //TODO 9/26/20: extract it somewhere

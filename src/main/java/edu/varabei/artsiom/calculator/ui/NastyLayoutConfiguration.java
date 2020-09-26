@@ -33,7 +33,7 @@ public class NastyLayoutConfiguration {
     }
 
     @Bean
-    JComponent addButton() {
+    UIElement addButton() {
         LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getAddButton();
         JButton add = new JButton("add");
         add.setBounds(layoutProps.bounds());
@@ -46,11 +46,11 @@ public class NastyLayoutConfiguration {
 
             resultLabel().setResultText(result);
         });
-        return add;
+        return () -> add;
     }
 
     @Bean
-    JComponent substrButton() {
+    UIElement substrButton() {
         LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getSubButton();
         JButton sub = new JButton("subtract");
         sub.setBounds(layoutProps.bounds());
@@ -63,7 +63,7 @@ public class NastyLayoutConfiguration {
 
             resultLabel().setResultText(result);
         });
-        return sub;
+        return () -> sub;
     }
 
     @Bean
