@@ -51,5 +51,5 @@ calculator:
       init-value: 'will be here...'
       x: ${calculator.components.left-number.x}
       y: 170
-      width: ${calculator.components.left-number.width}
+      width: 350
       height: ${calculator.components.left-number.height}

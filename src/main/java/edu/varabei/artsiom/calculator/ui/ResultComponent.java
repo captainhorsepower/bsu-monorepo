@@ -17,11 +17,12 @@ public class ResultComponent implements UIElement {
         drawableComponent.setLayout(null);
         drawableComponent.setBounds(props.bounds());
 
+        int width = 50;
         JLabel resultLabel = new JLabel(props.getLabel());
-        resultLabel.setBounds(0,0, 50, 25);
+        resultLabel.setBounds(0, 0, width, props.getHeight());
 
         resultValue.setText(props.getInitValue());
-        resultValue.setBounds(50, 0, 300, 25);
+        resultValue.setBounds(width, 0, props.getWidth() - width, props.getHeight());
 
         drawableComponent.add(resultLabel);
         drawableComponent.add(resultValue);

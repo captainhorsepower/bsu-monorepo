@@ -28,12 +28,11 @@ public class NumberInputTextField implements UIElement {
     public void configure() {
         drawableComponent.setLayout(null);
         drawableComponent.setBounds(props.bounds());
-//        drawableComponent.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
         JLabel label = new JLabel(props.getLabel());
         label.setBounds(0, 0, 50, props.getHeight());
 
-        textField.setBounds(50, 0, (int) Math.round(props.getMaxLen() * 7.25), props.getHeight());
+        textField.setBounds(50, 0, props.getWidth() - 50, props.getHeight());
         textField.addKeyListener((KL) this::keyTyped);
         textField.getDocument().addDocumentListener((DL) this::onDocumentChange);
 
