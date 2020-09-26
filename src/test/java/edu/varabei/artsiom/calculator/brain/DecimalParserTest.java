@@ -1,5 +1,6 @@
 package edu.varabei.artsiom.calculator.brain;
 
+import com.sun.tools.javac.util.List;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -60,6 +61,80 @@ class DecimalParserTest {
                 parser.parse("123_456_987.1230000")));
         assertEquals("1", parser.parse(
                 parser.parse("00001.000000")));
+    }
+
+    @Test
+    public void onlyOneSplit() {
+        assertThrows(Throwable.class, () -> parser.onlyOneSplit("1234.123123"));
+        assertThrows(Throwable.class, () -> parser.onlyOneSplit("12345.123123"));
+        assertDoesNotThrow(() -> parser.onlyOneSplit("10"));
+        assertDoesNotThrow(() -> parser.onlyOneSplit("101"));
+        assertDoesNotThrow(() -> parser.onlyOneSplit("101.12312313"));
+        assertDoesNotThrow(() -> parser.onlyOneSplit(".12312313"));
+    }
+
+    @Test
+    public void checkFirst() {
+        assertDoesNotThrow(() -> parser.checkFirst("1"));
+        assertDoesNotThrow(() -> parser.checkFirst("12"));
+        assertDoesNotThrow(() -> parser.checkFirst("123"));
+        assertThrows(Throwable.class, () -> parser.checkFirst(""));
+        assertThrows(Throwable.class, () -> parser.checkFirst("1234"));
+    }
+
+    @Test
+    public void checkLast() {
+        assertDoesNotThrow(() -> parser.checkLast("123"));
+        assertDoesNotThrow(() -> parser.checkLast("123.1231231"));
+        assertThrows(Throwable.class, () -> parser.checkLast("1234.1231231"));
+        assertThrows(Throwable.class, () -> parser.checkLast("12.1231231"));
+        assertThrows(Throwable.class, () -> parser.checkLast(".1231231"));
+    }
+
+    @Test
+    public void checkMiddleTrain() {
+        assertDoesNotThrow(() -> parser.checkMiddleTrain(Arrays.asList(
+                "12 123 123.".split(" "))));
+        assertDoesNotThrow(() -> parser.checkMiddleTrain(Arrays.asList(
+                "123 123 123 123.123123123".split(" "))));
+        assertDoesNotThrow(() -> parser.checkMiddleTrain(Arrays.asList(
+                "12 123 123 456 123".split(" "))));
+        assertDoesNotThrow(() -> parser.checkMiddleTrain(Arrays.asList(
+                "12 123 123 456 123 123 123.".split(" "))));
+        assertThrows(Throwable.class, () -> parser.checkMiddleTrain(Arrays.asList(
+                "12 1234 123 456 123 123 123.".split(" "))));
+        assertThrows(Throwable.class, () -> parser.checkMiddleTrain(Arrays.asList(
+                "12 123 123 4564 123".split(" "))));
+
+        assertThrows(Throwable.class, () -> parser.checkMiddleTrain(Arrays.asList(
+                "12 1234 123".split(" "))));
+
+        assertThrows(Throwable.class, () -> parser.checkMiddleTrain(Arrays.asList(
+                "12 1234 123.".split(" "))));
+
+        assertThrows(Throwable.class, () -> parser.checkMiddleTrain(Arrays.asList(
+                "12 1234 123.123".split(" "))));
+    }
+
+    @Test
+    public void allowOnlyValidSpaces() {
+        assertThrows(Throwable.class, () -> parser.parse("-1 123 2"));
+        assertThrows(Throwable.class, () -> parser.parse("1 123 2"));
+        assertThrows(Throwable.class, () -> parser.parse("1 123 2.123"));
+
+        assertDoesNotThrow(() -> parser.parse("1"));
+        assertDoesNotThrow(() -> parser.parse("1.123123123"));
+        assertDoesNotThrow(() -> parser.parse("12"));
+        assertDoesNotThrow(() -> parser.parse("12.123123"));
+        assertDoesNotThrow(() -> parser.parse("12 123"));
+        assertDoesNotThrow(() -> parser.parse("12 123.1231"));
+        assertDoesNotThrow(() -> parser.parse("1 123 123"));
+        assertDoesNotThrow(() -> parser.parse("1 123 123.13123123"));
+        assertDoesNotThrow(() -> parser.parse("112 123 123.13123123"));
+        assertDoesNotThrow(() -> parser.parse("+112 123 123.13123123"));
+        assertDoesNotThrow(() -> parser.parse("-112 123 123.13123123"));
+        assertDoesNotThrow(() -> parser.parse("+ 112 123 123.13123123"));
+        assertDoesNotThrow(() -> parser.parse("- 112 123 123.13123123"));
     }
 
     @Test
