@@ -23,6 +23,7 @@ public class LayoutConfigProperties {
 
     @Data
     static class ComponentProperties {
+        String label;
         int x, y, width, height;
 
         public Rectangle bounds() {
@@ -37,7 +38,6 @@ public class LayoutConfigProperties {
 
     @Data
     static class ResultProperties extends ComponentProperties {
-        String label;
         String initValue;
     }
 }

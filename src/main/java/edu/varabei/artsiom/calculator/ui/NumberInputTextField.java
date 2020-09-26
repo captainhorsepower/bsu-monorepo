@@ -19,20 +19,30 @@ import java.awt.event.KeyEvent;
 @RequiredArgsConstructor
 public class NumberInputTextField implements UIElement {
 
+    private final JPanel drawableComponent = new JPanel();
     private final JTextField textField = new JTextField();
     private final LayoutConfigProperties.ComponentProperties props;
     private final DecimalParser parser;
 
     @PostConstruct
     public void configure() {
-        textField.setBounds(props.bounds());
+        drawableComponent.setLayout(null);
+        drawableComponent.setBounds(props.bounds());
+
+        JLabel label = new JLabel(props.getLabel());
+        label.setBounds(0, 0, 50, props.getHeight());
+
+        textField.setBounds(50, 0, 150, props.getHeight());
         textField.addKeyListener((KL) this::keyTyped);
         textField.getDocument().addDocumentListener((DL) this::onDocumentChange);
+
+        drawableComponent.add(label);
+        drawableComponent.add(textField);
     }
 
     @Override
     public JComponent getDrawableComponent() {
-        return textField;
+        return drawableComponent;
     }
 
     public String getText() {

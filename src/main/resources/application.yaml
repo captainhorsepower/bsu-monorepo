@@ -1,21 +1,23 @@
 calculator:
   title: Smart Pants Calculator
-  width: 600
-  height: 800
+  width: 500
+  height: 200
   components:
     left-number:
-      x: 50
-      y: 50
-      width: 150
+      label: 'left:'
+      x: 25
+      y: 25
+      width: 250
       height: 25
     right-number:
+      label: 'right:'
       x: ${calculator.components.left-number.x}
-      y: 100
+      y: 75
       width: ${calculator.components.left-number.width}
       height: ${calculator.components.left-number.height}
     add-button:
       title: add
-      x: 200
+      x: 300
       y: ${calculator.components.left-number.y}
       width: 60
       height: ${calculator.components.left-number.height}
@@ -25,10 +27,14 @@ calculator:
       y: ${calculator.components.right-number.y}
       width: ${calculator.components.add-button.width}
       height: ${calculator.components.add-button.height}
+    mult-button:
+      x: 300
+    div-button:
+      x: 300
     result:
       label: 'result:'
       init-value: 'will be here...'
       x: ${calculator.components.left-number.x}
-      y: 150
+      y: 125
       width: ${calculator.components.left-number.width}
       height: ${calculator.components.left-number.height}
