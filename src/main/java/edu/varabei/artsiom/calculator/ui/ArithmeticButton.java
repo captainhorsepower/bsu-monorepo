@@ -1,10 +1,6 @@
 package edu.varabei.artsiom.calculator.ui;
 
-import edu.varabei.artsiom.calculator.brain.Calculator;
-import edu.varabei.artsiom.calculator.brain.CalculatorException;
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.PostConstruct;
