@@ -14,25 +14,29 @@ import javax.swing.*;
 public class NastyLayoutConfiguration {
 
     private final Calculator calculator;
+    private final LayoutConfigProperties layoutConfig;
 
     @Bean
     public NumberInputTextField inputTextField() {
+        LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getLeftNumber();
         NumberInputTextField textField = new NumberInputTextField();
-        textField.setBounds(50, 50, 100, 25);
+        textField.setBounds(layoutProps.bounds());
         return textField;
     }
 
     @Bean
     public NumberInputTextField input2TextField() {
+        LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getRightNumber();
         NumberInputTextField textField = new NumberInputTextField();
-        textField.setBounds(50, 100, 100, 25);
+        textField.setBounds(layoutProps.bounds());
         return textField;
     }
 
     @Bean
     JComponent addButton() {
+        LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getAddButton();
         JButton add = new JButton("add");
-        add.setBounds(200, 100, 60, 25);
+        add.setBounds(layoutProps.bounds());
         add.addActionListener(e -> {
             String left = inputTextField().getText();
             String right = input2TextField().getText();
@@ -47,8 +51,9 @@ public class NastyLayoutConfiguration {
 
     @Bean
     JComponent substrButton() {
+        LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getSubButton();
         JButton sub = new JButton("subtract");
-        sub.setBounds(200, 100, 60, 25);
+        sub.setBounds(layoutProps.bounds());
         sub.addActionListener(e -> {
             String left = inputTextField().getText();
             String right = input2TextField().getText();
@@ -63,8 +68,9 @@ public class NastyLayoutConfiguration {
 
     @Bean
     ResultComponent resultLabel() {
+        LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getResult();
         ResultComponent result = new ResultComponent();
-        result.setBounds(200, 250, 250, 25);
+        result.setBounds(layoutProps.bounds());
         return result;
     }
 

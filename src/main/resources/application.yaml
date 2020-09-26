@@ -2,3 +2,29 @@ calculator:
   title: Smart Pants Calculator
   width: 600
   height: 800
+  components:
+    left-number:
+      x: 50
+      y: 50
+      width: 150
+      height: 25
+    right-number:
+      x: ${calculator.components.left-number.x}
+      y: 100
+      width: ${calculator.components.left-number.width}
+      height: ${calculator.components.left-number.height}
+    add-button:
+      x: 200
+      y: ${calculator.components.left-number.y}
+      width: 60
+      height: ${calculator.components.left-number.height}
+    sub-button:
+      x: ${calculator.components.add-button.x}
+      y: ${calculator.components.right-number.y}
+      width: ${calculator.components.add-button.width}
+      height: ${calculator.components.add-button.height}
+    result:
+      x: ${calculator.components.left-number.x}
+      y: 150
+      width: ${calculator.components.left-number.width}
+      height: ${calculator.components.left-number.height}

@@ -1,6 +1,6 @@
 package edu.varabei.artsiom.calculator.ui;
 
-import edu.varabei.artsiom.calculator.util.KL;
+import edu.varabei.artsiom.calculator.ui.util.KL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -18,6 +18,7 @@ public class NumberInputTextField extends JTextField {
         this.addKeyListener((KL) this::keyTyped);
     }
 
+    //TODO 9/26/20: extract it somewhere
     private void keyTyped(KeyEvent keyEvent) {
         NumberInputTextField textField = NumberInputTextField.this;
         final String textBefore = textField.getText();

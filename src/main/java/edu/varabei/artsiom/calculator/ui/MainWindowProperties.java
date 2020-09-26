@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties("calculator")
 @Data
-public class MainWindowConfig {
+public class MainWindowProperties {
 
     String title;
     Integer width;

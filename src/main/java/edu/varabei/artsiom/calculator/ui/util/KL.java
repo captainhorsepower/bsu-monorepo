@@ -1,4 +1,4 @@
-package edu.varabei.artsiom.calculator.util;
+package edu.varabei.artsiom.calculator.ui.util;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

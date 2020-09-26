@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CalculatorMainWindow extends JFrame {
 
-    private final MainWindowConfig config;
+    private final MainWindowProperties config;
     private final List<JComponent> innerComponents;
 
     @PostConstruct
