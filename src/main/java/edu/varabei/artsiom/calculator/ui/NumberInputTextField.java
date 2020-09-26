@@ -1,4 +1,4 @@
-package edu.varabei.artsiom.calculator;
+package edu.varabei.artsiom.calculator.ui;
 
 import edu.varabei.artsiom.calculator.util.KL;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,6 @@ import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 @Log4j2
 @RequiredArgsConstructor

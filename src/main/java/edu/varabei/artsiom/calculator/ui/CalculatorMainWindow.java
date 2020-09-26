@@ -1,5 +1,6 @@
-package edu.varabei.artsiom.calculator;
+package edu.varabei.artsiom.calculator.ui;
 
+import edu.varabei.artsiom.calculator.MainWindowConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -28,16 +29,5 @@ public class CalculatorMainWindow extends JFrame {
 
         setVisible(true);
     }
-
-//    public static void main(String[] args) {
-//        JFrame frame = new JFrame("Label Example");
-//        JLabel l1, l2;
-//        l1 = new JLabel("First Label.");
-//        l1.setBounds(50, 50, 100, 30);
-//        l2 = new JLabel("Second Label.");
-//        l2.setBounds(50, 100, 100, 30);
-//        frame.add(l1);
-//        frame.add(l2);
-//    }
 
 }
