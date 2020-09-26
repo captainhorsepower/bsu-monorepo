@@ -57,8 +57,7 @@ public class NastyLayoutConfiguration {
     UIElement multButton() {
         return ArithmeticButton.builder()
                 .props(layoutConfig.getMultButton())
-                .operation(calculator::add)
-                // FIXME: 9/26/20
+                .operation(calculator::mult)
                 .leftNum(leftNumField()::getText)
                 .rightNum(rightNumField()::getText)
                 .resultConsumer(resultLabel()::setResultText)
@@ -69,8 +68,7 @@ public class NastyLayoutConfiguration {
     UIElement divButton() {
         return ArithmeticButton.builder()
                 .props(layoutConfig.getDivButton())
-                // FIXME: 9/26/20
-                .operation(calculator::sub)
+                .operation(calculator::div)
                 .leftNum(leftNumField()::getText)
                 .rightNum(rightNumField()::getText)
                 .resultConsumer(resultLabel()::setResultText)
