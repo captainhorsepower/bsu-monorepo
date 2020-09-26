@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.lang.NonNull;
 
 import java.awt.*;
 
@@ -16,8 +15,8 @@ import java.awt.*;
 public class LayoutConfigProperties {
 
     ComponentProperties identity;
-    ComponentProperties leftNumber;
-    ComponentProperties rightNumber;
+    TextFieldProperties leftNumber;
+    TextFieldProperties rightNumber;
     ButtonProperties addButton;
     ButtonProperties subButton;
     ButtonProperties multButton;
@@ -42,5 +41,10 @@ public class LayoutConfigProperties {
     @Data
     static class ResultProperties extends ComponentProperties {
         String initValue;
+    }
+
+    @Data
+    static class TextFieldProperties extends ComponentProperties {
+        int maxLen;
     }
 }

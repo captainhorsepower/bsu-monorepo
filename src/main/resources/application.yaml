@@ -6,15 +6,17 @@ calculator:
     identity:
       x: ${calculator.components.left-number.x}
       y: 25
-      width: 300
+      width: 350
       height: 50
     left-number:
+      max-len: 28
       label: 'left:'
       x: 25
       y: 95
-      width: 225
+      width: 250
       height: 25
     right-number:
+      max-len: ${calculator.components.left-number.max-len}
       label: 'right:'
       x: ${calculator.components.left-number.x}
       y: 125
@@ -22,7 +24,7 @@ calculator:
       height: ${calculator.components.left-number.height}
     add-button:
       title: add
-      x: 250
+      x: 275
       y: ${calculator.components.left-number.y}
       width: 60
       height: ${calculator.components.left-number.height}
@@ -34,7 +36,7 @@ calculator:
       height: ${calculator.components.add-button.height}
     mult-button:
       title: mult
-      x: 315
+      x: 335
       y: ${calculator.components.left-number.y}
       width: ${calculator.components.add-button.width}
       height: ${calculator.components.add-button.height}

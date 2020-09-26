@@ -9,8 +9,8 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -21,18 +21,19 @@ public class NumberInputTextField implements UIElement {
 
     private final JPanel drawableComponent = new JPanel();
     private final JTextField textField = new JTextField();
-    private final LayoutConfigProperties.ComponentProperties props;
+    private final LayoutConfigProperties.TextFieldProperties props;
     private final DecimalParser parser;
 
     @PostConstruct
     public void configure() {
         drawableComponent.setLayout(null);
         drawableComponent.setBounds(props.bounds());
+//        drawableComponent.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
         JLabel label = new JLabel(props.getLabel());
         label.setBounds(0, 0, 50, props.getHeight());
 
-        textField.setBounds(50, 0, 150, props.getHeight());
+        textField.setBounds(50, 0, (int) Math.round(props.getMaxLen() * 7.25), props.getHeight());
         textField.addKeyListener((KL) this::keyTyped);
         textField.getDocument().addDocumentListener((DL) this::onDocumentChange);
 
@@ -52,7 +53,10 @@ public class NumberInputTextField implements UIElement {
     private void keyTyped(KeyEvent keyEvent) {
         if (keyEvent.getExtendedKeyCode() != KeyEvent.VK_BACK_SPACE
             && keyEvent.getExtendedKeyCode() != KeyEvent.VK_DELETE
-            && !("" + keyEvent.getKeyChar()).matches("[0-9\\-+.,\\s_]")) {
+            && (textField.getText()
+                        .replaceAll("(?![0-9.,])+", "")
+                        .length() >= props.getMaxLen()
+                || !("" + keyEvent.getKeyChar()).matches("[0-9\\-+.,\\s_]"))) {
             log.trace("[key listener] suppressed key press");
             keyEvent.consume();
         }
