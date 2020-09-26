@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CalculatorTest {
+class CalculatorTest implements CompareDecimalsMixin {
 
     Calculator calc = new Calculator();
 
@@ -28,11 +28,6 @@ class CalculatorTest {
     @Test
     public void subLongCases() {
         assertTrue(decimalsEqual("110", calc.sub("87654321098765432.1", "87654321098765322.1")));
-    }
-
-    private boolean decimalsEqual(String expected, String actual) {
-        expected = expected.replaceAll("_", "");
-        return 0 == new BigDecimal(expected).compareTo(new BigDecimal(actual));
     }
 
 }
