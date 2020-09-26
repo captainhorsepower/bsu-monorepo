@@ -110,10 +110,4 @@ public class DecimalParser {
                        .replaceAll("^$", "0");
     }
 
-    @Value
-    static class Pair<S, T> {
-        S left;
-        S right;
-    }
-
 }
