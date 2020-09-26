@@ -14,11 +14,13 @@ calculator:
       width: ${calculator.components.left-number.width}
       height: ${calculator.components.left-number.height}
     add-button:
+      title: add
       x: 200
       y: ${calculator.components.left-number.y}
       width: 60
       height: ${calculator.components.left-number.height}
     sub-button:
+      title: sub
       x: ${calculator.components.add-button.x}
       y: ${calculator.components.right-number.y}
       width: ${calculator.components.add-button.width}

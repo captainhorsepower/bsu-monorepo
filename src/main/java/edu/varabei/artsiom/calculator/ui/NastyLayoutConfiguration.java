@@ -19,49 +19,35 @@ public class NastyLayoutConfiguration {
     private final DecimalParser decimalParser;
 
     @Bean
-    public NumberInputTextField inputTextField() {
-        LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getLeftNumber();
-        return new NumberInputTextField(layoutProps, decimalParser);
+    public NumberInputTextField leftNumField() {
+        return new NumberInputTextField(layoutConfig.getLeftNumber(), decimalParser);
     }
 
     @Bean
-    public NumberInputTextField input2TextField() {
-        LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getRightNumber();
-        return new NumberInputTextField(layoutProps, decimalParser);
+    public NumberInputTextField rightNumField() {
+        return new NumberInputTextField(layoutConfig.getRightNumber(), decimalParser);
     }
 
     @Bean
     UIElement addButton() {
-        LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getAddButton();
-        JButton add = new JButton("add");
-        add.setBounds(layoutProps.bounds());
-        add.addActionListener(e -> {
-            String left = inputTextField().getText();
-            String right = input2TextField().getText();
-
-            String result = calculator.add(left, right);
-            log.info("[add] {} + {} = {}", left, right, result);
-
-            resultLabel().setResultText(result);
-        });
-        return () -> add;
+        return ArithmeticButton.builder()
+                .props(layoutConfig.getAddButton())
+                .operation(calculator::add)
+                .leftNum(leftNumField()::getText)
+                .rightNum(rightNumField()::getText)
+                .resultConsumer(resultLabel()::setResultText)
+                .build();
     }
 
     @Bean
     UIElement substrButton() {
-        LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getSubButton();
-        JButton sub = new JButton("subtract");
-        sub.setBounds(layoutProps.bounds());
-        sub.addActionListener(e -> {
-            String left = inputTextField().getText();
-            String right = input2TextField().getText();
-
-            String result = calculator.sub(left, right);
-            log.info("[sub] {} - {} = {}", left, right, result);
-
-            resultLabel().setResultText(result);
-        });
-        return () -> sub;
+        return ArithmeticButton.builder()
+                .props(layoutConfig.getSubButton())
+                .operation(calculator::sub)
+                .leftNum(leftNumField()::getText)
+                .rightNum(rightNumField()::getText)
+                .resultConsumer(resultLabel()::setResultText)
+                .build();
     }
 
     @Bean

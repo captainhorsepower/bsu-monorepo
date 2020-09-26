@@ -17,8 +17,8 @@ public class LayoutConfigProperties {
 
     ComponentProperties leftNumber;
     ComponentProperties rightNumber;
-    ComponentProperties addButton;
-    ComponentProperties subButton;
+    ButtonProperties addButton;
+    ButtonProperties subButton;
     ComponentProperties result;
 
     @Data
@@ -28,5 +28,10 @@ public class LayoutConfigProperties {
         public Rectangle bounds() {
             return new Rectangle(x, y, width, height);
         }
+    }
+
+    @Data
+    static class ButtonProperties extends ComponentProperties {
+        String title;
     }
 }
