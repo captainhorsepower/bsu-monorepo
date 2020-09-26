@@ -52,10 +52,7 @@ public class NastyLayoutConfiguration {
 
     @Bean
     ResultComponent resultLabel() {
-        LayoutConfigProperties.ComponentProperties layoutProps = layoutConfig.getResult();
-        ResultComponent result = new ResultComponent();
-        result.setBounds(layoutProps.bounds());
-        return result;
+        return new ResultComponent(layoutConfig.getResult());
     }
 
 
