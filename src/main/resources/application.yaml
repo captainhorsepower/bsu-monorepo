@@ -26,6 +26,8 @@ calculator:
       width: ${calculator.components.add-button.width}
       height: ${calculator.components.add-button.height}
     result:
+      label: 'result:'
+      init-value: 'will be here...'
       x: ${calculator.components.left-number.x}
       y: 150
       width: ${calculator.components.left-number.width}

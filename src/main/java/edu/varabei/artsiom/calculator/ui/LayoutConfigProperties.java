@@ -19,7 +19,7 @@ public class LayoutConfigProperties {
     ComponentProperties rightNumber;
     ButtonProperties addButton;
     ButtonProperties subButton;
-    ComponentProperties result;
+    ResultProperties result;
 
     @Data
     static class ComponentProperties {
@@ -33,5 +33,11 @@ public class LayoutConfigProperties {
     @Data
     static class ButtonProperties extends ComponentProperties {
         String title;
+    }
+
+    @Data
+    static class ResultProperties extends ComponentProperties {
+        String label;
+        String initValue;
     }
 }
