@@ -1,13 +1,15 @@
 package edu.varabei.artsiom.cyphernotebook.server.crypto;
 
+import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.crypto.KeyGenerator;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
-public class SecurityConfig {
+public class CryptoConfig {
 
     @Bean
     Charset charset() {
@@ -17,6 +19,12 @@ public class SecurityConfig {
     @Bean
     String aesTransformation() {
         return "AES/CBC/PKCS5Padding";
+    }
+
+    @Bean
+    @SneakyThrows
+    KeyGenerator aesKeyGenerator() {
+        return KeyGenerator.getInstance("AES");
     }
 
 }

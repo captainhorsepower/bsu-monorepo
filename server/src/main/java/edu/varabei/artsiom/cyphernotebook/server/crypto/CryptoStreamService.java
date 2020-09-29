@@ -21,14 +21,23 @@ import java.security.spec.AlgorithmParameterSpec;
 @RequiredArgsConstructor
 public class CryptoStreamService {
 
-    private final Charset charset;
+    // 16 bytes ~ 128 bit ~ AES block size
+    private static final int BYTE_BLOCK_LEN = 16;
+//    private final Charset charset;
     private final String aesTransformation;
-    private final KeyGenerator aesKeyGenerator;
+//    private final KeyGenerator aesKeyGenerator;
 
     public InputStream encrypt(InputStream rawContentStream, Key sessionKey) {
         final ByteArrayInputStream prependedBlock = new ByteArrayInputStream(secureRandom128Bit());
-        new SequenceInputStream(prependedBlock, rawContentStream);
-        return new CipherInputStream(rawContentStream, getCipher(Cipher.ENCRYPT_MODE, sessionKey));
+        final SequenceInputStream prependedStream = new SequenceInputStream(prependedBlock, rawContentStream);
+        return new CipherInputStream(prependedStream, getCipher(Cipher.ENCRYPT_MODE, sessionKey));
+    }
+
+    @SneakyThrows
+    public InputStream decrypt(InputStream encryptedContentStream, Key sessionKey) {
+        final CipherInputStream decryptingStream = new CipherInputStream(encryptedContentStream, getCipher(Cipher.DECRYPT_MODE, sessionKey));
+        decryptingStream.skipNBytes(BYTE_BLOCK_LEN);
+        return decryptingStream;
     }
 
     @SneakyThrows
@@ -40,8 +49,7 @@ public class CryptoStreamService {
     }
 
     byte[] secureRandom128Bit() {
-        // 16 bytes ~ 128 bit ~ as AES block size
-        final ByteBuffer buffer = ByteBuffer.allocate(16);
+        final ByteBuffer buffer = ByteBuffer.allocate(BYTE_BLOCK_LEN);
         new SecureRandom().nextBytes(buffer.array());
         return buffer.array();
     }
