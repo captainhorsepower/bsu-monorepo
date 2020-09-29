@@ -9,12 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
-public class CryptoConfig {
-
-    @Bean
-    Charset charset() {
-        return StandardCharsets.US_ASCII;
-    }
+public class AESConfig {
 
     @Bean
     String aesTransformation() {

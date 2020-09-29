@@ -51,7 +51,7 @@ public class ApiController {
     
     @DeleteMapping("/api/files/{pathToFile}")
     public ResponseEntity<?> deleteFile(@PathVariable String pathToFile) {
-        // FIXME: 9/29/20 
+        // FIXME: 9/29/20
         return ResponseEntity.ok("deleted");
     }
 
