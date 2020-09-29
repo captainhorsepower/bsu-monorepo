@@ -1,4 +1,4 @@
-package edu.varabei.artsiom.cyphernotebook.server.web;
+package edu.varabei.artsiom.cyphernotebook.server.web.exceptions;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.web.servlet.error.ErrorController;

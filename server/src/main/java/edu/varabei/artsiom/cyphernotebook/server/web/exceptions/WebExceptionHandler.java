@@ -1,4 +1,4 @@
-package edu.varabei.artsiom.cyphernotebook.server.web;
+package edu.varabei.artsiom.cyphernotebook.server.web.exceptions;
 
 
 import org.springframework.http.HttpHeaders;
