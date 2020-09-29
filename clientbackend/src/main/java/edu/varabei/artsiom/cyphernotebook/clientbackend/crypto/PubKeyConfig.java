@@ -10,18 +10,13 @@ import java.security.KeyFactory;
 public class PubKeyConfig {
 
     @Bean
-    String pubKeyTransformation() {
-        return "RSA/ECB/PKCS1Padding";
-    }
-
-    @Bean
     String pubKeyAlgorithm() {
         return "RSA";
     }
 
     @Bean
-    @SneakyThrows
-    KeyFactory pubKeyFactory() {
-        return KeyFactory.getInstance(pubKeyAlgorithm());
+    String pubKeyTransformation() {
+        return "RSA/ECB/PKCS1Padding";
     }
+
 }
