@@ -41,14 +41,14 @@ public class BackendWebClient {
         stateStore.put(KEY_PAIR, keyPair);
     }
 
-    public void keygen() {
+    public void getSessionKey() {
         final KeyPair keyPair = stateStore.get(KEY_PAIR);
         val request = new KeygenRequestDTO(
                 pubKeyTransformation,
                 pubKeyAlgorithm,
                 base64(keyPair.getPublic().getEncoded()));
 
-        val response = restTemplate.exchange("localhost:8080/api/keygen",
+        val response = restTemplate.exchange("http://localhost:8080/api/keygen",
                 HttpMethod.POST, new HttpEntity<>(request, createHeaders()), SessionKeyDTO.class);
 
         checkCookie(response);
@@ -89,7 +89,7 @@ public class BackendWebClient {
     }
 
     void checkCookie(ResponseEntity<?> response) {
-        val headers = response.getHeaders().get("Cookie");
+        val headers = response.getHeaders().get("Set-Cookie");
         if (headers != null && !headers.isEmpty())
             headers.stream().findFirst()
                     .ifPresent(cookie -> stateStore.put("cookie", cookie));

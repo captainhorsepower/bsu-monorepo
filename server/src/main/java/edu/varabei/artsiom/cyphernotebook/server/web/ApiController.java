@@ -19,6 +19,8 @@ import java.security.Key;
 import java.security.Principal;
 import java.time.Duration;
 
+import static edu.varabei.artsiom.cyphernotebook.server.web.SessionKeyHolder.SESSION_KEY;
+
 @RestController
 @RequiredArgsConstructor
 public class ApiController {
@@ -36,13 +38,17 @@ public class ApiController {
     }
 
     @PostMapping("/api/keygen")
-    public ResponseEntity<?> sessionKeygen(HttpServletRequest request, @RequestBody KeygenForm form) {
-        val keyHolder = new SessionKeyHolder(
-                aesKeyGenerator.generateKey(), Duration.ofMinutes(60));
-        request.getSession().setAttribute(SessionKeyHolder.SESSION_KEY, keyHolder);
+    public ResponseEntity<?> sessionKeygen(@RequestBody KeygenForm form,
+                                           HttpServletRequest request,
+                                           Principal principal) {
+        val keyHolder = new SessionKeyHolder(aesKeyGenerator.generateKey(), Duration.ofMinutes(60));
+        request.getSession().setAttribute(String.format("%s-%s", principal.getName(), SESSION_KEY), keyHolder);
 
         val sessionKeyBytes = pubKeyService.encryptWithPubKey(
-                keyHolder.getKey().getEncoded(), form.getPubKeyBase64());
+                keyHolder.getKey().getEncoded(),
+                form.getPubKeyAlgorithm(),
+                form.getPubKeyTransformation(),
+                form.getPubKeyBase64());
         return ResponseEntity.ok(
                 new SessionKeyDTO(
                         aesTransformation,
@@ -52,7 +58,7 @@ public class ApiController {
     }
 
     Key getSessionKey(HttpServletRequest request) {
-        val keyHolder = (SessionKeyHolder) request.getSession().getAttribute(SessionKeyHolder.SESSION_KEY);
+        val keyHolder = (SessionKeyHolder) request.getSession().getAttribute(SESSION_KEY);
         if (keyHolder == null || keyHolder.keyExpired()) throw new RuntimeException("session key expired");
         return keyHolder.getKey();
     }

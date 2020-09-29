@@ -5,6 +5,7 @@ import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.crypto.Cipher;
@@ -16,10 +17,10 @@ import java.security.spec.X509EncodedKeySpec;
 @SpringBootTest
 class PubKeyServiceTest {
 
-    @Autowired
+    @Value("RSA")
     String pubKeyAlgorithm;
 
-    @Autowired
+    @Value("RSA/ECB/PKCS1Padding")
     String pubKeyTransformation;
 
     @Autowired
@@ -32,7 +33,7 @@ class PubKeyServiceTest {
         val keyPair = keyPair();
         val pubKeySpec = new X509EncodedKeySpec(keyPair.getPublic().getEncoded());
 
-        val encryptedBytes = pubKeyService.encryptWithPubKey(secretMessage.getBytes(), pubKeySpec);
+        val encryptedBytes = pubKeyService.encryptWithPubKey(secretMessage.getBytes(), pubKeyAlgorithm, pubKeyTransformation, pubKeySpec);
         val decryptedBytes = decode(encryptedBytes, keyPair.getPrivate());
 
         Assertions.assertEquals(secretMessage, new String(decryptedBytes));

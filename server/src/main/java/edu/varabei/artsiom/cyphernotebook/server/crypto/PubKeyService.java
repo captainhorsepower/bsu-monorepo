@@ -1,6 +1,5 @@
 package edu.varabei.artsiom.cyphernotebook.server.crypto;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
@@ -9,27 +8,22 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.Cipher;
 import java.security.KeyFactory;
-import java.security.PublicKey;
 import java.security.spec.KeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-@Log4j2
 @Service
-@RequiredArgsConstructor
 public class PubKeyService {
 
-    private final KeyFactory pubKeyFactory;
-    private final String pubKeyTransformation;
-
-    public byte[] encryptWithPubKey(byte[] input, String base64PubKey) {
+    public byte[] encryptWithPubKey(byte[] input, String alg, String transformation, String base64PubKey) {
         val keySpec = new X509EncodedKeySpec(Base64.decodeBase64(base64PubKey));
-        return encryptWithPubKey(input, keySpec);
+        return encryptWithPubKey(input, alg, transformation, keySpec);
     }
 
     @SneakyThrows
-    public byte[] encryptWithPubKey(byte[] input, KeySpec pubKeySpec) {
-        final PublicKey pubKey = pubKeyFactory.generatePublic(pubKeySpec);
-        final Cipher cipher = Cipher.getInstance(pubKeyTransformation);
+    public byte[] encryptWithPubKey(byte[] input, String alg, String transformation, KeySpec pubKeySpec) {
+        val pubKeyFactory = KeyFactory.getInstance(alg);
+        val pubKey = pubKeyFactory.generatePublic(pubKeySpec);
+        val cipher = Cipher.getInstance(transformation);
         cipher.init(Cipher.ENCRYPT_MODE, pubKey);
         return cipher.doFinal(input);
     }
