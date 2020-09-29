@@ -8,6 +8,8 @@ import lombok.val;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.http.fileupload.RequestContext;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -52,11 +54,12 @@ public class ApiController {
     @SneakyThrows
     public ResponseEntity<?> getFile(@PathVariable String pathToFile, Principal principal, HttpServletRequest request) {
         val file = new FileSystemResource(principal.getName() + File.separator + pathToFile);
-        val keyHolder = (SessionKeyHolder) request.getSession().getAttribute(SessionKeyHolder.SESSION_KEY);
-        //TODO 9/29/20:
+//        val keyHolder = (SessionKeyHolder) request.getSession().getAttribute(SessionKeyHolder.SESSION_KEY);
+        //TODO 9/29/20: handle file not found and key expired not found
         return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
                 .lastModified(file.lastModified())
-                .body(aesService.encrypt(file.getInputStream(), ))
+                .body(new InputStreamResource(file.getInputStream()));
     }
 
     @PostMapping("/api/files/{pathToFile}")
