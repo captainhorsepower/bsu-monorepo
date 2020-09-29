@@ -46,16 +46,4 @@ public class CryptoFilesService {
         return Files.deleteIfExists(Paths.get(pathToFile));
     }
 
-
-
-    @SneakyThrows
-    InputStream readFile(String pathToFile) {
-        return Files.newInputStream(Paths.get(pathToFile), StandardOpenOption.READ);
-    }
-
-    @SneakyThrows
-    OutputStream outputStreamForWrite(String pathToFile) {
-        return Files.newOutputStream(Paths.get(pathToFile), StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-    }
-
 }
