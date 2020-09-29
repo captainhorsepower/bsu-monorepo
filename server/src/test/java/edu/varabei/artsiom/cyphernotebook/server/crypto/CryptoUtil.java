@@ -4,9 +4,13 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 @UtilityClass
 public class CryptoUtil {
@@ -55,4 +59,16 @@ public class CryptoUtil {
     private int available(ByteBuffer buf) {
         return buf.limit() - buf.position();
     }
+
+
+    @SneakyThrows
+    public InputStream inputStreamFromFileForRead(String pathToFile) {
+        return Files.newInputStream(Paths.get(pathToFile), StandardOpenOption.READ);
+    }
+
+    @SneakyThrows
+    public OutputStream outputStreamForWrite(String pathToFile) {
+        return Files.newOutputStream(Paths.get(pathToFile), StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+    }
+
 }
