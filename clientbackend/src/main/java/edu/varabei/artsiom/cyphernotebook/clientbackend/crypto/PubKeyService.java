@@ -5,11 +5,11 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Cipher;
-import java.security.KeyFactory;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.spec.KeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -18,20 +18,28 @@ import java.security.spec.X509EncodedKeySpec;
 @RequiredArgsConstructor
 public class PubKeyService {
 
-    private final KeyFactory pubKeyFactory;
+    private final String pubKeyAlgorithm;
     private final String pubKeyTransformation;
 
-    public byte[] encryptWithPubKey(byte[] input, String base64PubKey) {
-        val keySpec = new X509EncodedKeySpec(Base64.decodeBase64(base64PubKey));
-        return encryptWithPubKey(input, keySpec);
+    @SneakyThrows
+    public byte[] encrypt(byte[] raw, PublicKey pubKey) {
+        val cipher = Cipher.getInstance(pubKeyTransformation);
+        cipher.init(Cipher.ENCRYPT_MODE, pubKey);
+        return cipher.doFinal(raw);
     }
 
     @SneakyThrows
-    public byte[] encryptWithPubKey(byte[] input, KeySpec pubKeySpec) {
-        final PublicKey pubKey = pubKeyFactory.generatePublic(pubKeySpec);
-        final Cipher cipher = Cipher.getInstance(pubKeyTransformation);
-        cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-        return cipher.doFinal(input);
+    public byte[] decrypt(byte[] encrypted, Key privKey) {
+        val cipher = Cipher.getInstance(pubKeyTransformation);
+        cipher.init(Cipher.DECRYPT_MODE, privKey);
+        return cipher.doFinal(encrypted);
+    }
+
+    @SneakyThrows
+    public KeyPair genKeyPair() {
+        val keyPairGenerator = KeyPairGenerator.getInstance(pubKeyAlgorithm);
+        keyPairGenerator.initialize(4096);
+        return keyPairGenerator.generateKeyPair();
     }
 
 }
