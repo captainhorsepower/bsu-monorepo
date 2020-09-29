@@ -1,19 +1,23 @@
 package edu.varabei.artsiom.cyphernotebook.server.web;
 
+import edu.varabei.artsiom.cyphernotebook.server.crypto.AESCryptoService;
 import edu.varabei.artsiom.cyphernotebook.server.crypto.PubKeyService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.tomcat.util.http.fileupload.RequestContext;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.servlet.mvc.condition.RequestConditionHolder;
 
 import javax.crypto.KeyGenerator;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.xml.crypto.dsig.keyinfo.KeyValue;
+import java.io.File;
+import java.security.Principal;
 import java.time.Duration;
-import java.time.temporal.TemporalUnit;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ public class ApiController {
 
     private final KeyGenerator aesKeyGenerator;
     private final PubKeyService pubKeyService;
+    private final AESCryptoService aesService;
 
     @PostMapping("/api/signup")
     public String signup() {
@@ -31,13 +36,11 @@ public class ApiController {
     @PostMapping("/api/keygen")
     public ResponseEntity<?> sessionKeygen(HttpServletRequest request, @RequestBody KeygenForm form) {
         val keyHolder = new SessionKeyHolder(
-                aesKeyGenerator.generateKey(),
-                Duration.ofMinutes(60)
-        );
+                aesKeyGenerator.generateKey(), Duration.ofMinutes(60));
         request.getSession().setAttribute(SessionKeyHolder.SESSION_KEY, keyHolder);
 
-        val sessionKeyBytes = pubKeyService
-                .encryptWithPubKey(keyHolder.getKey().getEncoded(), form.getPubKeyBase64());
+        val sessionKeyBytes = pubKeyService.encryptWithPubKey(
+                keyHolder.getKey().getEncoded(), form.getPubKeyBase64());
         return ResponseEntity.ok(
                 new SessionKeyDTO(
                         new String(Base64.encodeBase64(sessionKeyBytes)),
@@ -46,9 +49,14 @@ public class ApiController {
     }
 
     @GetMapping("/api/files/{pathToFile}")
-    public ResponseEntity<?> getFile(@PathVariable String pathToFile) {
-        // FIXME: 9/29/20 
-        return ResponseEntity.ok("file");
+    @SneakyThrows
+    public ResponseEntity<?> getFile(@PathVariable String pathToFile, Principal principal, HttpServletRequest request) {
+        val file = new FileSystemResource(principal.getName() + File.separator + pathToFile);
+        val keyHolder = (SessionKeyHolder) request.getSession().getAttribute(SessionKeyHolder.SESSION_KEY);
+        //TODO 9/29/20:
+        return ResponseEntity.ok()
+                .lastModified(file.lastModified())
+                .body(aesService.encrypt(file.getInputStream(), ))
     }
 
     @PostMapping("/api/files/{pathToFile}")

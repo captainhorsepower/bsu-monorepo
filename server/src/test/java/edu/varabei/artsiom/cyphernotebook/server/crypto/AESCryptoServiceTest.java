@@ -16,10 +16,10 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class CryptoStreamServiceTest {
+class AESCryptoServiceTest {
 
     @Autowired
-    CryptoStreamService cryptoStreamService;
+    AESCryptoService AESCryptoService;
 
     @Autowired
     KeyGenerator aesKeyGenerator;
@@ -33,8 +33,8 @@ class CryptoStreamServiceTest {
         final byte[] bytes = randomBytes.array();
         new Random().nextBytes(bytes);
 
-        final InputStream encryptedInput = cryptoStreamService.encrypt(new ByteArrayInputStream(bytes), sessionKey);
-        final InputStream decryptedInput = cryptoStreamService.decrypt(encryptedInput, sessionKey);
+        final InputStream encryptedInput = AESCryptoService.encrypt(new ByteArrayInputStream(bytes), sessionKey);
+        final InputStream decryptedInput = AESCryptoService.decrypt(encryptedInput, sessionKey);
         final ByteArrayInputStream rawInput = new ByteArrayInputStream(bytes);
 
         assertTrue(CryptoUtil.isEqual(rawInput, decryptedInput));
@@ -48,13 +48,13 @@ class CryptoStreamServiceTest {
         // encrypt
         try (final InputStream rawImage = CryptoUtil.inputStreamFromFileForRead("src/test/resources/meem2.jpeg");
              final OutputStream out = CryptoUtil.outputStreamForWrite("src/test/resources/meem2-enc.jpeg")) {
-            final InputStream encrypt = cryptoStreamService.encrypt(rawImage, sessionKey);
+            final InputStream encrypt = AESCryptoService.encrypt(rawImage, sessionKey);
             encrypt.transferTo(out);
         }
         // decrypt
         try (final InputStream rawImage = CryptoUtil.inputStreamFromFileForRead("src/test/resources/meem2-enc.jpeg");
              final OutputStream out = CryptoUtil.outputStreamForWrite("src/test/resources/meem2-dec.jpeg")) {
-            final InputStream decrypt = cryptoStreamService.decrypt(rawImage, sessionKey);
+            final InputStream decrypt = AESCryptoService.decrypt(rawImage, sessionKey);
             decrypt.transferTo(out);
         }
 

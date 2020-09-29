@@ -19,7 +19,7 @@ import java.security.spec.AlgorithmParameterSpec;
 
 @Service
 @RequiredArgsConstructor
-public class CryptoStreamService {
+public class AESCryptoService {
 
     // 16 bytes ~ 128 bit ~ AES block size
     private static final int BYTE_BLOCK_LEN = 16;
