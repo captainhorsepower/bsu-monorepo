@@ -23,9 +23,7 @@ public class CryptoStreamService {
 
     // 16 bytes ~ 128 bit ~ AES block size
     private static final int BYTE_BLOCK_LEN = 16;
-//    private final Charset charset;
     private final String aesTransformation;
-//    private final KeyGenerator aesKeyGenerator;
 
     public InputStream encrypt(InputStream rawContentStream, Key sessionKey) {
         final ByteArrayInputStream prependedBlock = new ByteArrayInputStream(secureRandom128Bit());

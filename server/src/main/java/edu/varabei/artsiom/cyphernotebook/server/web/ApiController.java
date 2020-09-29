@@ -2,8 +2,7 @@ package edu.varabei.artsiom.cyphernotebook.server.web;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.KeyGenerator;
 import javax.servlet.http.HttpServletRequest;
@@ -15,16 +14,17 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
-public class HelloWorldController {
+public class ApiController {
 
     private final KeyGenerator aesKeyGenerator;
 
-    @RequestMapping("/api/signup")
+    @PostMapping("/api/signup")
     public String signup() {
+        // FIXME: 9/29/20 
         throw new RuntimeException("sign up not implemented");
     }
 
-    @RequestMapping("/api/keygen")
+    @PostMapping("/api/keygen")
     public ResponseEntity<?> genSessionKey(HttpServletRequest request) {
         final HttpSession session = request.getSession();
         final SessionKeyHolder keyHolder = new SessionKeyHolder(
@@ -33,7 +33,26 @@ public class HelloWorldController {
         );
         session.setAttribute(SessionKeyHolder.SESSION_KEY, keyHolder);
 
+        //TODO 9/29/20: encrypt and send key
         return ResponseEntity.ok("encrypted key and ttl");
+    }
+    
+    @GetMapping("/api/files/{pathToFile}")
+    public ResponseEntity<?> getFile(@PathVariable String pathToFile) {
+        // FIXME: 9/29/20 
+        return ResponseEntity.ok("file");
+    }
+    
+    @PostMapping("/api/files/{pathToFile}")
+    public ResponseEntity<?> postFile(@PathVariable String pathToFile) {
+        // FIXME: 9/29/20 
+        return ResponseEntity.ok("update or upload");
+    }
+    
+    @DeleteMapping("/api/files/{pathToFile}")
+    public ResponseEntity<?> deleteFile(@PathVariable String pathToFile) {
+        // FIXME: 9/29/20 
+        return ResponseEntity.ok("deleted");
     }
 
 }
