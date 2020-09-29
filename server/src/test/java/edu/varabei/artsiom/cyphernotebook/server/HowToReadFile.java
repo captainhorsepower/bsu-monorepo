@@ -1,6 +1,8 @@
 package edu.varabei.artsiom.cyphernotebook.server;
 
 import lombok.SneakyThrows;
+import org.apache.commons.io.input.CountingInputStream;
+import org.apache.commons.io.output.CountingOutputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,10 +11,10 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -22,7 +24,7 @@ import java.security.Key;
 
 public class HowToReadFile {
 
-    private static final Charset charset = StandardCharsets.UTF_8;
+    private static final Charset charset = StandardCharsets.US_ASCII;
     private static final String aesKeyString = "1234567812345678";
 
     @Test
@@ -32,30 +34,97 @@ public class HowToReadFile {
         Assertions.assertEquals("line1: hello worldline2: Hello World", content);
     }
 
+//    @Test
+//    @SneakyThrows
+//    public void encryptDecryptFileWithOutputStream() {
+//        try (InputStream rawInput = inputStreamFromFileForRead("src/test/resources/hello-world.txt");
+//             OutputStream outputStream = outputStreamForWrite("src/test/resources/hello-world-encrypted-out.txt")) {
+//            OutputStream encryptingOutput = new CipherOutputStream(outputStream, getAESCipher(Cipher.ENCRYPT_MODE));
+//            transferTo(rawInput, encryptingOutput);
+//        }
+//
+//        try (InputStream encInput = inputStreamFromFileForRead("src/test/resources/hello-world-encrypted-out.txt");
+//             OutputStream outputStream = outputStreamForWrite("src/test/resources/hello-world-decrypted-out.txt")) {
+//            OutputStream decryptingOutput = new CipherOutputStream(outputStream, getAESCipher(Cipher.DECRYPT_MODE));
+//            transferTo(encInput, decryptingOutput);
+//        }
+//
+//        final InputStream inputStream = inputStreamFromFileForRead("src/test/resources/hello-world-encrypted-out.txt");
+//        final CipherInputStream decryptingInputStream = new CipherInputStream(inputStream, getAESCipher(Cipher.DECRYPT_MODE));
+//        final String content = textFromFile(decryptingInputStream);
+//        System.out.println(content);
+//    }
+
     @Test
     @SneakyThrows
-    public void copyFile() {
-        try (InputStream inputStream = inputStreamFromFileForRead("src/test/resources/hello-world.txt");
-             OutputStream outputStream = outputStreamForWrite("src/test/resources/hello-world-copy.txt")) {
-            inputStream.transferTo(outputStream);
+    public void encryptDecryptFileWithInputStream() {
+        try (InputStream rawInput = inputStreamFromFileForRead("src/test/resources/hello-world.txt");
+             OutputStream outputStream = outputStreamForWrite("src/test/resources/hello-world-encrypted-in.txt")) {
+            InputStream encryptingInput = new CipherInputStream(rawInput, getAESCipher(Cipher.ENCRYPT_MODE));
+            transferTo(encryptingInput, outputStream);
+        }
+
+        try (InputStream encInput = inputStreamFromFileForRead("src/test/resources/hello-world-encrypted-in.txt");
+             OutputStream outputStream = outputStreamForWrite("src/test/resources/hello-world-decrypted-in.txt")) {
+            InputStream decryptingInput = new CipherInputStream(encInput, getAESCipher(Cipher.DECRYPT_MODE));
+            transferTo(decryptingInput, outputStream);
+        }
+
+        try (InputStream rawInput = inputStreamFromFileForRead("src/test/resources/hello-world.txt");
+             InputStream decInput = inputStreamFromFileForRead("src/test/resources/hello-world-decrypted-in.txt")) {
+            final String rawContent = textFromFile(rawInput);
+            final String decContent = textFromFile(decInput);
+            Assertions.assertEquals(rawContent, decContent);
         }
     }
 
     @Test
     @SneakyThrows
-    public void encryptDecryptFile() {
-        try (InputStream inputStream = inputStreamFromFileForRead("src/test/resources/hello-world.txt");
-             OutputStream outputStream = outputStreamForWrite("src/test/resources/hello-world-encrypted.txt")) {
-            InputStream encrypted = new CipherInputStream(inputStream, getAESCipher(Cipher.ENCRYPT_MODE));
-            encrypted.transferTo(outputStream);
+    public void encryptDecryptImageFileWithInputStream() {
+        try (InputStream rawInput = inputStreamFromFileForRead("src/test/resources/meem1.jpeg");
+             OutputStream outputStream = outputStreamForWrite("src/test/resources/meem1-encrypted.jpeg")) {
+            InputStream encryptingInput = new CipherInputStream(rawInput, getAESCipher(Cipher.ENCRYPT_MODE));
+            transferTo(encryptingInput, outputStream);
         }
 
-        try (InputStream inputStream = inputStreamFromFileForRead("src/test/resources/hello-world-encrypted.txt");
-             OutputStream outputStream = outputStreamForWrite("src/test/resources/hello-world-decrypted.txt")) {
-            OutputStream decrypted = new CipherOutputStream(outputStream, getAESCipher(Cipher.DECRYPT_MODE));
-            inputStream.transferTo(decrypted);
+        try (InputStream encInput = inputStreamFromFileForRead("src/test/resources/meem1-encrypted.jpeg");
+             OutputStream outputStream = outputStreamForWrite("src/test/resources/meem1-decrypted.jpeg")) {
+            InputStream decryptingInput = new CipherInputStream(encInput, getAESCipher(Cipher.DECRYPT_MODE));
+            transferTo(decryptingInput, outputStream);
         }
 
+        try (InputStream rawInput = inputStreamFromFileForRead("src/test/resources/meem1.jpeg");
+             InputStream decInput = inputStreamFromFileForRead("src/test/resources/meem1-decrypted.jpeg")) {
+            Assertions.assertTrue(isEqual(rawInput, decInput));
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    public void hmm() {
+        try (InputStream rawInput = inputStreamFromFileForRead("src/test/resources/hello-world.txt");
+             OutputStream outputStream = outputStreamForWrite("src/test/resources/hello-world-encrypted-decrypted-input.txt")) {
+            InputStream encryptingInput = new CipherInputStream(rawInput, getAESCipher(Cipher.ENCRYPT_MODE));
+            InputStream decryptingInput = new CipherInputStream(encryptingInput, getAESCipher(Cipher.DECRYPT_MODE));
+            transferTo(decryptingInput, outputStream);
+        }
+
+        try (InputStream rawInput = inputStreamFromFileForRead("src/test/resources/hello-world.txt");
+             OutputStream outputStream = outputStreamForWrite("src/test/resources/hello-world-encrypted-decrypted-output.txt")) {
+            OutputStream encryptingOutput = new CipherOutputStream(outputStream, getAESCipher(Cipher.ENCRYPT_MODE));
+            OutputStream decryptingOutput = new CipherOutputStream(encryptingOutput, getAESCipher(Cipher.DECRYPT_MODE));
+            transferTo(rawInput, decryptingOutput);
+        }
+    }
+
+    @SneakyThrows
+    void transferTo(InputStream is, OutputStream os) {
+        final CountingInputStream cis = new CountingInputStream(is);
+        final CountingOutputStream cos = new CountingOutputStream(os);
+
+        final long transfered = cis.transferTo(cos);
+
+        System.out.printf("\ntransfered: %s\nis: %s\nos: %s\n", transfered, cis.getCount(), cos.getCount());
     }
 
     @SneakyThrows
@@ -70,14 +139,17 @@ public class HowToReadFile {
 
     @SneakyThrows
     String textFromFile(InputStream is) {
+        is = new CountingInputStream(is);
         final InputStreamReader inputStreamReader = new InputStreamReader(is);
         final BufferedReader reader = new BufferedReader(inputStreamReader);
 
         StringBuilder content = new StringBuilder();
-        String str = "";
+        String str;
         while ((str = reader.readLine()) != null) {
             content.append(str);
         }
+
+        System.out.printf("read %s bytes\n", ((CountingInputStream) is).getCount());
 
         reader.close();
 
@@ -92,6 +164,40 @@ public class HowToReadFile {
         final IvParameterSpec iv = new IvParameterSpec(aesKeyString.getBytes(charset));
         cipher.init(mode, key, iv);
         return cipher;
+    }
+
+    private static boolean isEqual(InputStream i1, InputStream i2)
+            throws IOException {
+
+        ReadableByteChannel ch1 = Channels.newChannel(i1);
+        ReadableByteChannel ch2 = Channels.newChannel(i2);
+
+        ByteBuffer buf1 = ByteBuffer.allocateDirect(1024);
+        ByteBuffer buf2 = ByteBuffer.allocateDirect(1024);
+
+        try {
+            while (true) {
+
+                int n1 = ch1.read(buf1);
+                int n2 = ch2.read(buf2);
+
+                if (n1 == -1 || n2 == -1) return n1 == n2;
+
+                buf1.flip();
+                buf2.flip();
+
+                for (int i = 0; i < Math.min(n1, n2); i++)
+                    if (buf1.get() != buf2.get())
+                        return false;
+
+                buf1.compact();
+                buf2.compact();
+            }
+
+        } finally {
+            i1.close();
+            i2.close();
+        }
     }
 
 }
