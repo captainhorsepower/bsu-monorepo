@@ -7,16 +7,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class CryptoStreamServiceTest {

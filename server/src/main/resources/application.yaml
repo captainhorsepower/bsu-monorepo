@@ -1,0 +1,35 @@
+spring:
+  servlet:
+    multipart:
+      max-request-size: 16MB
+      max-file-size: 16MB
+  jackson:
+    deserialization:
+      USE_LONG_FOR_INTS: true
+
+  datasource:
+    hikari:
+      connection-timeout: 10000
+      maximum-pool-size: 20
+    url: jdbc:postgresql://localhost:5432/kbrs
+    username: username
+    password: password
+    driverClassName: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+          lob:
+            non_contextual_creation: true # fix exception caused by some not implemented by postgres stuff
+        show_sql: false # show generated sql for debug and optimizations
+        format_sql: true
+
+logging:
+  file:
+    max-size: 1MB
+  level:
+    org.apache: off # shut up unnecessary exception log from org.apache.catalina.core.StandardWrapperValve
+    org.springframework: info
