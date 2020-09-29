@@ -11,11 +11,13 @@ public class SessionKeyHolder {
     public static final String SESSION_KEY = "session-key";
 
     Key key;
+    String transformation;
     Instant exp;
 
-    public SessionKeyHolder(Key key, Duration ttl) {
+    public SessionKeyHolder(Key key, String transformation, long exp) {
         this.key = key;
-        this.exp = Instant.now().plus(ttl);
+        this.transformation = transformation;
+        this.exp = Instant.ofEpochMilli(exp);
     }
 
     public boolean keyExpired() {

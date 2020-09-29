@@ -6,11 +6,11 @@ import lombok.Value;
 @Value
 public class SessionKeyDTO {
 
-    @JsonProperty("AES_transformation")
-    String aesTransformation;
+    @JsonProperty("transformation")
+    String transformation;
 
     @JsonProperty("session_key_base64")
-    String sessionKey;
+    String keyBase64;
 
     long exp;
 
