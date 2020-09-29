@@ -39,15 +39,15 @@ class PubKeyServiceTest {
     }
 
     @SneakyThrows
-    private byte[] decode(byte[] encoded, Key privKey) {
+    public byte[] decode(byte[] encoded, Key privKey) {
         val cipher = Cipher.getInstance(pubKeyTransformation);
         cipher.init(Cipher.DECRYPT_MODE, privKey);
         return cipher.doFinal(encoded);
     }
 
     @SneakyThrows
-    private KeyPair keyPair() {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+    public KeyPair keyPair() {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(pubKeyAlgorithm);
         keyPairGenerator.initialize(4096);
         return keyPairGenerator.generateKeyPair();
     }
