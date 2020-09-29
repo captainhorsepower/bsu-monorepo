@@ -1,6 +1,7 @@
 package edu.varabei.artsiom.cyphernotebook.server.web;
 
 import edu.varabei.artsiom.cyphernotebook.server.crypto.AESCryptoService;
+import edu.varabei.artsiom.cyphernotebook.server.crypto.CryptoFilesService;
 import edu.varabei.artsiom.cyphernotebook.server.crypto.PubKeyService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -17,7 +18,10 @@ import org.springframework.web.servlet.mvc.condition.RequestConditionHolder;
 
 import javax.crypto.KeyGenerator;
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.io.File;
+import java.io.InputStream;
+import java.security.Key;
 import java.security.Principal;
 import java.time.Duration;
 
@@ -27,7 +31,8 @@ public class ApiController {
 
     private final KeyGenerator aesKeyGenerator;
     private final PubKeyService pubKeyService;
-    private final AESCryptoService aesService;
+
+    private final CryptoFilesService filesService;
 
     @PostMapping("/api/signup")
     public String signup() {
@@ -50,27 +55,38 @@ public class ApiController {
                 ));
     }
 
+    Key getSessionKey(HttpServletRequest request) {
+        val keyHolder = (SessionKeyHolder) request.getSession().getAttribute(SessionKeyHolder.SESSION_KEY);
+        if (keyHolder == null || keyHolder.keyExpired()) throw new RuntimeException("session key expired");
+        return keyHolder.getKey();
+    }
+
+    String userPathToFile(Principal principal, String pathToFile) {
+        return principal.getName() + File.separator + pathToFile;
+    }
+
     @GetMapping("/api/files/{pathToFile}")
     @SneakyThrows
     public ResponseEntity<?> getFile(@PathVariable String pathToFile, Principal principal, HttpServletRequest request) {
-        val file = new FileSystemResource(principal.getName() + File.separator + pathToFile);
-//        val keyHolder = (SessionKeyHolder) request.getSession().getAttribute(SessionKeyHolder.SESSION_KEY);
-        //TODO 9/29/20: handle file not found and key expired not found
+        val sessionKey = getSessionKey(request);
+        val userPathToFile = userPathToFile(principal, pathToFile);
+        InputStream encryptedFile = filesService.getFileEncrypted(userPathToFile, sessionKey);
+
         return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG)
-                .lastModified(file.lastModified())
-                .body(new InputStreamResource(file.getInputStream()));
+                .body(new InputStreamResource(encryptedFile));
     }
 
     @PostMapping("/api/files/{pathToFile}")
-    public ResponseEntity<?> postFile(@PathVariable String pathToFile) {
-        // FIXME: 9/29/20 
+    public ResponseEntity<?> postFile(@PathVariable String pathToFile, Principal principal, HttpServletRequest request) {
+        val sessionKey = getSessionKey(request);
+        val userPathToFile = userPathToFile(principal, pathToFile);
         return ResponseEntity.ok("update or upload");
     }
 
     @DeleteMapping("/api/files/{pathToFile}")
-    public ResponseEntity<?> deleteFile(@PathVariable String pathToFile) {
-        // FIXME: 9/29/20
+    public ResponseEntity<?> deleteFile(@PathVariable String pathToFile, Principal principal, HttpServletRequest request) {
+        val sessionKey = getSessionKey(request);
+        val userPathToFile = userPathToFile(principal, pathToFile);
         return ResponseEntity.ok("deleted");
     }
 

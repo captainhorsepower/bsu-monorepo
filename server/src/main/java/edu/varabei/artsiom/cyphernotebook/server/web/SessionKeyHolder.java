@@ -21,4 +21,7 @@ public class SessionKeyHolder {
         this.exp = Instant.now().plus(ttl);
     }
 
+    public boolean keyExpired() {
+        return Instant.now().isAfter(exp);
+    }
 }
