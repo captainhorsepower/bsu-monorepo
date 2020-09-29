@@ -84,10 +84,10 @@ public class ApiController {
     }
 
     @DeleteMapping("/api/files/{pathToFile}")
-    public ResponseEntity<?> deleteFile(@PathVariable String pathToFile, Principal principal, HttpServletRequest request) {
-        val sessionKey = getSessionKey(request);
+    public ResponseEntity<?> deleteFile(@PathVariable String pathToFile, Principal principal) {
         val userPathToFile = userPathToFile(principal, pathToFile);
-        return ResponseEntity.ok("deleted");
+        val deleted = filesService.deleteFile(userPathToFile);
+        return ResponseEntity.ok(deleted ? "deleted" : "deleted (not found)");
     }
 
 }

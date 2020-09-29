@@ -22,14 +22,21 @@ public class CryptoFilesService {
     private final AESCryptoService aesService;
 
     @SneakyThrows
-    public InputStream getFileEncrypted(String pathToFile, Key sessionKey) {
+    public InputStream getFileEncrypted(String pathToFile, Key aesKey) {
         val path = Paths.get(pathToFile);
         if (!Files.exists(path)) throw new RuntimeException("File " + pathToFile + " does not exist");
 
         val is = Files.newInputStream(Paths.get(pathToFile), StandardOpenOption.READ);
 
-        return aesService.encrypt(is, sessionKey);
+        return aesService.encrypt(is, aesKey);
     }
+
+    @SneakyThrows
+    public boolean deleteFile(String pathToFile) {
+        return Files.deleteIfExists(Paths.get(pathToFile));
+    }
+
+
 
     @SneakyThrows
     InputStream readFile(String pathToFile) {
