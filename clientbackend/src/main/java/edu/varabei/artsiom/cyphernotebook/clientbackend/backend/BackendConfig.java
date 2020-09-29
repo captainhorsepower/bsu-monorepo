@@ -1,6 +1,6 @@
 package edu.varabei.artsiom.cyphernotebook.clientbackend.backend;
 
-import lombok.val;
+import edu.varabei.artsiom.cyphernotebook.clientbackend.StateStore;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package edu.varabei.artsiom.cyphernotebook.clientbackend.backend;
+package edu.varabei.artsiom.cyphernotebook.clientbackend;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

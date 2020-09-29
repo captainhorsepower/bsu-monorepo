@@ -1,5 +1,6 @@
 package edu.varabei.artsiom.cyphernotebook.clientbackend.backend;
 
+import edu.varabei.artsiom.cyphernotebook.clientbackend.StateStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
