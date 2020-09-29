@@ -1,6 +1,7 @@
 package edu.varabei.artsiom.cyphernotebook.server.web.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,7 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    
+
+    @Autowired
     UserDetailsService userDetailsService;
 
     @Override
@@ -45,9 +47,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // @formatter:off
         http
             .authorizeRequests()
-                .anyRequest().authenticated()
                 .antMatchers("/api/login", "/api/signup", "/error").permitAll()
+                .anyRequest().authenticated()
             .and().httpBasic()
+                .realmName("LABA2")
                 .authenticationEntryPoint((req, res, e) -> {throw e;})
             .and().exceptionHandling()
                 .authenticationEntryPoint((req, res, e) -> {throw e;})

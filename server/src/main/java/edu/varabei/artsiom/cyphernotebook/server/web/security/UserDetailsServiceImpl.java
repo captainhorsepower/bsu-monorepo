@@ -20,6 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .username(s)
                 .password("password")
                 .passwordEncoder(passwordEncoder::encode)
+                .authorities("read", "write")
                 .build();
     }
 }
