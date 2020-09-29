@@ -1,4 +1,4 @@
-package edu.varabei.artsiom.cyphernotebook.clientbackend.web;
+package edu.varabei.artsiom.cyphernotebook.clientbackend.backend;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;

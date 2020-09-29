@@ -20,23 +20,23 @@ public class AESCryptoService {
 
     // 16 bytes ~ 128 bit ~ AES block size
     private static final int BYTE_BLOCK_LEN = 16;
-    private final String aesTransformation;
 
-    public InputStream encrypt(InputStream rawContentStream, Key sessionKey) {
+    public InputStream encrypt(InputStream rawContentStream, String transformation, Key key) {
         final ByteArrayInputStream prependedBlock = new ByteArrayInputStream(secureRandom128Bit());
         final SequenceInputStream prependedStream = new SequenceInputStream(prependedBlock, rawContentStream);
-        return new CipherInputStream(prependedStream, getCipher(Cipher.ENCRYPT_MODE, sessionKey));
+        return new CipherInputStream(prependedStream, getCipher(Cipher.ENCRYPT_MODE, transformation, key));
     }
 
     @SneakyThrows
-    public InputStream decrypt(InputStream encryptedContentStream, Key sessionKey) {
-        final CipherInputStream decryptingStream = new CipherInputStream(encryptedContentStream, getCipher(Cipher.DECRYPT_MODE, sessionKey));
+    public InputStream decrypt(InputStream encryptedContentStream, String transformation, Key key) {
+        final CipherInputStream decryptingStream = new CipherInputStream(
+                encryptedContentStream, getCipher(Cipher.DECRYPT_MODE, transformation, key));
         decryptingStream.skipNBytes(BYTE_BLOCK_LEN);
         return decryptingStream;
     }
 
     @SneakyThrows
-    Cipher getCipher(int mode, Key key) {
+    Cipher getCipher(int mode, String aesTransformation, Key key) {
         final Cipher cipher = Cipher.getInstance(aesTransformation);
         final byte[] iv = secureRandom128Bit();
         cipher.init(mode, key, new IvParameterSpec(iv));
