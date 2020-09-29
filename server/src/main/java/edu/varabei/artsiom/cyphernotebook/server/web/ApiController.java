@@ -81,7 +81,7 @@ public class ApiController {
     @SneakyThrows
     @PostMapping("/api/files/{pathToFile}")
     public ResponseEntity<?> postFile(@PathVariable String pathToFile,
-                                      @RequestParam("file") MultipartFile encryptedFile,
+                                      @RequestPart("file") MultipartFile encryptedFile,
                                       Principal principal,
                                       HttpServletRequest request) {
         val sessionKey = getSessionKey(request);

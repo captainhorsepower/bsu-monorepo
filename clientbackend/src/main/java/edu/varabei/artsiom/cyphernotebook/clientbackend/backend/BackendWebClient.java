@@ -1,18 +1,21 @@
 package edu.varabei.artsiom.cyphernotebook.clientbackend.backend;
 
 import edu.varabei.artsiom.cyphernotebook.clientbackend.StateStore;
+import edu.varabei.artsiom.cyphernotebook.clientbackend.crypto.AESCryptoService;
 import edu.varabei.artsiom.cyphernotebook.clientbackend.crypto.PubKeyService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.codec.binary.Base64;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 
@@ -27,6 +30,7 @@ public class BackendWebClient {
     private final RestTemplate restTemplate;
     private final StateStore stateStore;
     private final PubKeyService pubKeyService;
+    private final AESCryptoService aesCryptoService;
 
     private final String pubKeyTransformation;
     private final String pubKeyAlgorithm;
@@ -41,7 +45,7 @@ public class BackendWebClient {
         stateStore.put(KEY_PAIR, keyPair);
     }
 
-    public void getSessionKey() {
+    public SessionKeyHolder getSessionKey() {
         final KeyPair keyPair = stateStore.get(KEY_PAIR);
         val request = new KeygenRequestDTO(
                 pubKeyTransformation,
@@ -54,12 +58,37 @@ public class BackendWebClient {
         checkCookie(response);
 
         val sessionKeyDTO = response.getBody();
+        val aesKeyBytes = pubKeyService.decrypt(base64(sessionKeyDTO.getKeyBase64()), keyPair.getPrivate());
         val keyHolder = new SessionKeyHolder(
-                new SecretKeySpec(base64(sessionKeyDTO.getKeyBase64()), "AES"),
-                sessionKeyDTO.getTransformation(),
+                new SecretKeySpec(aesKeyBytes, "AES"),
+        sessionKeyDTO.getTransformation(),
                 sessionKeyDTO.getExp());
 
         stateStore.put(SESSION_KEY, keyHolder);
+        return keyHolder;
+    }
+
+    // FIXME: 9/30/20 does not work, silence on the other end
+    @SneakyThrows
+    public String uploadFile(InputStream rawContent, String pathToFile) {
+        //TODO 9/30/20: check exp
+        final SessionKeyHolder holder = stateStore.get(SESSION_KEY);
+        val encryptedContent = aesCryptoService.encrypt(rawContent, holder.getTransformation(), holder.getKey());
+
+        val headers = createHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", encryptedContent.readAllBytes());
+
+        val response = restTemplate.exchange(
+                "http://localhost:8080/api/files/" + pathToFile,
+                HttpMethod.POST,
+                new HttpEntity<>(body, headers),
+                String.class);
+
+        checkCookie(response);
+        return response.getBody();
     }
 
     HttpHeaders createHeaders() {
