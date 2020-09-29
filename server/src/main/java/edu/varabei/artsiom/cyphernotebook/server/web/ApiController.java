@@ -1,25 +1,18 @@
 package edu.varabei.artsiom.cyphernotebook.server.web;
 
-import edu.varabei.artsiom.cyphernotebook.server.crypto.AESCryptoService;
 import edu.varabei.artsiom.cyphernotebook.server.crypto.CryptoFilesService;
 import edu.varabei.artsiom.cyphernotebook.server.crypto.PubKeyService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.apache.tomcat.util.http.fileupload.RequestContext;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.condition.RequestConditionHolder;
 
 import javax.crypto.KeyGenerator;
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.io.File;
 import java.io.InputStream;
 import java.security.Key;
@@ -32,6 +25,7 @@ public class ApiController {
 
     private final KeyGenerator aesKeyGenerator;
     private final PubKeyService pubKeyService;
+    private final String aesTransformation;
 
     private final CryptoFilesService filesService;
 
@@ -51,6 +45,7 @@ public class ApiController {
                 keyHolder.getKey().getEncoded(), form.getPubKeyBase64());
         return ResponseEntity.ok(
                 new SessionKeyDTO(
+                        aesTransformation,
                         new String(Base64.encodeBase64(sessionKeyBytes)),
                         keyHolder.getExp().toEpochMilli()
                 ));

@@ -1,4 +1,4 @@
-package edu.varabei.artsiom.cyphernotebook.server.web;
+package edu.varabei.artsiom.cyphernotebook.clientbackend.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
