@@ -71,11 +71,11 @@ public class BackendWebClient {
             byte[] encodedAuth = Base64.encodeBase64(
                     auth.getBytes(StandardCharsets.US_ASCII));
             String authHeader = "Basic " + new String(encodedAuth);
-            set("Authorization", authHeader);
+            set(HttpHeaders.AUTHORIZATION, authHeader);
 
             String cookie = stateStore.get("cookie");
             if (cookie != null) {
-                set("Cookie", cookie);
+                set(HttpHeaders.AUTHORIZATION, cookie);
             }
         }};
     }
@@ -89,7 +89,7 @@ public class BackendWebClient {
     }
 
     void checkCookie(ResponseEntity<?> response) {
-        val headers = response.getHeaders().get("Set-Cookie");
+        val headers = response.getHeaders().get(HttpHeaders.SET_COOKIE);
         if (headers != null && !headers.isEmpty())
             headers.stream().findFirst()
                     .ifPresent(cookie -> stateStore.put("cookie", cookie));
