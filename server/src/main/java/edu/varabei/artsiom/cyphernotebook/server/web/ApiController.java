@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.condition.RequestConditionHolder;
 
 import javax.crypto.KeyGenerator;
@@ -67,20 +68,25 @@ public class ApiController {
 
     @GetMapping("/api/files/{pathToFile}")
     @SneakyThrows
-    public ResponseEntity<?> getFile(@PathVariable String pathToFile, Principal principal, HttpServletRequest request) {
+    public ResponseEntity<?> getFile(@PathVariable String pathToFile,
+                                     Principal principal,
+                                     HttpServletRequest request) {
         val sessionKey = getSessionKey(request);
         val userPathToFile = userPathToFile(principal, pathToFile);
         InputStream encryptedFile = filesService.getFileEncrypted(userPathToFile, sessionKey);
-
-        return ResponseEntity.ok()
-                .body(new InputStreamResource(encryptedFile));
+        return ResponseEntity.ok().body(new InputStreamResource(encryptedFile));
     }
 
+    @SneakyThrows
     @PostMapping("/api/files/{pathToFile}")
-    public ResponseEntity<?> postFile(@PathVariable String pathToFile, Principal principal, HttpServletRequest request) {
+    public ResponseEntity<?> postFile(@PathVariable String pathToFile,
+                                      @RequestParam("file") MultipartFile encryptedFile,
+                                      Principal principal,
+                                      HttpServletRequest request) {
         val sessionKey = getSessionKey(request);
         val userPathToFile = userPathToFile(principal, pathToFile);
-        return ResponseEntity.ok("update or upload");
+        val bytesWritten = filesService.saveFile(userPathToFile, sessionKey, encryptedFile.getInputStream());
+        return ResponseEntity.ok("saved " + bytesWritten + " bytes");
     }
 
     @DeleteMapping("/api/files/{pathToFile}")

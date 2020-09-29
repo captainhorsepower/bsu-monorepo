@@ -32,6 +32,16 @@ public class CryptoFilesService {
     }
 
     @SneakyThrows
+    public long saveFile(String pathToFile, Key aesKey, InputStream encryptedFile) {
+        val path = Paths.get(pathToFile);
+        Files.createDirectories(path.getParent());
+
+        val is = aesService.decrypt(encryptedFile, aesKey);
+        val os = Files.newOutputStream(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+        return is.transferTo(os);
+    }
+
+    @SneakyThrows
     public boolean deleteFile(String pathToFile) {
         return Files.deleteIfExists(Paths.get(pathToFile));
     }
