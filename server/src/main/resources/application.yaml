@@ -1,8 +1,8 @@
 spring:
   servlet:
     multipart:
-      max-request-size: 16MB
-      max-file-size: 16MB
+      max-request-size: 100MB
+      max-file-size: 100MB
   jackson:
     deserialization:
       USE_LONG_FOR_INTS: true
