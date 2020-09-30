@@ -63,4 +63,20 @@ class BackendWebClientTest {
         System.out.println(response);
     }
 
+    @Test
+    @SneakyThrows
+    public void uploadAndDownloadPPTX() {
+        backend.saveCredentials("artem", "password");
+        backend.genKeyPair();
+        backend.getSessionKey();
+
+        backend.uploadFile(
+                Files.newInputStream(Paths.get("my-files/aircloud.pptx")),
+                "aircloud.backup");
+        backend.getSessionKey();
+        backend.getFile(
+                Files.newOutputStream(Paths.get("my-files/aircloud-down.pptx")),
+                "aircloud.backup");
+    }
+
 }

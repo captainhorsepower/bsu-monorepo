@@ -6,16 +6,11 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
-import javax.crypto.KeyGenerator;
 import javax.crypto.spec.IvParameterSpec;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.SequenceInputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.security.Key;
 import java.security.SecureRandom;
-import java.security.spec.AlgorithmParameterSpec;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +29,29 @@ public class AESCryptoService {
     @SneakyThrows
     public InputStream decrypt(InputStream encryptedContentStream, Key sessionKey) {
         final CipherInputStream decryptingStream = new CipherInputStream(encryptedContentStream, getCipher(Cipher.DECRYPT_MODE, sessionKey));
-        decryptingStream.skipNBytes(BYTE_BLOCK_LEN);
+        skipNBytes(decryptingStream, BYTE_BLOCK_LEN);
         return decryptingStream;
+    }
+
+    // skip N bytes not found on every damn JRE, so here it is (copied from java.io.InputStream)
+    public void skipNBytes(InputStream is, long n) throws IOException {
+        if (n > 0) {
+            long ns = is.skip(n);
+            if (ns >= 0 && ns < n) { // skipped too few bytes
+                // adjust number to skip
+                n -= ns;
+                // read until requested number skipped or EOS reached
+                while (n > 0 && is.read() != -1) {
+                    n--;
+                }
+                // if not enough skipped, then EOFE
+                if (n != 0) {
+                    throw new EOFException();
+                }
+            } else if (ns != n) { // skipped negative or too many bytes
+                throw new IOException("Unable to skip exactly");
+            }
+        }
     }
 
     @SneakyThrows
