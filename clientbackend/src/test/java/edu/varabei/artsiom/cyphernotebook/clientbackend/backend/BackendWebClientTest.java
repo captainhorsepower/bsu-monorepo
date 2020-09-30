@@ -51,4 +51,13 @@ class BackendWebClientTest {
         System.out.println("read " + bytesRead.longValue() + " bytes");
     }
 
+    @Test
+    public void deleteFile() {
+        backend.saveCredentials("artem", "password");
+        backend.genKeyPair();
+        backend.getSessionKey();
+
+        backend.deleteFile("deleteme");
+    }
+
 }

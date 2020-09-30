@@ -114,6 +114,13 @@ public class BackendWebClient {
                                 .transferTo(output));
     }
 
+    public String deleteFile(String pathToFile) {
+        val response = restTemplate.exchange(
+                "http://localhost:8080/api/files/" + pathToFile,
+                HttpMethod.DELETE, new HttpEntity<>(createHeaders()), String.class);
+        return response.getBody();
+    }
+
     HttpHeaders createHeaders() {
         return new HttpHeaders() {{
             String username = stateStore.get("username");
