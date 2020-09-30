@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -76,23 +77,32 @@ public class BackendWebClient {
         return stateStore.get(SESSION_KEY);
     }
 
-    // FIXME: 9/30/20 does not work, silence on the other end
+    // much thanks to https://medium.com/red6-es/uploading-a-file-with-a-filename-with-spring-resttemplate-8ec5e7dc52ca
     @SneakyThrows
     public String uploadFile(InputStream rawContent, String pathToFile) {
         val keyHolder = keyHolder();
         val encryptedContent = aesCryptoService.encrypt(rawContent, keyHolder.getTransformation(), keyHolder.getKey());
 
-        val headers = createHeaders();
+        HttpHeaders headers = createHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
+        // This nested HttpEntiy is important to create the correct
+        // Content-Disposition entry with metadata "name" and "filename"
+        MultiValueMap<String, String> fileMap = new LinkedMultiValueMap<>();
+        ContentDisposition contentDisposition = ContentDisposition
+                .builder("form-data")
+                .name("file")
+                .filename("localfile")
+                .build();
+        fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+        HttpEntity<byte[]> fileEntity = new HttpEntity<>(encryptedContent.readAllBytes(), fileMap);
+
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", encryptedContent.readAllBytes());
+        body.add("file", fileEntity);
 
         val response = restTemplate.exchange(
                 "http://localhost:8080/api/files/" + pathToFile,
-                HttpMethod.POST,
-                new HttpEntity<>(body, headers),
-                String.class);
+                HttpMethod.POST, new HttpEntity<>(body, headers), String.class);
 
         checkCookie(response);
         return response.getBody();

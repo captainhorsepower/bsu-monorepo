@@ -37,6 +37,8 @@ class BackendWebClientTest {
         val rawContent = Files.newInputStream(Paths.get("my-files/source.jpeg"));
         val feedback = backend.uploadFile(rawContent, "uploaded.jpeg");
         System.out.println(feedback);
+
+        backend.uploadFile(Files.newInputStream(Paths.get("my-files/textfile.txt")), "text.txt");
     }
 
     @Test
@@ -57,7 +59,8 @@ class BackendWebClientTest {
         backend.genKeyPair();
         backend.getSessionKey();
 
-        backend.deleteFile("deleteme");
+        val response = backend.deleteFile("deleteme");
+        System.out.println(response);
     }
 
 }
