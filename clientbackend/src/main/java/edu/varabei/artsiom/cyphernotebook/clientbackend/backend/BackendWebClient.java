@@ -12,10 +12,13 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 
@@ -61,19 +64,23 @@ public class BackendWebClient {
         val aesKeyBytes = pubKeyService.decrypt(base64(sessionKeyDTO.getKeyBase64()), keyPair.getPrivate());
         val keyHolder = new SessionKeyHolder(
                 new SecretKeySpec(aesKeyBytes, "AES"),
-        sessionKeyDTO.getTransformation(),
+                sessionKeyDTO.getTransformation(),
                 sessionKeyDTO.getExp());
 
         stateStore.put(SESSION_KEY, keyHolder);
         return keyHolder;
     }
 
+    SessionKeyHolder keyHolder() {
+        //TODO 9/30/20: check exp
+        return stateStore.get(SESSION_KEY);
+    }
+
     // FIXME: 9/30/20 does not work, silence on the other end
     @SneakyThrows
     public String uploadFile(InputStream rawContent, String pathToFile) {
-        //TODO 9/30/20: check exp
-        final SessionKeyHolder holder = stateStore.get(SESSION_KEY);
-        val encryptedContent = aesCryptoService.encrypt(rawContent, holder.getTransformation(), holder.getKey());
+        val keyHolder = keyHolder();
+        val encryptedContent = aesCryptoService.encrypt(rawContent, keyHolder.getTransformation(), keyHolder.getKey());
 
         val headers = createHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -91,6 +98,22 @@ public class BackendWebClient {
         return response.getBody();
     }
 
+    @SneakyThrows
+    public Number getFile(OutputStream output, String pathToFile) {
+        val keyHolder = keyHolder();
+
+        return restTemplate.execute(
+                "http://localhost:8080/api/files/" + pathToFile,
+                HttpMethod.GET,
+                httpRequest -> httpRequest.getHeaders().addAll(createHeaders()),
+                (ResponseExtractor<Number>) httpResponse ->
+                        aesCryptoService.decrypt(
+                                httpResponse.getBody(),
+                                keyHolder.getTransformation(),
+                                keyHolder.getKey())
+                                .transferTo(output));
+    }
+
     HttpHeaders createHeaders() {
         return new HttpHeaders() {{
             String username = stateStore.get("username");
@@ -104,7 +127,7 @@ public class BackendWebClient {
 
             String cookie = stateStore.get("cookie");
             if (cookie != null) {
-                set(HttpHeaders.AUTHORIZATION, cookie);
+                set(HttpHeaders.COOKIE, cookie);
             }
         }};
     }

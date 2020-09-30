@@ -57,8 +57,9 @@ public class ApiController {
                 ));
     }
 
-    Key getSessionKey(HttpServletRequest request) {
-        val keyHolder = (SessionKeyHolder) request.getSession().getAttribute(SESSION_KEY);
+    Key getSessionKey(HttpServletRequest request, Principal principal) {
+        val keyHolder = (SessionKeyHolder) request.getSession()
+                .getAttribute(principal.getName() + "-" + SESSION_KEY);
         if (keyHolder == null || keyHolder.keyExpired()) throw new RuntimeException("session key expired");
         return keyHolder.getKey();
     }
@@ -72,7 +73,7 @@ public class ApiController {
     public ResponseEntity<?> getFile(@PathVariable String pathToFile,
                                      Principal principal,
                                      HttpServletRequest request) {
-        val sessionKey = getSessionKey(request);
+        val sessionKey = getSessionKey(request, principal);
         val userPathToFile = userPathToFile(principal, pathToFile);
         InputStream encryptedFile = filesService.getFileEncrypted(userPathToFile, sessionKey);
         return ResponseEntity.ok().body(new InputStreamResource(encryptedFile));
@@ -84,7 +85,7 @@ public class ApiController {
                                       @RequestPart("file") MultipartFile encryptedFile,
                                       Principal principal,
                                       HttpServletRequest request) {
-        val sessionKey = getSessionKey(request);
+        val sessionKey = getSessionKey(request, principal);
         val userPathToFile = userPathToFile(principal, pathToFile);
         val bytesWritten = filesService.saveFile(userPathToFile, sessionKey, encryptedFile.getInputStream());
         return ResponseEntity.ok("saved " + bytesWritten + " bytes");

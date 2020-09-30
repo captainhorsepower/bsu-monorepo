@@ -39,4 +39,16 @@ class BackendWebClientTest {
         System.out.println(feedback);
     }
 
+    @Test
+    @SneakyThrows
+    public void getFile() {
+        backend.saveCredentials("artem", "password");
+        backend.genKeyPair();
+        backend.getSessionKey();
+
+        val file = Files.newOutputStream(Paths.get("my-files/downloaded.jpeg"));
+        final Number bytesRead = backend.getFile(file, "meem1-encrypted.jpeg");
+        System.out.println("read " + bytesRead.longValue() + " bytes");
+    }
+
 }
