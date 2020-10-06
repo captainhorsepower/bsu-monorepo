@@ -13,6 +13,12 @@ class DecimalParserTest {
     DecimalParser parser = new DecimalParser();
 
     @Test
+    public void redTest() {
+        assertTrue(decimalsEqual("1234.566", parser.parse("1 234.566")));
+        assertTrue(decimalsEqual("1234.566", parser.parse("1 234,566")));
+    }
+
+    @Test
     public void simpleCases() {
         assertTrue(decimalsEqual("10", parser.parse("10.0")));
         assertTrue(decimalsEqual(".9", parser.parse("0.9")));

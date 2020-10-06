@@ -16,11 +16,14 @@ import java.util.stream.Collectors;
 public class DecimalParser {
 
     public BigDecimal parse(String input) {
-        String parsed = handleWhitespace(input.replaceAll("[\\-+]\\s?", "")); // lose sign
+        String parsed = handleWhitespace(
+                input
+                        .replaceAll(",", ".") // replace comas
+                        .replaceAll("[\\-+]\\s?", "") // lose sign
+        );
         if (input.substring(0, 1).matches("[\\-+]")) {
             parsed = input.charAt(0) + parsed;
         }
-        parsed = parsed.replaceAll(",", ".");
         return new BigDecimal(parsed);
     }
 
