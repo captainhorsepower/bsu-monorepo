@@ -13,7 +13,7 @@ class DecimalParserTest {
     DecimalParser parser = new DecimalParser();
 
     @Test
-    public void redTest() {
+    public void longInputAllowsComma() {
         assertTrue(decimalsEqual("1234.566", parser.parse("1 234.566")));
         assertTrue(decimalsEqual("1234.566", parser.parse("1 234,566")));
     }
