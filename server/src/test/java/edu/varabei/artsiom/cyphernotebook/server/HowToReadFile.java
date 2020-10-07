@@ -2,6 +2,7 @@ package edu.varabei.artsiom.cyphernotebook.server;
 
 import edu.varabei.artsiom.cyphernotebook.server.crypto.CryptoUtil;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.junit.jupiter.api.Assertions;
@@ -12,6 +13,8 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -22,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.Key;
+import java.security.SecureRandom;
 
 public class HowToReadFile {
 
@@ -166,5 +170,41 @@ public class HowToReadFile {
         cipher.init(mode, key, iv);
         return cipher;
     }
+
+    @Test
+    @SneakyThrows
+    public void lols_pic() {
+        val skipped = 128;
+        for (int i = 1; i < 1046; i++) {
+            String src = String.format("/Users/artemvrby/Downloads/pics/%sp.bmp", i);
+            String enc = String.format("src/test/resources/test/cbc/%s-enc.bmp",i );
+            String dec = String.format("src/test/resources/test/cbc/%s-dec.bmp",i );
+            try {
+                try (InputStream rawInput = inputStreamFromFileForRead(src);
+                     OutputStream outputStream = outputStreamForWrite(enc)) {
+                    val buffer = ByteBuffer.allocate(skipped);
+                    rawInput.readNBytes(buffer.array(), 0, skipped);
+                    val encryptingInput = new CipherInputStream(rawInput, getAESCipher(Cipher.ENCRYPT_MODE));
+                    val lol = new SequenceInputStream(new ByteArrayInputStream(buffer.array()), encryptingInput);
+                    System.out.println(lol.transferTo(outputStream));
+                }
+
+                try (InputStream encInput = inputStreamFromFileForRead(enc);
+                     OutputStream outputStream = outputStreamForWrite(dec)) {
+                    val buffer = ByteBuffer.allocate(skipped);
+                    encInput.readNBytes(buffer.array(), 0, skipped);
+                    val decryptingInput = new CipherInputStream(encInput, getAESCipher(Cipher.DECRYPT_MODE));
+                    val decryptedBytes = decryptingInput.readAllBytes();
+                    val lol = new SequenceInputStream(new ByteArrayInputStream(buffer.array()), new ByteArrayInputStream(decryptedBytes));
+                    lol.transferTo(outputStream);
+                }
+            } catch (Exception err) {
+                System.out.println("failed with " + i);
+//                System.out.println(err);
+            }
+        }
+    }
+
+
 
 }
