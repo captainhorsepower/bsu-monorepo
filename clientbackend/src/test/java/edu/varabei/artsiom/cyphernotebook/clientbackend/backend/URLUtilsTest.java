@@ -1,6 +1,8 @@
 package edu.varabei.artsiom.cyphernotebook.clientbackend.backend;
 
+import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +26,15 @@ class URLUtilsTest {
         );
         System.out.println(URLUtils.encodeURL(unixPath));
         System.out.println(URLUtils.encodeURL(dumbAssPath));
+    }
+
+    @Test
+    @SneakyThrows
+    public void buildingURI() {
+        String pathToFile = "meem.jpg";
+        System.out.println(new URIBuilder("http://localhost:8080/api/files")
+                .addParameter("file", pathToFile)
+                .build());
     }
 
 }

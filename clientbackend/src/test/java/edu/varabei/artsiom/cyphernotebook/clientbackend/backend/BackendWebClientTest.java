@@ -70,13 +70,15 @@ class BackendWebClientTest {
         backend.genKeyPair();
         backend.getSessionKey();
 
+        val folder = "folder/aircloud.backup";
+
         backend.uploadFile(
                 Files.newInputStream(Paths.get("my-files/aircloud.pptx")),
-                "aircloud.backup");
+                folder);
         backend.getSessionKey();
         backend.getFile(
                 Files.newOutputStream(Paths.get("my-files/aircloud-down.pptx")),
-                "aircloud.backup");
+                folder);
     }
 
 }

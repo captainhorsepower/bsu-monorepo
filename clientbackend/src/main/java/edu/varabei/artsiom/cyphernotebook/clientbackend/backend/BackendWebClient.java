@@ -81,6 +81,7 @@ public class BackendWebClient {
     // much thanks to https://medium.com/red6-es/uploading-a-file-with-a-filename-with-spring-resttemplate-8ec5e7dc52ca
     @SneakyThrows
     public String uploadFile(InputStream rawContent, String pathToFile) {
+        pathToFile = URLUtils.encodeURL(pathToFile);
         val keyHolder = keyHolder();
         val encryptedContent = aesCryptoService.encrypt(rawContent, keyHolder.getTransformation(), keyHolder.getKey());
 
@@ -102,7 +103,9 @@ public class BackendWebClient {
         body.add("file", fileEntity);
 
         val response = restTemplate.exchange(
-                "http://localhost:8080/api/files/" + pathToFile,
+                new URIBuilder("http://localhost:8080/api/files")
+                        .addParameter("fileName", pathToFile)
+                        .build(),
                 HttpMethod.POST, new HttpEntity<>(body, headers), String.class);
 
         checkCookie(response);
@@ -111,10 +114,13 @@ public class BackendWebClient {
 
     @SneakyThrows
     public Number getFile(OutputStream output, String pathToFile) {
+        pathToFile = URLUtils.encodeURL(pathToFile);
         val keyHolder = keyHolder();
 
         return restTemplate.execute(
-                "http://localhost:8080/api/files/" + pathToFile,
+                new URIBuilder("http://localhost:8080/api/files")
+                        .addParameter("fileName", pathToFile)
+                        .build(),
                 HttpMethod.GET,
                 httpRequest -> httpRequest.getHeaders().addAll(createHeaders()),
                 (ResponseExtractor<Number>) httpResponse ->
@@ -126,8 +132,9 @@ public class BackendWebClient {
     }
 
     public String deleteFile(String pathToFile) {
+        pathToFile = URLUtils.encodeURL(pathToFile);
         val response = restTemplate.exchange(
-                "http://localhost:8080/api/files/" + pathToFile,
+                "http://localhost:8080/api/files" + pathToFile,
                 HttpMethod.DELETE, new HttpEntity<>(createHeaders()), String.class);
         return response.getBody();
     }

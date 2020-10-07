@@ -5,6 +5,7 @@ import edu.varabei.artsiom.cyphernotebook.server.crypto.PubKeyService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -65,12 +66,14 @@ public class ApiController {
     }
 
     String userPathToFile(Principal principal, String pathToFile) {
+        pathToFile = URLUtils.decodeURL(pathToFile);
+        pathToFile = FilenameUtils.separatorsToSystem(pathToFile);
         return principal.getName() + File.separator + pathToFile;
     }
 
-    @GetMapping("/api/files/{pathToFile}")
+    @GetMapping("/api/files")
     @SneakyThrows
-    public ResponseEntity<?> getFile(@PathVariable String pathToFile,
+    public ResponseEntity<?> getFile(@RequestParam("fileName") String pathToFile,
                                      Principal principal,
                                      HttpServletRequest request) {
         val sessionKey = getSessionKey(request, principal);
@@ -80,8 +83,8 @@ public class ApiController {
     }
 
     @SneakyThrows
-    @PostMapping("/api/files/{pathToFile}")
-    public ResponseEntity<?> postFile(@PathVariable String pathToFile,
+    @PostMapping("/api/files")
+    public ResponseEntity<?> postFile(@RequestParam("fileName") String pathToFile,
                                       @RequestPart("file") MultipartFile encryptedFile,
                                       Principal principal,
                                       HttpServletRequest request) {
@@ -91,8 +94,8 @@ public class ApiController {
         return ResponseEntity.ok("saved " + bytesWritten + " bytes");
     }
 
-    @DeleteMapping("/api/files/{pathToFile}")
-    public ResponseEntity<?> deleteFile(@PathVariable String pathToFile, Principal principal) {
+    @DeleteMapping("/api/files")
+    public ResponseEntity<?> deleteFile(@RequestParam("fileName") String pathToFile, Principal principal) {
         val userPathToFile = userPathToFile(principal, pathToFile);
         val deleted = filesService.deleteFile(userPathToFile);
         return ResponseEntity.ok(deleted ? "deleted" : "deleted (not found)");
