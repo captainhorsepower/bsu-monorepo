@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.awt.*;
+import java.util.List;
 
 @Data
 @Configuration
@@ -15,12 +16,14 @@ import java.awt.*;
 public class LayoutConfigProperties {
 
     ComponentProperties identity;
-    TextFieldProperties leftNumber;
-    TextFieldProperties rightNumber;
+
+    List<TextFieldProperties> numberInputs;
+
     ButtonProperties addButton;
     ButtonProperties subButton;
     ButtonProperties multButton;
     ButtonProperties divButton;
+
     ResultProperties result;
 
     @Data

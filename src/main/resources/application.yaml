@@ -1,55 +1,66 @@
 calculator:
   title: Smart Pants Calculator
-  width: 400
-  height: 250
+  width: 800
+  height: 800
   components:
     identity:
-      x: ${calculator.components.left-number.x}
+      x: ${calculator.components.number-inputs[0].x}
       y: 25
       width: 350
       height: 50
-    left-number:
-      max-len: 28
-      label: 'left:'
-      x: 25
-      y: 95
-      width: 250
-      height: 25
-    right-number:
-      max-len: ${calculator.components.left-number.max-len}
-      label: 'right:'
-      x: ${calculator.components.left-number.x}
-      y: 125
-      width: ${calculator.components.left-number.width}
-      height: ${calculator.components.left-number.height}
+    number-inputs:
+      - max-len: 28
+        label: 'first:'
+        x: 25
+        y: 95
+        width: 250
+        height: 25
+      - max-len: ${calculator.components.number-inputs[0].max-len}
+        label: 'second:'
+        x: ${calculator.components.number-inputs[0].x}
+        y: 125
+        width: ${calculator.components.number-inputs[0].width}
+        height: ${calculator.components.number-inputs[0].height}
+      - max-len: ${calculator.components.number-inputs[0].max-len}
+        label: 'third:'
+        x: ${calculator.components.number-inputs[0].x}
+        y: 160
+        width: ${calculator.components.number-inputs[0].width}
+        height: ${calculator.components.number-inputs[0].height}
+      - max-len: ${calculator.components.number-inputs[0].max-len}
+        label: 'fourth:'
+        x: ${calculator.components.number-inputs[2].x}
+        y: 200
+        width: ${calculator.components.number-inputs[2].width}
+        height: ${calculator.components.number-inputs[2].height}
     add-button:
       title: add
       x: 275
-      y: ${calculator.components.left-number.y}
+      y: ${calculator.components.number-inputs[0].y}
       width: 60
-      height: ${calculator.components.left-number.height}
+      height: ${calculator.components.number-inputs[0].height}
     sub-button:
       title: sub
       x: ${calculator.components.add-button.x}
-      y: ${calculator.components.right-number.y}
+      y: ${calculator.components.number-inputs[1].y}
       width: ${calculator.components.add-button.width}
       height: ${calculator.components.add-button.height}
     mult-button:
       title: mult
       x: 335
-      y: ${calculator.components.left-number.y}
+      y: ${calculator.components.number-inputs[0].y}
       width: ${calculator.components.add-button.width}
       height: ${calculator.components.add-button.height}
     div-button:
       title: div
       x: ${calculator.components.mult-button.x}
-      y: ${calculator.components.right-number.y}
+      y: ${calculator.components.number-inputs[1].y}
       width: ${calculator.components.add-button.width}
       height: ${calculator.components.add-button.height}
     result:
       label: 'result:'
       init-value: 'will be here...'
-      x: ${calculator.components.left-number.x}
-      y: 170
+      x: ${calculator.components.number-inputs[0].x}
+      y: 700
       width: 350
-      height: ${calculator.components.left-number.height}
+      height: ${calculator.components.number-inputs[0].height}
