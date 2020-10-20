@@ -26,6 +26,12 @@ class ExprToNotationTest {
         assertEquals("1.123 4.123 +", toPostfixNotation("1.123 + 4.123"));
     }
 
+    @Test
+    public void redTest() {
+        assertEquals("a b + c + d +", toPostfixNotation("a + b + c + d"));
+        assertEquals("a b c + + d +", toPostfixNotation("a + ( b + c ) + d"));
+    }
+
     String toPostfixNotation(String expr) {
         return parser.toPostfixNotation(expr);
     }

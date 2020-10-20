@@ -2,13 +2,15 @@ package edu.varabei.artsiom.calculator.ui;
 
 import edu.varabei.artsiom.calculator.brain.Calculator;
 import edu.varabei.artsiom.calculator.brain.DecimalParser;
+import edu.varabei.artsiom.calculator.brain.ExprToNotation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.swing.*;
+import java.math.BigDecimal;
+import java.util.Arrays;
 
 @Log4j2
 @Configuration
@@ -16,6 +18,7 @@ import javax.swing.*;
 public class NastyLayoutConfiguration {
 
     private final Calculator calculator;
+    private final ExprToNotation exprToNotation;
     private final LayoutConfigProperties layoutConfig;
     private final DecimalParser decimalParser;
 
@@ -60,33 +63,27 @@ public class NastyLayoutConfiguration {
     }
 
     @Bean
-    UIElement roundingMode(LayoutConfigProperties layoutConfig) {
-        final ButtonGroup buttonGroup = new ButtonGroup();
-        final JRadioButton math = new JRadioButton("math");
-        final JRadioButton bank = new JRadioButton("bank");
-        final JRadioButton down = new JRadioButton("down");
-
-        buttonGroup.add(math);
-        buttonGroup.add(bank);
-        buttonGroup.add(down);
-
-        bank.setSelected(true);
-
-        val panel = new JPanel();
-        val h = 110;
-        val w = 60;
-        panel.setBounds(300, 95, w, h);
-
-        panel.add(math);
-        panel.add(bank);
-        panel.add(down);
-        return () -> panel;
+    RoundingModeSelector roundingMode(LayoutConfigProperties layoutConfig) {
+        return new RoundingModeSelector();
     }
 
     @Bean
-    ResultComponent resultLabel() {
-        return new ResultComponent(layoutConfig.getResult());
+    ResultComponent resultLabel(RoundingModeSelector rm) {
+        return new ResultComponent(layoutConfig.getResult(), () -> {
+            val expr = String.join(" ",
+                    Arrays.asList(
+                            decimalParser.parse(firstNumField().getText()).toString(),
+                            firstOp().getText(), "(",
+                            decimalParser.parse(secondNumField().getText()).toString(),
+                            secondOp().getText(),
+                            decimalParser.parse(thirdNumField().getText()).toString(),
+                            ")", thirdOp().getText(),
+                            decimalParser.parse(fourthNumField().getText()).toString()
+                    ));
+            val postfixNotation = exprToNotation.toPostfixNotation(expr);
+            BigDecimal res = calculator.calc(postfixNotation, rm.getSelected());
+            return decimalParser.parse(res);
+        });
     }
-
 
 }

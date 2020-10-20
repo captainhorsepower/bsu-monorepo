@@ -1,11 +1,13 @@
 package edu.varabei.artsiom.calculator.brain;
 
 import lombok.val;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.function.BiPredicate;
 
+@Component
 public class ExprToNotation {
 
     public String toPostfixNotation(String expr) {
