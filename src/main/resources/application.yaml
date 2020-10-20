@@ -11,28 +11,32 @@ calculator:
     number-inputs:
       - max-len: 28
         label: 'first:'
-        x: 150
+        x: 25
         y: 95
         width: 250
         height: 25
+        init-value: '0'
       - max-len: ${calculator.components.number-inputs[0].max-len}
-        label: 'second:'
-        x: 25
-        y: 225
+        label: 'open ('
+        x: ${calculator.components.number-inputs[0].x}
+        y: 125
         width: ${calculator.components.number-inputs[0].width}
         height: ${calculator.components.number-inputs[0].height}
+        init-value: ${calculator.components.number-inputs[0].init-value}
       - max-len: ${calculator.components.number-inputs[0].max-len}
-        label: 'third:'
-        x: 300
-        y: ${calculator.components.number-inputs[1].y}
+        label: 'close )'
+        x: ${calculator.components.number-inputs[0].x}
+        y: 155
         width: ${calculator.components.number-inputs[0].width}
         height: ${calculator.components.number-inputs[0].height}
+        init-value: ${calculator.components.number-inputs[0].init-value}
       - max-len: ${calculator.components.number-inputs[0].max-len}
         label: 'fourth:'
         x: ${calculator.components.number-inputs[0].x}
-        y: 425
-        width: ${calculator.components.number-inputs[2].width}
-        height: ${calculator.components.number-inputs[2].height}
+        y: 185
+        width: ${calculator.components.number-inputs[0].width}
+        height: ${calculator.components.number-inputs[0].height}
+        init-value: ${calculator.components.number-inputs[0].init-value}
     add-button:
       title: add
       x: 275

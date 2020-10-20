@@ -9,7 +9,6 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.Document;
 import java.awt.*;
@@ -17,36 +16,27 @@ import java.awt.event.KeyEvent;
 
 @Log4j2
 @RequiredArgsConstructor
-public class NumberInputTextField implements UIElement {
+public class MathOpTextField implements UIElement {
 
-    private final JPanel drawableComponent = new JPanel();
     private final JTextField textField = new JTextField();
-    private final LayoutConfigProperties.TextFieldProperties props;
-    private final DecimalParser parser;
+    private final LayoutConfigProperties.ComponentProperties props;
 
     @PostConstruct
     public void configure() {
-        drawableComponent.setLayout(null);
-        drawableComponent.setBounds(props.bounds());
+        textField.setBounds(props.bounds());
 
         JLabel label = new JLabel(props.getLabel());
         label.setBounds(0, 0, 50, props.getHeight());
 
-        textField.setBounds(50, 0, props.getWidth() - 50, props.getHeight());
-        textField.setText(
-                parser.parse(
-                        parser.parse(
-                                props.getInitValue())));
+        textField.setText("+");
+
         textField.addKeyListener((KL) this::keyTyped);
         textField.getDocument().addDocumentListener((DL) this::onDocumentChange);
-
-        drawableComponent.add(label);
-        drawableComponent.add(textField);
     }
 
     @Override
     public JComponent getDrawableComponent() {
-        return drawableComponent;
+        return textField;
     }
 
     public String getText() {
@@ -56,10 +46,7 @@ public class NumberInputTextField implements UIElement {
     private void keyTyped(KeyEvent keyEvent) {
         if (keyEvent.getExtendedKeyCode() != KeyEvent.VK_BACK_SPACE
             && keyEvent.getExtendedKeyCode() != KeyEvent.VK_DELETE
-            && (textField.getText()
-                        .replaceAll("(?![0-9.,])+", "")
-                        .length() >= props.getMaxLen()
-                || !("" + keyEvent.getKeyChar()).matches("[0-9\\-+.,\\s_]"))) {
+            && (textField.getText().length() >= 1)) {
             log.trace("[key listener] suppressed key press");
             keyEvent.consume();
         }
@@ -69,17 +56,9 @@ public class NumberInputTextField implements UIElement {
     private void onDocumentChange(DocumentEvent documentEvent) {
         Document document = documentEvent.getDocument();
         String textAfter = document.getText(0, document.getLength());
-        boolean isNumber = isNumber(textAfter);
-        log.trace("[document listener] {} {} isNumber: {}", documentEvent.getType(), textAfter, isNumber);
+        String math = "+-*/";
+        boolean isNumber = !textAfter.isEmpty() && math.contains(textAfter.trim());
         textField.setBackground(isNumber ? Color.GREEN : Color.RED);
     }
 
-    private boolean isNumber(String text) {
-        try {
-            parser.parse(text);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
 }

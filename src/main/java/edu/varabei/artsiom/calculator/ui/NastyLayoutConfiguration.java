@@ -45,31 +45,41 @@ public class NastyLayoutConfiguration {
     }
 
     @Bean
-    UIElement radioButtons(LayoutConfigProperties layoutConfig) {
-        final ButtonGroup buttonGroup = new ButtonGroup();
-        final JRadioButton add = new JRadioButton("+");
-        final JRadioButton sub = new JRadioButton("-");
-        final JRadioButton mult = new JRadioButton("*");
-        final JRadioButton div = new JRadioButton("/");
+    MathOpTextField firstOp() {
+        return new MathOpTextField(layoutConfig.getMathOps().get(0));
+    }
 
-        buttonGroup.add(add);
-        buttonGroup.add(sub);
-        buttonGroup.add(mult);
-        buttonGroup.add(div);
+    @Bean
+    MathOpTextField secondOp() {
+        return new MathOpTextField(layoutConfig.getMathOps().get(1));
+    }
+
+    @Bean
+    MathOpTextField thirdOp() {
+        return new MathOpTextField(layoutConfig.getMathOps().get(2));
+    }
+
+    @Bean
+    UIElement roundingMode(LayoutConfigProperties layoutConfig) {
+        final ButtonGroup buttonGroup = new ButtonGroup();
+        final JRadioButton math = new JRadioButton("math");
+        final JRadioButton bank = new JRadioButton("bank");
+        final JRadioButton down = new JRadioButton("down");
+
+        buttonGroup.add(math);
+        buttonGroup.add(bank);
+        buttonGroup.add(down);
+
+        bank.setSelected(true);
 
         val panel = new JPanel();
-        panel.add(add);
-        panel.add(sub);
-        panel.add(mult);
-        panel.add(div);
-        val inputs = layoutConfig.getNumberInputs();
         val h = 110;
         val w = 60;
-        panel.setBounds(
-                (inputs.get(1).getX() + inputs.get(1).getWidth() + inputs.get(2).getX()) / 2,
-                inputs.get(1).getY() - h / 2,
-                w, h
-        );
+        panel.setBounds(300, 95, w, h);
+
+        panel.add(math);
+        panel.add(bank);
+        panel.add(down);
         return () -> panel;
     }
 
