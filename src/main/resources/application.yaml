@@ -11,26 +11,26 @@ calculator:
     number-inputs:
       - max-len: 28
         label: 'first:'
-        x: 25
+        x: 150
         y: 95
         width: 250
         height: 25
       - max-len: ${calculator.components.number-inputs[0].max-len}
         label: 'second:'
-        x: ${calculator.components.number-inputs[0].x}
-        y: 125
+        x: 25
+        y: 225
         width: ${calculator.components.number-inputs[0].width}
         height: ${calculator.components.number-inputs[0].height}
       - max-len: ${calculator.components.number-inputs[0].max-len}
         label: 'third:'
-        x: ${calculator.components.number-inputs[0].x}
-        y: 160
+        x: 300
+        y: ${calculator.components.number-inputs[1].y}
         width: ${calculator.components.number-inputs[0].width}
         height: ${calculator.components.number-inputs[0].height}
       - max-len: ${calculator.components.number-inputs[0].max-len}
         label: 'fourth:'
-        x: ${calculator.components.number-inputs[2].x}
-        y: 200
+        x: ${calculator.components.number-inputs[0].x}
+        y: 425
         width: ${calculator.components.number-inputs[2].width}
         height: ${calculator.components.number-inputs[2].height}
     add-button:

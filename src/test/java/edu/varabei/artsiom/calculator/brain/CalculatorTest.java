@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CalculatorTest implements CompareDecimalsMixin {
 
     DecimalParser parser = new DecimalParser();
-    Calculator calc = new Calculator(parser, 6, 10);
+    Calculator calc = new Calculator(parser);
 
     @Test
     public void addSimpleCases() {

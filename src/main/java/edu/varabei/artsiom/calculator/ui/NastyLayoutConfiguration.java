@@ -4,8 +4,11 @@ import edu.varabei.artsiom.calculator.brain.Calculator;
 import edu.varabei.artsiom.calculator.brain.DecimalParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.swing.*;
 
 @Log4j2
 @Configuration
@@ -42,47 +45,32 @@ public class NastyLayoutConfiguration {
     }
 
     @Bean
-    UIElement addButton() {
-        return ArithmeticButton.builder()
-                .props(layoutConfig.getAddButton())
-                .operation(calculator::add)
-//                .leftNum(leftNumField()::getText)
-//                .rightNum(rightNumField()::getText)
-                .resultConsumer(resultLabel()::setResultText)
-                .build();
-    }
+    UIElement radioButtons(LayoutConfigProperties layoutConfig) {
+        final ButtonGroup buttonGroup = new ButtonGroup();
+        final JRadioButton add = new JRadioButton("+");
+        final JRadioButton sub = new JRadioButton("-");
+        final JRadioButton mult = new JRadioButton("*");
+        final JRadioButton div = new JRadioButton("/");
 
-    @Bean
-    UIElement substrButton() {
-        return ArithmeticButton.builder()
-                .props(layoutConfig.getSubButton())
-                .operation(calculator::sub)
-//                .leftNum(leftNumField()::getText)
-//                .rightNum(rightNumField()::getText)
-                .resultConsumer(resultLabel()::setResultText)
-                .build();
-    }
+        buttonGroup.add(add);
+        buttonGroup.add(sub);
+        buttonGroup.add(mult);
+        buttonGroup.add(div);
 
-    @Bean
-    UIElement multButton() {
-        return ArithmeticButton.builder()
-                .props(layoutConfig.getMultButton())
-                .operation(calculator::mult)
-//                .leftNum(leftNumField()::getText)
-//                .rightNum(rightNumField()::getText)
-                .resultConsumer(resultLabel()::setResultText)
-                .build();
-    }
-
-    @Bean
-    UIElement divButton() {
-        return ArithmeticButton.builder()
-                .props(layoutConfig.getDivButton())
-                .operation(calculator::div)
-//                .leftNum(leftNumField()::getText)
-//                .rightNum(rightNumField()::getText)
-                .resultConsumer(resultLabel()::setResultText)
-                .build();
+        val panel = new JPanel();
+        panel.add(add);
+        panel.add(sub);
+        panel.add(mult);
+        panel.add(div);
+        val inputs = layoutConfig.getNumberInputs();
+        val h = 110;
+        val w = 60;
+        panel.setBounds(
+                (inputs.get(1).getX() + inputs.get(1).getWidth() + inputs.get(2).getX()) / 2,
+                inputs.get(1).getY() - h / 2,
+                w, h
+        );
+        return () -> panel;
     }
 
     @Bean

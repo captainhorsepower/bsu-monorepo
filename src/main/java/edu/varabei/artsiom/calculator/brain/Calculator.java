@@ -2,12 +2,17 @@ package edu.varabei.artsiom.calculator.brain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.val;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 @Component
@@ -15,8 +20,22 @@ import java.util.function.Supplier;
 public class Calculator {
 
     private final DecimalParser parser;
-    private final int resultScale;
-    private final int calcScale;
+    //TODO 10/20/20: change to config
+    private final int resultScale = 10;
+    private final int calcScale = 6;
+    private final Map<MathOP, Method> mathMethods = new LinkedHashMap<MathOP, Method>() {
+        {
+            put(MathOP.ADD, getMethod("add"));
+            put(MathOP.SUB, getMethod("subtract"));
+            put(MathOP.MULT, getMethod("multiply"));
+            put(MathOP.DIV, getMethod("divide"));
+        }
+
+        @SneakyThrows
+        private Method getMethod(String name) {
+            return BigDecimal.class.getMethod(name, BigDecimal.class, MathContext.class);
+        }
+    };
 
     public String add(String left, String right) {
         return parser.parse(
@@ -45,38 +64,50 @@ public class Calculator {
                         .divide(parser.parse(right), 6, RoundingMode.HALF_EVEN));
     }
 
-//    public String calc(Expr expr, int roundingMode) {
-//        // have four numbers, three operations.
-//        // two middle numbers are immediately combined.
-//
-//        // then need to combine left with middle or middle with third.
-//        // and then the rest.
-//
-//        BigDecimal left, mid, right;
-//        mid = parser.parse(expr.midFirst.get())
-//                sop
-//            parser.parse(expr.midLast.get());
-//
-//        int op
-//        if (expr.top > expr.fop) {
-//
-//        }
-//        "subtract, add, multiply, divide";
-//        new MathContext()
-//        left.divi
-//        BigDecimal.class.getMethod()
-//
-//        BigDecimal result = left op right;
-//
-//        return parser.parse(result.setScale(resultScale, roundingMode));
-//    }
+    public String calc(Expr expr, RoundingMode mode) {
+        val calcContext = new MathContext(calcScale, mode);
+        val resContext = new MathContext(resultScale, mode);
+
+        val mid = doMath(
+                parser.parse(expr.getMidFirst().get()),
+                parser.parse(expr.getMidLast().get()),
+                expr.sop.get(),
+                calcContext
+        );
+
+        BigDecimal left = parser.parse(expr.getFirst().get());
+        BigDecimal right = parser.parse(expr.getLast().get());
+
+        MathOP op;
+        if (expr.top.get().p > expr.fop.get().p) {
+            right = doMath(mid, right, expr.top.get(), calcContext);
+            op = expr.fop.get();
+        } else {
+            left = doMath(left, mid, expr.fop.get(), calcContext);
+            op = expr.top.get();
+        }
+
+        return parser.parse(doMath(left, right, op, resContext));
+    }
+
+    @SneakyThrows
+    BigDecimal doMath(BigDecimal left, BigDecimal right, MathOP op, MathContext context) {
+        return (BigDecimal) mathMethods.get(op).invoke(left, right, context);
+    }
 
 
     @Getter
     public static class Expr {
         public static final int ADD = 1, SUB = 1, MULT = 2, DIV = 2;
         Supplier<String> first, midFirst, midLast, last;
-        Supplier<Integer> fop, sop, top; // first, second, third operation
+        Supplier<MathOP> fop, sop, top; // first, second, third operation
+    }
+
+    @RequiredArgsConstructor
+    public enum MathOP {
+        ADD(1), SUB(1),
+        MULT(2), DIV(2);
+        private final int p;
     }
 
 }
