@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -19,16 +21,12 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class Calculator {
 
-    private final DecimalParser parser;
-    //TODO 10/20/20: change to config
-    private final int resultScale = 10;
-    private final int calcScale = 6;
-    private final Map<MathOP, Method> mathMethods = new LinkedHashMap<MathOP, Method>() {
+    private final Map<String, Method> mathMethods = new LinkedHashMap<String, Method>() {
         {
-            put(MathOP.ADD, getMethod("add"));
-            put(MathOP.SUB, getMethod("subtract"));
-            put(MathOP.MULT, getMethod("multiply"));
-            put(MathOP.DIV, getMethod("divide"));
+            put("+", getMethod("add"));
+            put("-", getMethod("subtract"));
+            put("*", getMethod("multiply"));
+            put("/", getMethod("divide"));
         }
 
         @SneakyThrows
@@ -37,77 +35,33 @@ public class Calculator {
         }
     };
 
-    public String add(String left, String right) {
-        return parser.parse(
-                parser.parse(left)
-                        .add(parser.parse(right))
-                        .setScale(6, RoundingMode.HALF_EVEN));
-    }
+    public BigDecimal calc(String postfixNotation, RoundingMode mode) {
+        val calcScale = 10;
+        val resultScale = 6;
+        val math = "+-*/";
 
-    public String sub(String left, String right) {
-        return parser.parse(
-                parser.parse(left)
-                        .subtract(parser.parse(right))
-                        .setScale(6, RoundingMode.HALF_EVEN));
-    }
-
-    public String mult(String left, String right) {
-        return parser.parse(
-                parser.parse(left)
-                        .multiply(parser.parse(right))
-                        .setScale(6, RoundingMode.HALF_EVEN));
-    }
-
-    public String div(String left, String right) {
-        return parser.parse(
-                parser.parse(left)
-                        .divide(parser.parse(right), 6, RoundingMode.HALF_EVEN));
-    }
-
-    public String calc(Expr expr, RoundingMode mode) {
         val calcContext = new MathContext(calcScale, mode);
-        val resContext = new MathContext(resultScale, mode);
 
-        val mid = doMath(
-                parser.parse(expr.getMidFirst().get()),
-                parser.parse(expr.getMidLast().get()),
-                expr.sop.get(),
-                calcContext
-        );
+        Deque<BigDecimal> stack = new ArrayDeque<>();
+        for (String item : postfixNotation.split(" ")) {
+            if (!math.contains(item))
+                stack.add(new BigDecimal(item));
+            else {
+                val left = stack.pop();
+                val right = stack.pop();
+                stack.add(doMath(left, right, item, calcContext));
+            }
 
-        BigDecimal left = parser.parse(expr.getFirst().get());
-        BigDecimal right = parser.parse(expr.getLast().get());
-
-        MathOP op;
-        if (expr.top.get().p > expr.fop.get().p) {
-            right = doMath(mid, right, expr.top.get(), calcContext);
-            op = expr.fop.get();
-        } else {
-            left = doMath(left, mid, expr.fop.get(), calcContext);
-            op = expr.top.get();
         }
 
-        return parser.parse(doMath(left, right, op, resContext));
+        val resContext = new MathContext(resultScale, mode);
+        return stack.pop().round(resContext);
     }
+
 
     @SneakyThrows
-    BigDecimal doMath(BigDecimal left, BigDecimal right, MathOP op, MathContext context) {
+    BigDecimal doMath(BigDecimal left, BigDecimal right, String op, MathContext context) {
         return (BigDecimal) mathMethods.get(op).invoke(left, right, context);
-    }
-
-
-    @Getter
-    public static class Expr {
-        public static final int ADD = 1, SUB = 1, MULT = 2, DIV = 2;
-        Supplier<String> first, midFirst, midLast, last;
-        Supplier<MathOP> fop, sop, top; // first, second, third operation
-    }
-
-    @RequiredArgsConstructor
-    public enum MathOP {
-        ADD(1), SUB(1),
-        MULT(2), DIV(2);
-        private final int p;
     }
 
 }
