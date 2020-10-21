@@ -35,27 +35,30 @@ public class Calculator {
         }
     };
 
+    public BigDecimal calc(String postfixNotation) {
+        return calc(postfixNotation, 10, RoundingMode.HALF_UP);
+    };
+
     public BigDecimal calc(String postfixNotation, RoundingMode mode) {
-        val calcScale = 10;
-        val resultScale = 6;
+        return calc(postfixNotation, 10, mode);
+    }
+
+    public BigDecimal calc(String postfixNotation, int calcScale, RoundingMode mode) {
         val math = "+-*/";
-
         val calcContext = new MathContext(calcScale, mode);
-
         Deque<BigDecimal> stack = new ArrayDeque<>();
         for (String item : postfixNotation.split(" ")) {
             if (!math.contains(item))
-                stack.add(new BigDecimal(item));
+                stack.addFirst(new BigDecimal(item));
             else {
-                val left = stack.pop();
                 val right = stack.pop();
-                stack.add(doMath(left, right, item, calcContext));
+                val left = stack.pop();
+                val res = doMath(left, right, item, calcContext);
+                stack.add(res);
             }
 
         }
-
-        val resContext = new MathContext(resultScale, mode);
-        return stack.pop().round(resContext);
+        return stack.pop();
     }
 
 

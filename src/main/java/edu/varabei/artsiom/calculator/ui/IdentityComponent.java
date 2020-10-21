@@ -18,7 +18,7 @@ public class IdentityComponent extends JPanel implements UIElement {
         JLabel имяФамилия = new JLabel("Артём Воробей");
         имяФамилия.setBounds(0, 0, 200, 25);
 
-        JLabel курсГруппаГод = new JLabel("4к 4гр, сентябрь 2020");
+        JLabel курсГруппаГод = new JLabel("4к 4гр, октябрь 2020");
         курсГруппаГод.setBounds(0, 25, 200, 25);
 
         add(имяФамилия);

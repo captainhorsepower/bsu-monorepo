@@ -1,7 +1,7 @@
 calculator:
   title: Smart Pants Calculator
-  width: 800
-  height: 800
+  width: 400
+  height: 450
   components:
     identity:
       x: ${calculator.components.number-inputs[0].x}
@@ -10,7 +10,7 @@ calculator:
       height: 50
     number-inputs:
       - max-len: 28
-        label: 'first:'
+        label: ''
         x: 25
         y: 95
         width: 250
@@ -31,7 +31,7 @@ calculator:
         height: ${calculator.components.number-inputs[0].height}
         init-value: ${calculator.components.number-inputs[0].init-value}
       - max-len: ${calculator.components.number-inputs[0].max-len}
-        label: 'fourth:'
+        label: ''
         x: ${calculator.components.number-inputs[0].x}
         y: 185
         width: ${calculator.components.number-inputs[0].width}
@@ -62,9 +62,9 @@ calculator:
       width: ${calculator.components.add-button.width}
       height: ${calculator.components.add-button.height}
     result:
-      label: 'result:'
-      init-value: 'will be here...'
+      label: 'do calc'
+      init-value: 'press button for results...'
       x: ${calculator.components.number-inputs[0].x}
-      y: 700
+      y: 350
       width: 350
-      height: ${calculator.components.number-inputs[0].height}
+      height: 60

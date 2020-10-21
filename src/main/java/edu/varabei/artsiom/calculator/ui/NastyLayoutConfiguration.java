@@ -3,13 +3,14 @@ package edu.varabei.artsiom.calculator.ui;
 import edu.varabei.artsiom.calculator.brain.Calculator;
 import edu.varabei.artsiom.calculator.brain.DecimalParser;
 import edu.varabei.artsiom.calculator.brain.ExprToNotation;
+import edu.varabei.artsiom.calculator.ui.util.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Arrays;
 
 @Log4j2
@@ -81,8 +82,13 @@ public class NastyLayoutConfiguration {
                             decimalParser.parse(fourthNumField().getText()).toString()
                     ));
             val postfixNotation = exprToNotation.toPostfixNotation(expr);
-            BigDecimal res = calculator.calc(postfixNotation, rm.getSelected());
-            return decimalParser.parse(res);
+            val res = calculator.calc(postfixNotation);
+
+            val roundingMode = rm.getSelected();
+            return Tuple.of(
+                    decimalParser.parse(res.round(new MathContext(6, roundingMode))),
+                    decimalParser.parse(res.setScale(0, roundingMode))
+            );
         });
     }
 

@@ -1,5 +1,6 @@
 package edu.varabei.artsiom.calculator.ui;
 
+import edu.varabei.artsiom.calculator.ui.util.Tuple;
 import lombok.RequiredArgsConstructor;
 
 import javax.annotation.PostConstruct;
@@ -11,9 +12,10 @@ public class ResultComponent implements UIElement {
 
     private final JPanel drawableComponent = new JPanel();
     private final JLabel resultValue = new JLabel();
+    private final JLabel roundedValue = new JLabel();
     private final JButton button = new JButton();
     private final LayoutConfigProperties.ResultProperties props;
-    private final Supplier<String> resultSupplier;
+    private final Supplier<Tuple<String, String>> resultSupplier;
 
     @PostConstruct
     public void configure() {
@@ -22,7 +24,7 @@ public class ResultComponent implements UIElement {
 
         int width = 80;
         button.setText(props.getLabel());
-        button.setBounds(0, 0, width, props.getHeight());
+        button.setBounds(0, 0, width, props.getHeight() / 2);
         button.addActionListener(e -> {
             try {
                 setResultText(resultSupplier.get());
@@ -33,10 +35,13 @@ public class ResultComponent implements UIElement {
         });
 
         resultValue.setText(props.getInitValue());
-        resultValue.setBounds(width, 0, props.getWidth() - width, props.getHeight());
+        resultValue.setBounds(width, 0, props.getWidth() - width, props.getHeight() / 2);
+        roundedValue.setText("rounded will be here...");
+        roundedValue.setBounds(width, props.getHeight() / 2, props.getWidth() - width, props.getHeight() / 2);
 
         drawableComponent.add(button);
         drawableComponent.add(resultValue);
+        drawableComponent.add(roundedValue);
     }
 
     @Override
@@ -44,8 +49,9 @@ public class ResultComponent implements UIElement {
         return drawableComponent;
     }
 
-    public void setResultText(String resultText) {
-        resultValue.setText(resultText);
+    public void setResultText(Tuple<String, String> resultText) {
+        resultValue.setText(resultText.getT1());
+        roundedValue.setText(resultText.getT2());
     }
 
 }

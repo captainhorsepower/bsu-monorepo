@@ -23,6 +23,14 @@ class CalculatorTest implements CompareDecimalsMixin {
                 "3",
                 calc.calc("2 2 2 * + 3 -", RoundingMode.DOWN)
         ));
+        assertEquals(
+                new BigDecimal("6"),
+                calc.calc("0 2 3 * + 0 +")
+        );
+        assertEquals(
+                new BigDecimal("3"),
+                calc.calc("0 9 3 / + 0 +")
+        );
     }
 
     @Test
