@@ -30,8 +30,8 @@ public class ExprToNotation {
                 if (hasHigherPriority.test(stack.getFirst(), item))
                     while (!stack.isEmpty()) {
                         val popped = stack.pop();
-                        if (!popped.equals("("))
-                            result.add(popped);
+                        if (popped.equals("(")) break;
+                        result.add(popped);
                     }
                 if (!item.equals(")"))
                     stack.addFirst(item);
