@@ -21,6 +21,8 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class Calculator {
 
+    private static BigDecimal INF = new BigDecimal("1000000000001.00000000000");
+
     private final Map<String, Method> mathMethods = new LinkedHashMap<String, Method>() {
         {
             put("+", getMethod("add"));
@@ -36,8 +38,10 @@ public class Calculator {
     };
 
     public BigDecimal calc(String postfixNotation) {
-        return calc(postfixNotation, 10, RoundingMode.HALF_UP);
-    };
+        return calc(postfixNotation, 20, RoundingMode.HALF_UP);
+    }
+
+    ;
 
     public BigDecimal calc(String postfixNotation, RoundingMode mode) {
         return calc(postfixNotation, 10, mode);
@@ -54,7 +58,12 @@ public class Calculator {
                 val right = stack.pop();
                 val left = stack.pop();
                 val res = doMath(left, right, item, calcContext);
-                stack.add(res);
+                if (res.compareTo(INF) > 0) {
+                    throw new RuntimeException(
+                            String.format("Промежутчный результат слишком велик!\nres=%s", res.toString())
+                    );
+                }
+                stack.addFirst(res);
             }
 
         }
@@ -64,7 +73,9 @@ public class Calculator {
 
     @SneakyThrows
     BigDecimal doMath(BigDecimal left, BigDecimal right, String op, MathContext context) {
-        return (BigDecimal) mathMethods.get(op).invoke(left, right, context);
+        final BigDecimal res = (BigDecimal) mathMethods.get(op).invoke(left, right, context);
+        RoundingMachine.round(res, 10, RoundingMode.HALF_UP);
+        return res;
     }
 
 }

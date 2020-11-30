@@ -164,4 +164,15 @@ class DecimalParserTest {
         return decimalsEqual(expected, actual.toString());
     }
 
+    // 986 282 584 876,635029
+    // - (123456.666666*987654.777777) / (-8.888888)
+    // =999 999 999 999.999998
+    @Test
+    public void redtestparse() {
+        assertTrue(decimalsEqual("986282584876.635029", parser.parse("986 282 584 876,635029")));
+        assertTrue(decimalsEqual("123456.666666", parser.parse("123456.666666")));
+        assertTrue(decimalsEqual("987654.777777", parser.parse("987654.777777")));
+        assertTrue(decimalsEqual("-8.888888", parser.parse("-8.888888")));
+    }
+
 }

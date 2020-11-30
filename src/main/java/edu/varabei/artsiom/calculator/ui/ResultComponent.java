@@ -2,11 +2,13 @@ package edu.varabei.artsiom.calculator.ui;
 
 import edu.varabei.artsiom.calculator.ui.util.Tuple;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.util.function.Supplier;
 
+@Log4j2
 @RequiredArgsConstructor
 public class ResultComponent implements UIElement {
 
@@ -29,8 +31,10 @@ public class ResultComponent implements UIElement {
             try {
                 setResultText(resultSupplier.get());
             } catch (Exception excep) {
+                log.info("bad input. Detail={}", excep.getMessage());
                 JOptionPane.showMessageDialog(null,
-                        "Bad input values", "Bad input", JOptionPane.ERROR_MESSAGE);
+                        "Bad input values"
+                        , "Bad input", JOptionPane.ERROR_MESSAGE);
             }
         });
 

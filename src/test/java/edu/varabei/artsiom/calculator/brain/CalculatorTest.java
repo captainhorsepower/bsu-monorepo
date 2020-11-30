@@ -60,12 +60,4 @@ class CalculatorTest implements CompareDecimalsMixin {
         ));
     }
 
-    // 986 282 584 876,635029
-    // - (123456.666666*987654.777777) / (-8.888888)
-    // =999 999 999 999.999998
-    @Test
-    public void bigNumbersCalc() {
-        //calc.
-    }
-
 }

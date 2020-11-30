@@ -41,6 +41,8 @@ class ExprToNotationTest {
     @Test
     public void largeNumbersTest() {
         assertEquals("a b c * d / -", toPostfixNotation("a - ( b * c ) / d"));
+        // FIXME: 11/30/20 
+//        assertEquals("a b c * d / -", toPostfixNotation("a - b * c / d"));
 
         String a = "986282584876,635029",
                 b = "123456.666666",

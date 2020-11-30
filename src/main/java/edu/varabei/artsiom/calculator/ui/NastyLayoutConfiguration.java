@@ -3,6 +3,7 @@ package edu.varabei.artsiom.calculator.ui;
 import edu.varabei.artsiom.calculator.brain.Calculator;
 import edu.varabei.artsiom.calculator.brain.DecimalParser;
 import edu.varabei.artsiom.calculator.brain.ExprToNotation;
+import edu.varabei.artsiom.calculator.brain.RoundingMachine;
 import edu.varabei.artsiom.calculator.ui.util.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -86,7 +87,7 @@ public class NastyLayoutConfiguration {
 
             val roundingMode = rm.getSelected();
             return Tuple.of(
-                    decimalParser.parse(res.round(new MathContext(6, roundingMode))),
+                    decimalParser.parse(RoundingMachine.round(res, 6, roundingMode)),
                     decimalParser.parse(res.setScale(0, roundingMode))
             );
         });
