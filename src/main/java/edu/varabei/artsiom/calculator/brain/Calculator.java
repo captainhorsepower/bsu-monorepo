@@ -59,7 +59,7 @@ public class Calculator {
                 val left = stack.pop();
                 val res = doMath(left, right, item, calcContext);
                 if (res.compareTo(INF) > 0) {
-                    throw new RuntimeException(
+                    throw new DecimalOverflowException(
                             String.format("Промежутчный результат слишком велик!\nres=%s", res.toString())
                     );
                 }
@@ -76,6 +76,12 @@ public class Calculator {
         final BigDecimal res = (BigDecimal) mathMethods.get(op).invoke(left, right, context);
         RoundingMachine.round(res, 10, RoundingMode.HALF_UP);
         return res;
+    }
+
+    public static class DecimalOverflowException extends RuntimeException {
+        public DecimalOverflowException(String message) {
+            super(message);
+        }
     }
 
 }

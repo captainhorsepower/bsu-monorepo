@@ -1,5 +1,6 @@
 package edu.varabei.artsiom.calculator.ui;
 
+import edu.varabei.artsiom.calculator.brain.Calculator;
 import edu.varabei.artsiom.calculator.ui.util.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -30,6 +31,11 @@ public class ResultComponent implements UIElement {
         button.addActionListener(e -> {
             try {
                 setResultText(resultSupplier.get());
+            } catch (Calculator.DecimalOverflowException excep) {
+                log.info("bad input. Detail={}", excep.getMessage());
+                JOptionPane.showMessageDialog(null,
+                        excep.getMessage()
+                        , "Overflow", JOptionPane.ERROR_MESSAGE);
             } catch (Exception excep) {
                 log.info("bad input. Detail={}", excep.getMessage());
                 JOptionPane.showMessageDialog(null,
