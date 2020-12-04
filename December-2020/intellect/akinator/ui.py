@@ -1,4 +1,9 @@
+# sample ASCII ui from stackoverflow
+# UI todo: https://stackoverflow.com/questions/11284748/how-do-i-create-a-static-framed-ascii-interface-in-python
+
+
 import curses
+
 
 classes = ["The sneaky thief", "The smarty wizard", "The proletariat"]
 
