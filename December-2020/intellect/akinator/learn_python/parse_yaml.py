@@ -1,4 +1,4 @@
-import yaml # PyYaml docs: https://pyyaml.org/wiki/PyYAMLDocumentation
+import yaml  # PyYaml docs: https://pyyaml.org/wiki/PyYAMLDocumentation
 
 a_yaml_file = open("example.yaml")
 parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
