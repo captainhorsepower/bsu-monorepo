@@ -1,17 +1,51 @@
 import curses
 from enum import Enum
+from os import remove, stat
 import yaml  # PyYaml docs: https://pyyaml.org/wiki/PyYAMLDocumentation
 
 
 def main():
-    rules = loadRules('sample-rules.yaml')
-    print(rules)
+    target = 'семейство'
+    rules = loadRules('sample-rules.yaml')  # can also random shuffle
+
+    ans = resolveAns(rules, target)
 
 
 def loadRules(filename):
     yamlFile = open(filename)
     yamlRules = yaml.load(yamlFile, Loader=yaml.FullLoader)['rules']
     return [Rule(yamlRule) for yamlRule in yamlRules]
+
+
+def resolveAns(rules, target, context=None):
+    context = context if context is not None else dict()
+    for r in [r for r in rules if r.canAnswer(target)]:
+        val = _resolveRuleAns(r, context, rules)
+        if (val):
+            return val
+
+
+def _resolveRuleAns(rule, context, rules):
+    status, val = rule.when(context)
+    while(status == RuleState.UNKNOWN):
+        _resolveKeyToContext(key=val, rules=rules, context=context)
+        status, val = rule.when(context)
+        print((status, val))
+
+    rules.remove(rule)
+    return val
+
+
+def _resolveKeyToContext(key, rules, context):
+    val = None
+    for r in [r for r in rules if r.canAnswer(key)]:
+        val = _resolveRuleAns(r, context, rules)
+        if (val):
+            context[key] = val
+            return
+    val = ask(question=f'Value for "{key} is:"',
+              options=list(set(sum([r.options(key) for r in rules], start=[]))))
+    context[key] = val
 
 
 class Rule:
@@ -48,12 +82,25 @@ class Rule:
         then: {self.__then}
         '''
 
-    # def test(self, context):
-    #     for p in self.__predicates:
-    #         if p.test(context) == RuleState.FAIL:
-    #             return RuleState
+    def canAnswer(self, target):
+        return target in self.__then
 
-# RuleState = Enum('RuleState', 'FAIL SUCCESS UNKNOWN')
+    def when(self, context):
+        for k, v in self.__when.items():
+            vv = context.get(k, None)
+            if not vv:
+                return RuleState.UNKNOWN, k
+            elif v != vv:
+                return RuleState.FAIL, None
+
+        return RuleState.SUCCESS, self.__then
+
+    def options(self, key):
+        v = self.__when.get(key, None)
+        return [v] if v else []
+
+
+RuleState = Enum('RuleState', 'FAIL SUCCESS UNKNOWN')
 
 
 def ask(question, options):
@@ -72,10 +119,10 @@ def ask(question, options):
         while c != 10:  # Enter in ascii
             stdscr.erase()
             stdscr.addstr(f"{question}\n", curses.A_UNDERLINE)
-            for i in range(len(classes)):
+            for i in range(len(options)):
                 attr = attributes['highlighted'] if i == option else attributes['normal']
                 stdscr.addstr(f"{i + 1}. ")
-                stdscr.addstr(classes[i] + '\n', attr)
+                stdscr.addstr(options[i] + '\n', attr)
 
             c = stdscr.getch()
             if 1 <= c - ord('0') <= len(options):
