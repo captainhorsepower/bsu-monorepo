@@ -1,6 +1,16 @@
-# sample ASCII ui from stackoverflow
-# UI todo: https://stackoverflow.com/questions/11284748/how-do-i-create-a-static-framed-ascii-interface-in-python
 import curses
+
+
+def main():
+    rules = loadRules("")
+
+
+class Rule:
+    pass
+
+
+def loadRules():
+    pass
 
 
 def ask(question, options):
@@ -40,9 +50,5 @@ def ask(question, options):
     curses.wrapper(_do_multiple_choice)
     return choice
 
-
-classes = ["The sneaky thief", "The smarty wizard", "The proletariat"]
-
-choice_outer = ask('What is your class?', classes)
-
-print(choice_outer)
+if __name__ == "__main__":
+    main()
