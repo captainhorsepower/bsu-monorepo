@@ -1,16 +1,59 @@
 import curses
+from enum import Enum
+import yaml  # PyYaml docs: https://pyyaml.org/wiki/PyYAMLDocumentation
 
 
 def main():
-    rules = loadRules("")
+    rules = loadRules('sample-rules.yaml')
+    print(rules)
+
+
+def loadRules(filename):
+    yamlFile = open(filename)
+    yamlRules = yaml.load(yamlFile, Loader=yaml.FullLoader)['rules']
+    return [Rule(yamlRule) for yamlRule in yamlRules]
 
 
 class Rule:
-    pass
+    """
+    - __when = dict of requirements
+    - given = current context
+    - __then = result if requirements satisfied
+    """
 
+    def __init__(self, yamlRule):
+        """
+        Supported yaml structure:
+        when: # условия для выполнения правила
+          and:  # list of key-value pairs, all must match. 
+                # or:... is not no supported cuz not required.
+          - key1: val1 #
+        then: 
+        - res-key1: res-val1
+        """
+        self.__when = dict()
+        for r in yamlRule['when']['and']:
+            self.__when.update(r)
 
-def loadRules():
-    pass
+        self.__then = dict()
+        for t in yamlRule['then']:
+            self.__then.update(t)
+
+    def __repr__(self) -> str:
+        return str(self)
+
+    def __str__(self) -> str:
+        return f'''
+        when: {self.__when} 
+        then: {self.__then}
+        '''
+
+    # def test(self, context):
+    #     for p in self.__predicates:
+    #         if p.test(context) == RuleState.FAIL:
+    #             return RuleState
+
+# RuleState = Enum('RuleState', 'FAIL SUCCESS UNKNOWN')
 
 
 def ask(question, options):
@@ -49,6 +92,7 @@ def ask(question, options):
 
     curses.wrapper(_do_multiple_choice)
     return choice
+
 
 if __name__ == "__main__":
     main()
