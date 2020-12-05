@@ -9,6 +9,8 @@ def main():
     rules = loadRules('sample-rules.yaml')  # can also random shuffle
 
     ans = resolveAns(rules, target)
+    # TODO: print ans
+    # TODO: visualize guess tree with ASCII
 
 
 def loadRules(filename):
@@ -43,7 +45,7 @@ def _resolveKeyToContext(key, rules, context):
         if (val):
             context[key] = val
             return
-    val = ask(question=f'Value for "{key} is:"',
+    val = ask(question=f"Выберите '{key}':",
               options=list(set(sum([r.options(key) for r in rules], start=[]))))
     context[key] = val
 
