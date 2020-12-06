@@ -48,7 +48,7 @@ def whenClausesMathch_thenClausesDont(key, rule, others):
 
 
 def ruleRepr(self) -> str:
-        return 'str(self)'
+        return 'rule repr'
 
 
 def ruleToStr(self) -> str:
