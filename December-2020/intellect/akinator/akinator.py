@@ -46,13 +46,14 @@ def chooseDatabaseFile():
 ---
 name: <имя базы>
 default-target: <предусмотренная разработчиком базы цель>
-rules: 
+rules:
 - when: # условия для выполнения правила
 - then: # резльтирующие признаки
 
 Сделал Воробей Артём, 4гр.
 """)])
-    if c == костыль: exit()
+    if c == костыль:
+        exit()
     return d[c]
 
 
@@ -72,7 +73,29 @@ def chooseTarget(rules, default):
 
     def _optStr(k):
         prefix = '[default]' if k == default else '[test]'
-        return f"{prefix:10}{k:15}{_targetOptions(k)}"
+
+        def formatLongList(l):
+            MAX_LINE_SYMBOLS = 50
+            inds = [0]
+            for curr in range(len(l)):
+               prev = inds[-1]
+               if (curr == prev): continue
+               if len(str(l[prev:(curr+1)])) > MAX_LINE_SYMBOLS:
+                   inds.append(curr)
+            inds.append(len(l))
+            
+            lines = []
+            for i in range(len(inds) - 1):
+                lines.append(l[inds[i]:inds[i+1]])
+                
+            firstLine = ', '.join(lines[0])
+            otherLines = '' if len(lines) == 1 else \
+                ',\n' + \
+                ',\n'.join(
+                    map(lambda l: f'{"":30}{l}', map(', '.join, lines[1:])))
+            return f"{{ {firstLine}{otherLines} }}"
+
+        return f"{prefix:10}{k:15}{formatLongList(_targetOptions(k))}"
 
     invOpts = {_optStr(k): k for k in thenDict}
     target = invOpts[ask(
