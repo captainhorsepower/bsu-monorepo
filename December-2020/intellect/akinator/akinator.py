@@ -290,9 +290,6 @@ def ask(question, options, preHooks=None, postHooks=None):
 
         nonlocal choice
         choice = options[option]
-        stdscr.erase()
-        stdscr.addstr(f"Ваш выбор: {choice}")
-        stdscr.getch()
 
     curses.wrapper(_do_multiple_choice)
     return choice
