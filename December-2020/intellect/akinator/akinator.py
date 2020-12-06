@@ -2,10 +2,11 @@ import curses
 from enum import Enum
 from os import remove, stat
 import yaml  # PyYaml docs: https://pyyaml.org/wiki/PyYAMLDocumentation
+import random
 
 
 def main():
-    rules, target = loadRules('sample-rules.yaml')  # can also random shuffle
+    rules, target = loadRules('sample-rules.yaml')
     target = chooseTarget(rules, default=target)
     ansDict = resolveAns(rules, target)
     drawResult(target, ansDict)
@@ -36,6 +37,7 @@ def chooseTarget(rules, default):
 
 def resolveAns(rules, target, context=None):
     context = context if context is not None else dict()
+    random.shuffle(rules) # shuffle rules for even more fun!
     for r in [r for r in rules if r.canAnswer(target)]:
         val = _resolveRuleAns(r, context, rules)
         if (val):
@@ -60,15 +62,13 @@ def _resolveKeyToContext(key, rules, context):
         if (ansDict):
             context.update(ansDict)
             return
+
     val = ask(question=f"Выберите '{key}':",
-              options=availableRuleOptions(key, rules),
-              preHooks=[drawMessageHook(f'\nПравила в игре: {len(rules)}')],
-              postHooks=[drawContextHook(context)])
+              options=list(set(sum([r.options(key)
+                                    for r in rules], start=[]))),
+              postHooks=[drawMessageHook(f'\nОсталось правил: {len(rules)}'),
+                         drawContextHook(context)])
     context[key] = val
-
-
-def availableRuleOptions(key, rules):
-    return list(set(sum([r.options(key) for r in rules], start=[])))
 
 
 def drawContextHook(context):
