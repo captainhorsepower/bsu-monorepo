@@ -5,15 +5,14 @@ import yaml  # PyYaml docs: https://pyyaml.org/wiki/PyYAMLDocumentation
 import random
 from glob import glob as findFiles
 
-guessed = 0
-asked = 0
-
-
 def main():
     filename = chooseDatabaseFile()
-    rules, target = loadRules(filename)
+    rules, target = chooseRules(filename)
     target, targetOptions = chooseTarget(rules, default=target)
-    ansDict = resolveAns(rules, target)
+
+    akinator = Akinator(rules, target)
+    akinator.resolveAns()
+
     drawResult(target, ansDict, fallbackOpts=targetOptions + ['Просто троллю'])
 
 
@@ -60,7 +59,7 @@ rules:
     return d[c]
 
 
-def loadRules(filename):
+def chooseRules(filename):
     yamlFile = yaml.load(open(filename), Loader=yaml.FullLoader)
     yamlRules = yamlFile['rules']
     return [Rule(yamlRule) for yamlRule in yamlRules], yamlFile.get('default-target', None)
@@ -81,16 +80,17 @@ def chooseTarget(rules, default):
             MAX_LINE_SYMBOLS = 50
             inds = [0]
             for curr in range(len(l)):
-               prev = inds[-1]
-               if (curr == prev): continue
-               if len(str(l[prev:(curr+1)])) > MAX_LINE_SYMBOLS:
-                   inds.append(curr)
+                prev = inds[-1]
+                if (curr == prev):
+                    continue
+                if len(str(l[prev:(curr+1)])) > MAX_LINE_SYMBOLS:
+                    inds.append(curr)
             inds.append(len(l))
-            
+
             lines = []
             for i in range(len(inds) - 1):
                 lines.append(l[inds[i]:inds[i+1]])
-                
+
             firstLine = ', '.join(lines[0])
             otherLines = '' if len(lines) == 1 else \
                 ',\n' + \
@@ -106,64 +106,85 @@ def chooseTarget(rules, default):
     return target, _targetOptions(target)
 
 
-def resolveAns(rules, target, context=None):
-    context = context if context is not None else dict()
-    random.shuffle(rules)  # shuffle rules for even more fun!
-    for r in [r for r in rules if r.canAnswer(target)]:
-        val = _resolveRuleAns(r, context, rules)
-        if (val):
-            _drawRule(r)
-            return val
+class Akinator:
+
+    def __init__(self, rules, target) -> None:
+        self.targetRules = [r for r in self.rules if r.canAnswer(target)]
+        self.rules = [r for r in self.rules if not r.canAnswer(target)]
+        random.shuffle(self.targetRules)
+        random.shuffle(self.rules)
+        self.finalTarget = target
+        self.context = {}
+        self.asked = 0
+
+    def resolveAns(self):
+        for r in self.targetRules:
+            val = self.__resolveRule(r)
+            if val:
+                return val
+
+    def __resolveRule(self, rule):
+        while True:
+            status, val = rule.when(self.context)
+            if status == RuleState.UNKNOWN:
+                self.__resolveKeyToContext(key=val)
+            else:
+                if val:
+                    _drawRule(rule)
+                return status, val
+
+    def __resolveKeyToContext(self, key):
+        val = None
+
+        # try to resolve value with rules
+        for r in [r for r in self.rules if r.canAnswer(key)]:
+            _, val = self.__resolveRule(r)
+            if val:
+                break
+
+        # else aks user
+        if not val:
+            self.asked += 1
+            val = ask(
+                question=f"Выберите '{key}':",
+                options=list(set(sum([r.options(key)
+                                      for r in self.rules
+                                      if not r.canAnswer(key)],
+                                     start=[]))),
+                postHooks=[_drawContextHook(self.context)])
+
+        self.__updContext(key, val)
+
+    def __updContext(self, key, val):
+        self.context[key] = val
+
+        # remove failing rules
+        for r in [r for r in self.rules if r.when(self.context)[0] == RuleState.FAIL]:
+            self.rules.remove(r)
+
+    def getAsked(self):
+        return self.asked
+
+    def getGuessed(self):
+        return len(self.context) - self.asked
 
 
-def drawResult(target, ansDict, fallbackOpts):
-    def _draw(stdscr):
-        stdscr.erase()
-        if ansDict:
-            stdscr.addstr(f"Спасибо за игру!\n\n")
-            stdscr.addstr(f"Получилось: {target} = {ansDict[target]}\n")
-            stdscr.addstr(f"\nАкинатор задал {asked} вопрос(ов|а)\nи вывел {guessed} значени(й|я)\n")
-        else:
-            ask(question="Что вы загадали?",
-                options=fallbackOpts,
-                preHooks=[_drawMessageHook(f"Все известные правила для '{target}' оказались ложью.\n\n")])
+    def drawResult(target, ansDict, fallbackOpts):
+        def _draw(stdscr):
+            stdscr.erase()
+            if ansDict:
+                stdscr.addstr(f"Спасибо за игру!\n\n")
+                stdscr.addstr(f"Получилось: {target} = {ansDict[target]}\n")
+                stdscr.addstr(
+                    f"\nАкинатор задал {asked} вопрос(ов|а)\nи вывел {guessed} значени(й|я)\n")
+            else:
+                ask(question="Что вы загадали?",
+                    options=fallbackOpts,
+                    preHooks=[_drawMessageHook(f"Все известные правила для '{target}' оказались ложью.\n\n")])
 
-        stdscr.getch()
+            stdscr.getch()
 
-    curses.wrapper(_draw)
-
-
-def _resolveRuleAns(rule, context, rules):
-    status, val = rule.when(context)
-    while(status == RuleState.UNKNOWN):
-        _resolveKeyToContext(key=val, rules=rules, context=context)
-        status, val = rule.when(context)
-        print((str(status), val))
-
-    rules.remove(rule)
-    if status == RuleState.SUCCESS:
-        global guessed
-        guessed += 1
-    return val
-
-
-def _resolveKeyToContext(key, rules, context):
-    for r in [r for r in rules if r.canAnswer(key)]:
-        ansDict = _resolveRuleAns(r, context, rules)
-        if (ansDict):
-            context.update(ansDict)
-            return
-
-    global asked
-    asked += 1
-    val = ask(question=f"Выберите '{key}':",
-              # can keep ref to parent rules to get options only from
-              # 'helpful' rules and always win! Rly?
-              options=list(set(sum([r.options(key)
-                                    for r in rules], start=[]))),
-              postHooks=[_drawMessageHook(f'\nОсталось правил: {len(rules)}'),
-                         _drawContextHook(context)])
-    context[key] = val
+        curses.wrapper(_draw)
 
 
 def _drawContextHook(context):
@@ -197,7 +218,6 @@ def _drawRule(rule):
         stdscr.getch()
 
     curses.wrapper(_draw)
-
 
 RuleState = Enum('RuleState', 'FAIL SUCCESS UNKNOWN')
 
