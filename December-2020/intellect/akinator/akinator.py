@@ -5,18 +5,32 @@ import yaml  # PyYaml docs: https://pyyaml.org/wiki/PyYAMLDocumentation
 
 
 def main():
-    target = 'семейство'
-    rules = loadRules('sample-rules.yaml')  # can also random shuffle
-
-    ans = resolveAns(rules, target)
-    # TODO: print ans
-    # TODO: visualize guess tree with ASCII
+    rules, target = loadRules('sample-rules.yaml')  # can also random shuffle
+    target = chooseTarget(rules, default=target)
+    ansDict = resolveAns(rules, target)
+    drawResult(target, ansDict)
 
 
 def loadRules(filename):
-    yamlFile = open(filename)
-    yamlRules = yaml.load(yamlFile, Loader=yaml.FullLoader)['rules']
-    return [Rule(yamlRule) for yamlRule in yamlRules]
+    yamlFile = yaml.load(open(filename), Loader=yaml.FullLoader)
+    yamlRules = yamlFile['rules']
+    return [Rule(yamlRule) for yamlRule in yamlRules], yamlFile['default-target']
+
+
+def chooseTarget(rules, default):
+    thenDict = {}
+    for r in rules:
+        thenDict.update(r.getThen())
+
+    def targetOptions(k):
+        return list(set(sum([r.targetOptions(k) for r in rules], start=[])))
+
+    def optStr(k):
+        return f"{('[default] ' + str(k) if k == default else k):20}{targetOptions(k)}"
+
+    invOpts = {optStr(k): k for k in thenDict}
+
+    return invOpts[ask('Что угадываем?', list(invOpts.keys()))]
 
 
 def resolveAns(rules, target, context=None):
@@ -24,6 +38,7 @@ def resolveAns(rules, target, context=None):
     for r in [r for r in rules if r.canAnswer(target)]:
         val = _resolveRuleAns(r, context, rules)
         if (val):
+            drawRule(r)
             return val
 
 
@@ -39,22 +54,67 @@ def _resolveRuleAns(rule, context, rules):
 
 
 def _resolveKeyToContext(key, rules, context):
-    val = None
     for r in [r for r in rules if r.canAnswer(key)]:
-        val = _resolveRuleAns(r, context, rules)
-        if (val):
-            context[key] = val
+        ansDict = _resolveRuleAns(r, context, rules)
+        if (ansDict):
+            context.update(ansDict)
             return
     val = ask(question=f"Выберите '{key}':",
-              options=list(set(sum([r.options(key) for r in rules], start=[]))))
+              options=availableRuleOptions(key, rules),
+              postHooks=[drawContext(context)])
     context[key] = val
+
+
+def availableRuleOptions(key, rules):
+    return list(set(sum([r.options(key) for r in rules], start=[])))
+
+
+def drawContext(context):
+    def _hook(stdscr):
+        stdscr.addstr('\nТекущий контекст:\n')
+        for k in context:
+            stdscr.addstr(f'\t{k:20}{context[k]}\n')
+
+    return _hook
+
+
+def drawRule(rule):
+    def _draw(stdscr):
+        stdscr.erase()
+        stdscr.addstr(f"По правилу:\n", curses.A_UNDERLINE)
+        stdscr.addstr(f"если:\n")
+        d = rule.getWhen()
+        for k in d:
+            stdscr.addstr(f'\t{k:20}{d[k]}\n')
+        stdscr.addstr(f"то:\n")
+        d = rule.getThen()
+        for k in d:
+            stdscr.addstr(f'\t{k:20}{d[k]}\n')
+        stdscr.getch()
+
+    curses.wrapper(_draw)
+
+
+def drawResult(target, ansDict):
+    def _draw(stdscr):
+        stdscr.erase()
+        if ansDict:
+            stdscr.addstr(f"Спасибо игру!\n\n")
+            stdscr.addstr(f"Получилось: {target} = {ansDict[target]}\n")
+        else:
+            stdscr.addstr(
+                f"Все известные правила для '{target}' оказались ложью.\n\n")
+
+        stdscr.getch()
+
+    curses.wrapper(_draw)
 
 
 class Rule:
     """
-    - __when = dict of requirements
+    - getWhen = dict of requirements
     - given = current context
-    - __then = result if requirements satisfied
+    - getThen = result if requirements satisfied
     """
 
     def __init__(self, yamlRule):
@@ -84,6 +144,12 @@ class Rule:
         then: {self.__then}
         '''
 
+    def getWhen(self):
+        return self.__when
+
+    def getThen(self):
+        return self.__then
+
     def canAnswer(self, target):
         return target in self.__then
 
@@ -101,11 +167,15 @@ class Rule:
         v = self.__when.get(key, None)
         return [v] if v else []
 
+    def targetOptions(self, key):
+        v = self.__then.get(key, None)
+        return [v] if v else []
+
 
 RuleState = Enum('RuleState', 'FAIL SUCCESS UNKNOWN')
 
 
-def ask(question, options):
+def ask(question, options, preHooks=None, postHooks=None):
     choice = ''
 
     def _do_multiple_choice(stdscr):
@@ -120,11 +190,15 @@ def ask(question, options):
         option = 0  # the current option that is marked
         while c != 10:  # Enter in ascii
             stdscr.erase()
+            drawHooks(stdscr, preHooks)
+
             stdscr.addstr(f"{question}\n", curses.A_UNDERLINE)
             for i in range(len(options)):
                 attr = attributes['highlighted'] if i == option else attributes['normal']
                 stdscr.addstr(f"{i + 1}. ")
                 stdscr.addstr(options[i] + '\n', attr)
+
+            drawHooks(stdscr, postHooks)
 
             c = stdscr.getch()
             if 1 <= c - ord('0') <= len(options):
@@ -136,11 +210,18 @@ def ask(question, options):
 
         nonlocal choice
         choice = options[option]
+        stdscr.erase()
         stdscr.addstr(f"Ваш выбор: {choice}")
         stdscr.getch()
 
     curses.wrapper(_do_multiple_choice)
     return choice
+
+
+def drawHooks(stdcrs, hooks):
+    if hooks:
+        for h in hooks:
+            h(stdcrs)
 
 
 if __name__ == "__main__":
