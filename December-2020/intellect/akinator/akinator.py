@@ -9,7 +9,7 @@ def main():
     rules, target = loadRules('sample-rules.yaml')
     target, targetOptions = chooseTarget(rules, default=target)
     ansDict = resolveAns(rules, target)
-    drawResult(target, ansDict, fallbackOpts=targetOptions)
+    drawResult(target, ansDict, fallbackOpts=targetOptions + ['Просто троллю'])
 
 
 def loadRules(filename):
@@ -31,7 +31,7 @@ def chooseTarget(rules, default):
         return f"{prefix:10}{k:15}{_targetOptions(k)}"
 
     invOpts = {_optStr(k): k for k in thenDict}
-    target = invOpts[ask('Что угадываем?', list(invOpts.keys()))]
+    target = invOpts[ask('Что угадываем? Справа список выводимых правилами ответов', list(invOpts.keys()))]
     return target, _targetOptions(target)
 
 
@@ -41,9 +41,26 @@ def resolveAns(rules, target, context=None):
     for r in [r for r in rules if r.canAnswer(target)]:
         val = _resolveRuleAns(r, context, rules)
         if (val):
-            drawRule(r)
+            _drawRule(r)
             return val
 
+
+def drawResult(target, ansDict, fallbackOpts):
+    def _draw(stdscr):
+        stdscr.erase()
+        if ansDict:
+            stdscr.addstr(f"Спасибо за игру!\n\n")
+            stdscr.addstr(f"Получилось: {target} = {ansDict[target]}\n")
+        else:
+            stdscr.addstr(
+                f"Все известные правила для '{target}' оказались ложью.\n\n")
+            ask(question="Что вы загадали?",
+                options=fallbackOpts)
+
+        stdscr.getch()
+
+    curses.wrapper(_draw)
+    
 
 def _resolveRuleAns(rule, context, rules):
     status, val = rule.when(context)
@@ -68,12 +85,12 @@ def _resolveKeyToContext(key, rules, context):
               # 'helpful' rules and always win! Rly?
               options=list(set(sum([r.options(key)
                                     for r in rules], start=[]))),
-              postHooks=[drawMessageHook(f'\nОсталось правил: {len(rules)}'),
-                         drawContextHook(context)])
+              postHooks=[_drawMessageHook(f'\nОсталось правил: {len(rules)}'),
+                         _drawContextHook(context)])
     context[key] = val
 
 
-def drawContextHook(context):
+def _drawContextHook(context):
     def _hook(stdscr):
         stdscr.addstr('\nТекущий контекст:\n')
         for k in context:
@@ -82,14 +99,14 @@ def drawContextHook(context):
     return _hook
 
 
-def drawMessageHook(message):
+def _drawMessageHook(message):
     def _hook(stdscr):
         stdscr.addstr(f'{message}\n')
 
     return _hook
 
 
-def drawRule(rule):
+def _drawRule(rule):
     def _draw(stdscr):
         stdscr.erase()
         stdscr.addstr(f"По правилу:\n", curses.A_UNDERLINE)
@@ -101,23 +118,6 @@ def drawRule(rule):
         d = rule.getThen()
         for k in d:
             stdscr.addstr(f'\t{k:20}{d[k]}\n')
-        stdscr.getch()
-
-    curses.wrapper(_draw)
-
-
-def drawResult(target, ansDict, fallbackOpts):
-    def _draw(stdscr):
-        stdscr.erase()
-        if ansDict:
-            stdscr.addstr(f"Спасибо за игру!\n\n")
-            stdscr.addstr(f"Получилось: {target} = {ansDict[target]}\n")
-        else:
-            stdscr.addstr(
-                f"Все известные правила для '{target}' оказались ложью.\n\n")
-            ask(question="Что вы загадали?",
-                options=fallbackOpts)
-
         stdscr.getch()
 
     curses.wrapper(_draw)
@@ -203,7 +203,7 @@ def ask(question, options, preHooks=None, postHooks=None):
         option = 0  # the current option that is marked
         while c != 10:  # Enter in ascii
             stdscr.erase()
-            drawHooks(stdscr, preHooks)
+            _drawHooks(stdscr, preHooks)
 
             stdscr.addstr(f"{question}\n", curses.A_UNDERLINE)
             for i in range(len(options)):
@@ -211,7 +211,7 @@ def ask(question, options, preHooks=None, postHooks=None):
                 stdscr.addstr(f"{i + 1}. ")
                 stdscr.addstr(options[i] + '\n', attr)
 
-            drawHooks(stdscr, postHooks)
+            _drawHooks(stdscr, postHooks)
 
             c = stdscr.getch()
             if 1 <= c - ord('0') <= len(options):
@@ -231,7 +231,7 @@ def ask(question, options, preHooks=None, postHooks=None):
     return choice
 
 
-def drawHooks(stdcrs, hooks):
+def _drawHooks(stdcrs, hooks):
     if hooks:
         for h in hooks:
             h(stdcrs)
