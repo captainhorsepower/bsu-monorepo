@@ -31,7 +31,8 @@ def chooseTarget(rules, default):
         return f"{prefix:10}{k:15}{_targetOptions(k)}"
 
     invOpts = {_optStr(k): k for k in thenDict}
-    target = invOpts[ask('Что угадываем? Справа список выводимых правилами ответов', list(invOpts.keys()))]
+    target = invOpts[ask(
+        'Что угадываем? Справа список выводимых правилами ответов', list(invOpts.keys()))]
     return target, _targetOptions(target)
 
 
@@ -52,22 +53,21 @@ def drawResult(target, ansDict, fallbackOpts):
             stdscr.addstr(f"Спасибо за игру!\n\n")
             stdscr.addstr(f"Получилось: {target} = {ansDict[target]}\n")
         else:
-            stdscr.addstr(
-                f"Все известные правила для '{target}' оказались ложью.\n\n")
             ask(question="Что вы загадали?",
-                options=fallbackOpts)
+                options=fallbackOpts,
+                preHooks=[_drawMessageHook(f"Все известные правила для '{target}' оказались ложью.\n\n")])
 
         stdscr.getch()
 
     curses.wrapper(_draw)
-    
+
 
 def _resolveRuleAns(rule, context, rules):
     status, val = rule.when(context)
     while(status == RuleState.UNKNOWN):
         _resolveKeyToContext(key=val, rules=rules, context=context)
         status, val = rule.when(context)
-        print((status, val))
+        print((str(status), val))
 
     rules.remove(rule)
     return val
