@@ -14,8 +14,8 @@ def main():
     akinator = Akinator(rules, target)
     ansDict = akinator.solveAkinator()
 
-    AsciiUtil.drawResult(target,
-                         ansDict,
+    AsciiUtil.drawResult(target=target,
+                         ansDict=ansDict,
                          fallbackOpts=targetOptions + ['Просто троллю'],
                          asked=akinator.getAsked(), guessed=akinator.getGuessed())
 
@@ -112,23 +112,25 @@ def chooseTarget(rules, default):
 
 class Akinator:
 
-    def __init__(self, rules, target) -> None:
-        self.targetRules = [r for r in rules if r.canAnswer(target)]
-        self.rules = [r for r in rules if not r.canAnswer(target)]
-        random.shuffle(self.targetRules)
+    def __init__(self, rules, target):
+        self.rules = rules
         random.shuffle(self.rules)
         self.finalTarget = target
         self.context = {}
         self.asked = 0
-        print(self.targetRules)
         print(self.rules)
         print(self.finalTarget)
 
     def solveAkinator(self):
-        for r in self.targetRules:
-            val = self.__resolveRule(r)
-            if val:
-                return val
+        while True:
+            targetRules = [r for r in self.rules if r.canAnswer(self.finalTarget)]
+            if not targetRules:
+                return
+            for r in targetRules:
+                _, val = self.__resolveRule(r)
+                if val:
+                    print(val)
+                    return val
 
     def __resolveRule(self, rule):
         while True:
@@ -159,15 +161,22 @@ class Akinator:
                                       if not r.canAnswer(key)],
                                      start=[]))),
                 postHooks=[AsciiUtil.drawContextHook(self.context)])
+        else:
+            val = val[key]
 
         self.__updContext(key, val)
 
     def __updContext(self, key, val):
         self.context[key] = val
-
+        
         # remove failing rules
         for r in [r for r in self.rules if r.when(self.context)[0] == RuleState.FAIL]:
             self.rules.remove(r)
+
+        print('-----------------------------')
+        print(f'put {key}: {val} to contex')
+        print(f'context: {len(self.context)} {self.context}') 
+        print(f'rules: {len(self.rules)} {self.rules}') 
 
     def getAsked(self):
         return self.asked
@@ -250,7 +259,7 @@ class AsciiUtil:
 
         curses.wrapper(_draw)
 
-    def drawResult(self, target, ansDict, fallbackOpts, asked, guessed):
+    def drawResult(target, ansDict, fallbackOpts, asked, guessed):
         def _draw(stdscr):
             stdscr.erase()
             if ansDict:
