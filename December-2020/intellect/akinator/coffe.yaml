@@ -1,0 +1,36 @@
+name: Кофе
+default-target:
+rules:
+- then:
+  - вид: эспрессо
+  when: &sample-when
+    and: 
+    - a: b
+    - c: d
+- then:
+  - вид: американо
+  when: *sample-when
+- then:
+  - вид: капучино
+  when: *sample-when
+- then:
+  - вид: моккачино
+  when: *sample-when
+- then:
+  - вид: латте
+  when: *sample-when
+- then:
+  - вид: маккиато
+  when: *sample-when
+- then:
+  - вид: flat white
+  when: *sample-when
+- then:
+  - вид: раф
+  when: *sample-when
+- then:
+  - вид: латте маккиато
+  when: *sample-when
+- then:
+  - вид: ирландский
+  when: *sample-when
