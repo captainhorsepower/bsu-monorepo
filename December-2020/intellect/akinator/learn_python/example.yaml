@@ -4,7 +4,7 @@ a_dictionary:
   nested_dictionary:
     nested_key: nested_value
 
-rules:
+a_list:
   - an item
   - another item
   - 1.25

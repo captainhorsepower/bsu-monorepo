@@ -22,7 +22,6 @@ def chooseDatabaseFile():
     4. return filename
     """
     dotYamls = list(set(findFiles("**/*.yaml") + findFiles("*.yaml")))
-    print(dotYamls)
 
     def _fileOptStr(filename):
         y = yaml.load(open(filename), Loader=yaml.FullLoader)
@@ -30,8 +29,9 @@ def chooseDatabaseFile():
         return f"{name:15}[{filename}]" if 'rules' in y else None
 
     d = {_fileOptStr(f): f for f in dotYamls if (_fileOptStr(f))}
+    костыль = 'Выход.'
     c = ask(question="Выберите базу:",
-            options=list(d.keys()),
+            options=list(d.keys()) + [костыль],
             preHooks=[_drawMessageHook(
                 """
 Добро пожаловать в ASCII акинатор.
@@ -52,6 +52,7 @@ rules:
 
 Сделал Воробей Артём, 4гр.
 """)])
+    if c == костыль: exit()
     return d[c]
 
 
