@@ -13,10 +13,10 @@ def verifyRules(rules):
     Rules can contradict if their 'then' keys match.
 
     Rule is invalid when:
-    - it's redundant. Exists 'prefix rule' 
+    - it's redundant. Exists 'prefix rule'
       - same 'then'
       - 'when' is a subset current 'when'.
-    - exists another rule with 
+    - exists another rule with
       - 'when' don't contradict
       - 'then' do
     """
@@ -43,9 +43,19 @@ def whenClausesMathch_thenClausesDont(key, rule, others):
             d['DO'].append(other)
         elif status == RuleState.UNKNOWN:
             d['CAN'].append(other)
-    
+
     return d
-            
+
+
+def ruleRepr(self) -> str:
+        return 'str(self)'
+
+
+def ruleToStr(self) -> str:
+        return 'rule str'
+
+Rule.__repr__ = ruleRepr
+Rule.__str__ = ruleToStr          
 
 
 if __name__ == "__main__":
