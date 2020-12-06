@@ -123,14 +123,14 @@ class Akinator:
 
     def solveAkinator(self):
         while True:
-            targetRules = [r for r in self.rules if r.canAnswer(self.finalTarget)]
+            targetRules = [
+                r for r in self.rules if r.canAnswer(self.finalTarget)]
             if not targetRules:
                 return
-            for r in targetRules:
-                _, val = self.__resolveRule(r)
-                if val:
-                    print(val)
-                    return val
+            _, val = self.__resolveRule(targetRules[0])
+            if val:
+                print(val)
+                return val
 
     def __resolveRule(self, rule):
         while True:
@@ -154,11 +154,12 @@ class Akinator:
         # else aks user
         if not val:
             self.asked += 1
+            # all rules that can answer key are failed.
+            # what are available options for key
+            # to ask the from user?
             val = AsciiUtil.ask(
                 question=f"Выберите '{key}':",
-                options=list(set(sum([r.options(key)
-                                      for r in self.rules
-                                      if not r.canAnswer(key)],
+                options=list(set(sum([r.options(key) for r in self.rules],
                                      start=[]))),
                 postHooks=[AsciiUtil.drawContextHook(self.context)])
         else:
@@ -168,15 +169,16 @@ class Akinator:
 
     def __updContext(self, key, val):
         self.context[key] = val
-        
+
         # remove failing rules
         for r in [r for r in self.rules if r.when(self.context)[0] == RuleState.FAIL]:
+            print(f'remove rule {r}')
             self.rules.remove(r)
 
         print('-----------------------------')
         print(f'put {key}: {val} to contex')
-        print(f'context: {len(self.context)} {self.context}') 
-        print(f'rules: {len(self.rules)} {self.rules}') 
+        print(f'context: {len(self.context)} {self.context}')
+        print(f'rules: {len(self.rules)} {self.rules}')
 
     def getAsked(self):
         return self.asked
@@ -325,11 +327,14 @@ class Rule:
 
     def when(self, context):
         for k, v in self.__when.items():
+            vv = context.get(k, v)
+            if v != vv:
+                return RuleState.FAIL, None
+
+        for k, v in self.__when.items():
             vv = context.get(k, None)
             if not vv:
                 return RuleState.UNKNOWN, k
-            elif v != vv:
-                return RuleState.FAIL, None
 
         return RuleState.SUCCESS, self.__then
 
