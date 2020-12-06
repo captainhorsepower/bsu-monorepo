@@ -30,11 +30,29 @@ def chooseDatabaseFile():
         return f"{name:15}[{filename}]" if 'rules' in y else None
 
     d = {_fileOptStr(f): f for f in dotYamls if (_fileOptStr(f))}
-    c = ask(question="Выберите базу данных:",
-        options=list(d.keys()),
-        preHooks=[_drawMessageHook(f"Обнаруженные **.*.yaml: {dotYamls}\n\n")])
+    c = ask(question="Выберите базу:",
+            options=list(d.keys()),
+            preHooks=[_drawMessageHook(
+                """
+Добро пожаловать в ASCII акинатор.
+
+Сделал Воробей Артём, 4гр.
+"""
+            )],
+            postHooks=[_drawMessageHook(f"\nОбнаруженные **.*.yaml: {dotYamls}\n"),
+                       _drawMessageHook(
+                """
+База знаний хранится в .yaml файлах со структурой:
+---
+name: <имя базы>
+default-target: <предусмотренная разработчиком базы цель>
+rules: 
+- when: # условия для выполнения правила
+- then: # резльтирующие признаки
+
+Сделал Воробей Артём, 4гр.
+""")])
     return d[c]
-    
 
 
 def loadRules(filename):
