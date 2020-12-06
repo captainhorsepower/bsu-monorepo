@@ -1,3 +1,4 @@
+name: пример
 default-target: семейство
 rules:
 - when:

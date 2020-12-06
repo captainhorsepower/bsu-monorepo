@@ -3,19 +3,44 @@ from enum import Enum
 from os import remove, stat
 import yaml  # PyYaml docs: https://pyyaml.org/wiki/PyYAMLDocumentation
 import random
+from glob import glob as findFiles
 
 
 def main():
-    rules, target = loadRules('sample-rules.yaml')
+    filename = chooseDatabaseFile()
+    rules, target = loadRules(filename)
     target, targetOptions = chooseTarget(rules, default=target)
     ansDict = resolveAns(rules, target)
     drawResult(target, ansDict, fallbackOpts=targetOptions + ['Просто троллю'])
 
 
+def chooseDatabaseFile():
+    """
+    1. get .yaml files
+    2. remove files wihtout 'rules' and 'name'
+    3. ask which file to use
+    4. return filename
+    """
+    dotYamls = list(set(findFiles("**/*.yaml") + findFiles("*.yaml")))
+    print(dotYamls)
+
+    def _fileOptStr(filename):
+        y = yaml.load(open(filename), Loader=yaml.FullLoader)
+        name = y.get('name', '<no name>')
+        return f"{name:15}[{filename}]" if 'rules' in y else None
+
+    d = {_fileOptStr(f): f for f in dotYamls if (_fileOptStr(f))}
+    c = ask(question="Выберите базу данных:",
+        options=list(d.keys()),
+        preHooks=[_drawMessageHook(f"Обнаруженные **.*.yaml: {dotYamls}\n\n")])
+    return d[c]
+    
+
+
 def loadRules(filename):
     yamlFile = yaml.load(open(filename), Loader=yaml.FullLoader)
     yamlRules = yamlFile['rules']
-    return [Rule(yamlRule) for yamlRule in yamlRules], yamlFile['default-target']
+    return [Rule(yamlRule) for yamlRule in yamlRules], yamlFile.get('default-target', None)
 
 
 def chooseTarget(rules, default):
@@ -137,10 +162,10 @@ class Rule:
         """
         Supported yaml structure:
         when: # условия для выполнения правила
-          and:  # list of key-value pairs, all must match. 
+          and:  # list of key-value pairs, all must match.
                 # or:... is not no supported cuz not required.
           - key1: val1 #
-        then: 
+        then:
         - res-key1: res-val1
         """
         self.__when = dict()
@@ -156,7 +181,7 @@ class Rule:
 
     def __str__(self) -> str:
         return f'''
-        when: {self.__when} 
+        when: {self.__when}
         then: {self.__then}
         '''
 
