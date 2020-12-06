@@ -22,13 +22,14 @@ def chooseTarget(rules, default):
     for r in rules:
         thenDict.update(r.getThen())
 
-    def targetOptions(k):
+    def _targetOptions(k):
         return list(set(sum([r.targetOptions(k) for r in rules], start=[])))
 
-    def optStr(k):
-        return f"{('[default] ' + str(k) if k == default else k):20}{targetOptions(k)}"
+    def _optStr(k):
+        prefix = '[default]' if k == default else '[test]'
+        return f"{prefix:10}{k:15}{_targetOptions(k)}"
 
-    invOpts = {optStr(k): k for k in thenDict}
+    invOpts = {_optStr(k): k for k in thenDict}
 
     return invOpts[ask('Что угадываем?', list(invOpts.keys()))]
 
@@ -61,7 +62,8 @@ def _resolveKeyToContext(key, rules, context):
             return
     val = ask(question=f"Выберите '{key}':",
               options=availableRuleOptions(key, rules),
-              postHooks=[drawContext(context)])
+              preHooks=[drawMessageHook(f'\nПравила в игре: {len(rules)}')],
+              postHooks=[drawContextHook(context)])
     context[key] = val
 
 
@@ -69,11 +71,18 @@ def availableRuleOptions(key, rules):
     return list(set(sum([r.options(key) for r in rules], start=[])))
 
 
-def drawContext(context):
+def drawContextHook(context):
     def _hook(stdscr):
         stdscr.addstr('\nТекущий контекст:\n')
         for k in context:
             stdscr.addstr(f'\t{k:20}{context[k]}\n')
+
+    return _hook
+
+
+def drawMessageHook(message):
+    def _hook(stdscr):
+        stdscr.addstr(f'{message}\n')
 
     return _hook
 
@@ -99,7 +108,7 @@ def drawResult(target, ansDict):
     def _draw(stdscr):
         stdscr.erase()
         if ansDict:
-            stdscr.addstr(f"Спасибо игру!\n\n")
+            stdscr.addstr(f"Спасибо за игру!\n\n")
             stdscr.addstr(f"Получилось: {target} = {ansDict[target]}\n")
         else:
             stdscr.addstr(
@@ -108,6 +117,9 @@ def drawResult(target, ansDict):
         stdscr.getch()
 
     curses.wrapper(_draw)
+
+
+RuleState = Enum('RuleState', 'FAIL SUCCESS UNKNOWN')
 
 
 class Rule:
@@ -170,9 +182,6 @@ class Rule:
     def targetOptions(self, key):
         v = self.__then.get(key, None)
         return [v] if v else []
-
-
-RuleState = Enum('RuleState', 'FAIL SUCCESS UNKNOWN')
 
 
 def ask(question, options, preHooks=None, postHooks=None):
