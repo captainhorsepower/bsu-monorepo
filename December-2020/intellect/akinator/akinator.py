@@ -5,6 +5,9 @@ import yaml  # PyYaml docs: https://pyyaml.org/wiki/PyYAMLDocumentation
 import random
 from glob import glob as findFiles
 
+guessed = 0
+asked = 0
+
 
 def main():
     filename = chooseDatabaseFile()
@@ -119,6 +122,7 @@ def drawResult(target, ansDict, fallbackOpts):
         if ansDict:
             stdscr.addstr(f"Спасибо за игру!\n\n")
             stdscr.addstr(f"Получилось: {target} = {ansDict[target]}\n")
+            stdscr.addstr(f"\nАкинатор задал {asked} вопрос(ов|а)\nи вывел {guessed} значени(й|я)\n")
         else:
             ask(question="Что вы загадали?",
                 options=fallbackOpts,
@@ -137,6 +141,9 @@ def _resolveRuleAns(rule, context, rules):
         print((str(status), val))
 
     rules.remove(rule)
+    if status == RuleState.SUCCESS:
+        global guessed
+        guessed += 1
     return val
 
 
@@ -147,6 +154,8 @@ def _resolveKeyToContext(key, rules, context):
             context.update(ansDict)
             return
 
+    global asked
+    asked += 1
     val = ask(question=f"Выберите '{key}':",
               # can keep ref to parent rules to get options only from
               # 'helpful' rules and always win! Rly?
