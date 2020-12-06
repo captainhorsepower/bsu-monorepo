@@ -154,13 +154,10 @@ class Akinator:
         # else aks user
         if not val:
             self.asked += 1
-            # all rules that can answer key are failed.
-            # what are available options for key
-            # to ask the from user?
             val = AsciiUtil.ask(
                 question=f"Выберите '{key}':",
-                options=list(set(sum([r.options(key) for r in self.rules],
-                                     start=[]))),
+                options=list(set(sum([r.options(key)
+                                      for r in self.rules], start=[]))),
                 postHooks=[AsciiUtil.drawContextHook(self.context)])
         else:
             val = val[key]
