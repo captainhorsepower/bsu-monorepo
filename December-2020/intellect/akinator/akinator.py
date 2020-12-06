@@ -7,9 +7,9 @@ import random
 
 def main():
     rules, target = loadRules('sample-rules.yaml')
-    target = chooseTarget(rules, default=target)
+    target, targetOptions = chooseTarget(rules, default=target)
     ansDict = resolveAns(rules, target)
-    drawResult(target, ansDict)
+    drawResult(target, ansDict, fallbackOpts=targetOptions)
 
 
 def loadRules(filename):
@@ -31,13 +31,13 @@ def chooseTarget(rules, default):
         return f"{prefix:10}{k:15}{_targetOptions(k)}"
 
     invOpts = {_optStr(k): k for k in thenDict}
-
-    return invOpts[ask('Что угадываем?', list(invOpts.keys()))]
+    target = invOpts[ask('Что угадываем?', list(invOpts.keys()))]
+    return target, _targetOptions(target)
 
 
 def resolveAns(rules, target, context=None):
     context = context if context is not None else dict()
-    random.shuffle(rules) # shuffle rules for even more fun!
+    random.shuffle(rules)  # shuffle rules for even more fun!
     for r in [r for r in rules if r.canAnswer(target)]:
         val = _resolveRuleAns(r, context, rules)
         if (val):
@@ -64,6 +64,8 @@ def _resolveKeyToContext(key, rules, context):
             return
 
     val = ask(question=f"Выберите '{key}':",
+              # can keep ref to parent rules to get options only from
+              # 'helpful' rules and always win! Rly?
               options=list(set(sum([r.options(key)
                                     for r in rules], start=[]))),
               postHooks=[drawMessageHook(f'\nОсталось правил: {len(rules)}'),
@@ -104,7 +106,7 @@ def drawRule(rule):
     curses.wrapper(_draw)
 
 
-def drawResult(target, ansDict):
+def drawResult(target, ansDict, fallbackOpts):
     def _draw(stdscr):
         stdscr.erase()
         if ansDict:
@@ -113,6 +115,8 @@ def drawResult(target, ansDict):
         else:
             stdscr.addstr(
                 f"Все известные правила для '{target}' оказались ложью.\n\n")
+            ask(question="Что вы загадали?",
+                options=fallbackOpts)
 
         stdscr.getch()
 
