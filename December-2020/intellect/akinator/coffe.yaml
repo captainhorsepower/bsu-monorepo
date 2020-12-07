@@ -34,32 +34,32 @@ definitions:
 
   - name: добавка к кофе
     чистый кофе: &with-none
-      добвка к основе: без добавки.
+      добавка к основе: без добавки.
     горячая вода: &with-hot-water
-      добвка к основе: вода ~ 90 градусов
+      добавка к основе: горячая вода
     взбитое молоко: 
       val: &with-milk-to-coffe
-        добвка к основе: взбитое молоко 60-70 градусов добавляется в кофе
+        добавка к основе: взбитое молоко вливают в кофе
       дополнительно:
         - молоко 60-70 градусов
         - молоко в кофе
     лате макиато: 
       val: &with-fat-milk-first-coffe-second
-        добвка к основе: взбитое жирное молоко, в него вливают кофе
+        добавка к основе: кофе вливают во взбитое жирное молоко
       дополнительно:
         - молоко 60-70 градусов
         - молоко преобладает
         - кофе в молоко, аккуратно, тонкой струйкой в центр
     кофе макиато:  
       val: &with-milk-macciato
-        добвка к основе: молочная пенка
+        добавка к основе: молочная пенка
       дополнительно:
         - 10-15 мл молока для пенки
         - при взбитии разогревается до 60 градусов
         - выкладывается в центр эспрессо
     ирландский кофе: 
       val: &with-irish-whiskey-and-cream
-        добвка к основе: ирладнский виски и сливки для пенки
+        добавка к основе: ирладнский виски и сливки для пенки
       дополнительно:
         - только ирладнский виски
         - эксперты рекомендуют жирние сливки
@@ -155,13 +155,13 @@ definitions:
         
 
 name: Кофе
-default-target:
+default-target: вид
 rules:
 
 - then:
   - вид: эспрессо
-  when: &sample-when
-    and: 
+  when: 
+    and: &espresso
     - *based-on-self
     - *with-none
     - *penka-krema
@@ -173,7 +173,7 @@ rules:
 - then:
   - вид: макиато
   when: 
-    and:
+    and: &macciato
     - *based-on-espresso
     - *with-milk-macciato
     - *penka-macciato
@@ -189,26 +189,10 @@ rules:
   then:
     - *with-none
 
-- name: объём из посуды
-  when:
-    and:
-    - *cup-espresso
-    - *with-none
-  then: 
-  - *vol-espresso-shot
-
-- name: объём из посуды
-  when:
-    and:
-    - *cup-espresso
-    - *with-milk-macciato
-  then: 
-  - *vol-macciato
-
 - then:
   - вид: американо
   when: 
-    and:
+    and: &americano
     - *based-on-double-espresso
     - *with-hot-water
     - *penka-krema
@@ -220,7 +204,7 @@ rules:
 - then:
   - вид: капучино
   when: 
-    and:
+    and: &cappuccino
     - *based-on-any-black-coffe
     - *with-milk-to-coffe
     - *penka-cappuccino
@@ -233,7 +217,7 @@ rules:
 - then:
   - вид: латте
   when:
-    and:
+    and: &latte
     - *based-on-any-black-coffe
     - *with-milk-to-coffe
     - *penka-latte
@@ -245,7 +229,7 @@ rules:
 - then:
   - вид: флэт уайт
   when: 
-    and:
+    and: &flat-white
     - *based-on-double-espresso
     - *with-milk-to-coffe
     - *penka-flat-white
@@ -257,7 +241,7 @@ rules:
 - then:
   - вид: латте макиато
   when: 
-    and:
+    and: &latte-macciato
     - *based-on-any-black-coffe
     - *with-fat-milk-first-coffe-second
     - *penka-latte-macciato
@@ -269,7 +253,7 @@ rules:
 - then:
   - вид: ирландский кофе
   when:
-    and:
+    and: &irish-coffe
     - *based-on-any-black-coffe
     - *with-irish-whiskey-and-cream
     - *penka-irish
@@ -328,6 +312,17 @@ rules:
 #     - вид: раф
 #   then:
 #     - вкус: пока не пробовал
+
+
+#################################
+# Rules to avoid dumb checkboxes
+#################################
+- name: all by two
+  when:
+    and: 
+    - *based-on-self
+    - *with-none
+  then: *espresso
 
 - name: вкус латте
   when:

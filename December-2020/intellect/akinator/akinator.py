@@ -10,7 +10,7 @@ def main():
     filename = chooseDatabaseFile()
     rules, target = chooseRules(filename)
     target, targetOptions = chooseTarget(rules, default=target)
-
+    
     akinator = Akinator(rules, target)
     ansDict = akinator.solveAkinator()
 
@@ -287,22 +287,18 @@ class Rule:
     """
 
     def __init__(self, yamlRule):
-        """
-        Supported yaml structure:
-        when: # условия для выполнения правила
-          and:  # list of key-value pairs, all must match.
-                # or:... is not no supported cuz not required.
-          - key1: val1 #
-        then:
-        - res-key1: res-val1
-        """
-        self.__when = dict()
+        when = dict()
         for r in yamlRule['when']['and']:
-            self.__when.update(r)
+            when.update(r)
 
-        self.__then = dict()
+        then = dict()
         for t in yamlRule['then']:
-            self.__then.update(t)
+            then.update(t)
+
+        then = {k: then[k] for k in then if k not in when}
+
+        self.__when, self.__then = when, then
+        print(f'when {list(self.__when.keys())} then {list(self.__then.keys())}')
 
     def __repr__(self) -> str:
         return str(self)

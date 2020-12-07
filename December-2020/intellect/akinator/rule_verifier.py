@@ -4,9 +4,24 @@ from akinator import *
 
 def main():
     filename = chooseDatabaseFile()
-    rules, _ = loadRules(filename)
-    verifyRules(rules)
+    rules, t = chooseRules(filename)
+    hah([r for r in rules if r.canAnswer(t)])
 
+def hah(rules):
+    keys = sharedWhenKeys(rules)
+    print(f'shared when {keys}')
+
+    keysILike = ['основа', 'добавка к основе']
+    for r in rules:
+        context = {k: r.getWhen()[k] for k in keysILike}
+        rulesLeft = [r.getThen() for r in rules if r.when(context)[0] != RuleState.FAIL]
+        print(f'{len(rulesLeft)} rules left when {context}')
+    
+
+def sharedWhenKeys(rules):
+    keys = list(set(
+        sum(map(lambda r: list(r.getWhen().keys()), rules), start=[])))
+    return keys
 
 def verifyRules(rules):
     """
@@ -54,8 +69,8 @@ def ruleRepr(self) -> str:
 def ruleToStr(self) -> str:
         return 'rule str'
 
-Rule.__repr__ = ruleRepr
-Rule.__str__ = ruleToStr          
+# Rule.__repr__ = ruleRepr
+# Rule.__str__ = ruleToStr          
 
 
 if __name__ == "__main__":
