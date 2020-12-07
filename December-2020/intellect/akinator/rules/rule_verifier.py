@@ -1,5 +1,5 @@
-import importlib
-from akinator import *
+# FIXME: can't easily import from parent package
+from ..akinator import *
 
 
 def main():
