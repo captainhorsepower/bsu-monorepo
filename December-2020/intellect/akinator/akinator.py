@@ -118,8 +118,6 @@ class Akinator:
         self.finalTarget = target
         self.context = {}
         self.asked = 0
-        print(self.rules)
-        print(self.finalTarget)
 
     def solveAkinator(self):
         while True:
@@ -159,23 +157,19 @@ class Akinator:
                 options=list(set(sum([r.options(key)
                                       for r in self.rules], start=[]))),
                 postHooks=[AsciiUtil.drawContextHook(self.context)])
-        else:
-            val = val[key]
 
         self.__updContext(key, val)
 
     def __updContext(self, key, val):
-        self.context[key] = val
+        if type(val) is dict:
+            self.context.update(val)
+        else:
+            self.context[key] = val
 
         # remove failing rules
         for r in [r for r in self.rules if r.when(self.context)[0] == RuleState.FAIL]:
             print(f'remove rule {r}')
             self.rules.remove(r)
-
-        print('-----------------------------')
-        print(f'put {key}: {val} to contex')
-        print(f'context: {len(self.context)} {self.context}')
-        print(f'rules: {len(self.rules)} {self.rules}')
 
     def getAsked(self):
         return self.asked
@@ -249,11 +243,11 @@ class AsciiUtil:
             stdscr.addstr(f"если:\n")
             d = rule.getWhen()
             for k in d:
-                stdscr.addstr(f'\t{k:20}{d[k]}\n')
+                stdscr.addstr(f'\t{k:30}{d[k]}\n')
             stdscr.addstr(f"то:\n")
             d = rule.getThen()
             for k in d:
-                stdscr.addstr(f'\t{k:20}{d[k]}\n')
+                stdscr.addstr(f'\t{k:30}{d[k]}\n')
             stdscr.getch()
 
         curses.wrapper(_draw)

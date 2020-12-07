@@ -15,7 +15,8 @@ def hah(rules):
     for r in rules:
         context = {k: r.getWhen()[k] for k in keysILike}
         rulesLeft = [r.getThen() for r in rules if r.when(context)[0] != RuleState.FAIL]
-        print(f'{len(rulesLeft)} rules left when {context}')
+        tmp = sum(map(lambda d: list(d.values()), rulesLeft), start=[])
+        print(f'{tmp} possible when {context}')
     
 
 def sharedWhenKeys(rules):

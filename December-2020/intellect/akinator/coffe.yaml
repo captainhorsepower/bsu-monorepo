@@ -323,6 +323,45 @@ rules:
     - *based-on-self
     - *with-none
   then: *espresso
+- name: all by two
+  when:
+    and: 
+    - *based-on-espresso
+    - *with-milk-macciato
+  then: *macciato
+- name: all by two
+  when:
+    and: 
+    - *based-on-double-espresso
+    - *with-hot-water
+  then: *americano
+- name: all by two
+  when:
+    and: 
+    - *based-on-any-black-coffe
+    - *with-milk-to-coffe
+    - *penka-cappuccino
+  then: *cappuccino
+- name: all by two
+  when:
+    and: 
+    - *based-on-any-black-coffe
+    - *with-milk-to-coffe
+    - *penka-latte
+  then: *latte
+- name: all by two
+  when:
+    and: 
+    - *based-on-any-black-coffe
+    - *with-fat-milk-first-coffe-second
+  then: *latte-macciato
+- name: all by two
+  when:
+    and: 
+    - *based-on-any-black-coffe
+    - *with-irish-whiskey-and-cream
+    - *penka-irish
+  then: *irish-coffe
 
 - name: вкус латте
   when:
