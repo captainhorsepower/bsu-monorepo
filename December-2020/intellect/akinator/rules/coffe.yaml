@@ -1,0 +1,401 @@
+definitions:
+  крема:
+    description: |-
+      пенка на поверности эспрессо
+      формируется во время экстракции эспрессо 
+
+      Цитата: “Попадая в чашку, жидкость оказывается в условиях 
+        нормального атмосферного давления и не в состоянии 
+        удерживать газ, который выходит в виде тысячи пузырьков. 
+        Они и формируют плотную пенку”.
+      
+      О чём крема нам говорит?
+      что кофе свеж и хорошо экстрагирован и что бариста контролирует кофе.
+  
+  латте-арт:
+    description: |-
+      Это способ вливания молока в эспрессо, благодаря которому 
+      на поверхности получаются узоры. 
+      Так же можно просто рисовать острым предметом на верхнем слое пены.
+  
+      Требует чёткого соблюдения пропорций молока и кофе.
+
+
+  coffe-params:
+  - name: основа 
+    сам себе основа: &based-on-self
+      основа: cам себе основа
+    эспрессо: &based-on-espresso
+      основа: эспрессо
+    двойной эспрессо: &based-on-double-espresso
+      основа: двойной эспрессо
+    любой кофе без молока: &based-on-any-black-coffe
+      основа: любой чёрный кофе
+
+  - name: добавка к кофе
+    чистый кофе: &with-none
+      добавка к основе: без добавки.
+    горячая вода: &with-hot-water
+      добавка к основе: горячая вода
+    взбитое молоко: 
+      val: &with-milk-to-coffe
+        добавка к основе: взбитое молоко вливают в кофе
+      дополнительно:
+        - молоко 60-70 градусов
+        - молоко в кофе
+    лате макиато: 
+      val: &with-fat-milk-first-coffe-second
+        добавка к основе: кофе вливают во взбитое жирное молоко
+      дополнительно:
+        - молоко 60-70 градусов
+        - молоко преобладает
+        - кофе в молоко, аккуратно, тонкой струйкой в центр
+    кофе макиато:  
+      val: &with-milk-macciato
+        добавка к основе: молочная пенка
+      дополнительно:
+        - 10-15 мл молока для пенки
+        - при взбитии разогревается до 60 градусов
+        - выкладывается в центр эспрессо
+    ирландский кофе: 
+      val: &with-irish-whiskey-and-cream
+        добавка к основе: ирладнский виски и сливки для пенки
+      дополнительно:
+        - только ирладнский виски
+        - эксперты рекомендуют жирние сливки
+    
+  - name: пенка
+    крема: &penka-krema
+      пенка: крема
+    капучино пенка: &penka-cappuccino
+      пенка: толстая и густая молочная пенка
+    латте пенка: &penka-latte
+      пенка: средняя по толщине и неочень густая молочная пенка
+    флэт уайт пенка: &penka-flat-white
+      пенка: тонка плоская молочная пенка
+    макиато: &penka-macciato
+      пенка: молочная пенка выкладывается ложечкой в центр напитка
+    латте макиато: &penka-latte-macciato
+      пенка: молочная пенка с коричневым пятном в центре
+    ирладнский кофе: 
+      val: &penka-irish
+        пенка: ровный слой мягкой пенки из взбитых сливок
+      приготоволение: 
+      - взбить сливки заранее
+      - сварить эспрессо
+      - полоснуть бокал кипятком
+      - положить в бокал сахар
+      - залить горячим эспрессо, перемешать 
+      - добавить виски 
+      - осторожно влить сливки
+
+
+
+  - name: объём
+    эспрессо: &vol-espresso-shot
+      объём: 25-30 мл
+    американо: &vol-americano
+      объём: 200-300 мл
+    капучино: &vol-cappuccino
+      объём: 150-200 мл
+    латте: &vol-latte
+      объём: 200-300 мл
+    макиато: &vol-macciato
+      объём: 45-65 мл
+
+
+  - name: посуда
+    чашечка эспрессо: &cup-espresso
+      посуда: чашчека для эспрессо
+    просто чашка: &cup-simple-cup
+      посуда: чашка
+    для латте: &cup-irish-glass-or-large-cup
+      посуда: айриш бокал или большая чашка, стакан
+    подогретая чашка: &cup-warmed-up
+      посуда: подогретая чашка
+    ирладнский бокал: &cup-irish-glass-warmed-up
+      посуда: айриш бокал ополоснутый кипятком
+
+  - name: время приготовления
+    эспрессо: &time-20-30-sec
+      время приготовления: 20-30 сек
+    капучино: &time-1-2-min
+      время приготовления: 1-2 минуты
+    латте: &time-3-8-min
+      время приготовления: 3-8 минут
+    флэт уайт: &time-5-min
+      время приготовления: 5 минут
+    макиато: &time-3-5-min
+      время приготовления: 3-5 минут
+    ирладнский кофе: &time-7-10-min
+      время приготовления: 7-10 минут
+
+
+  - name: температура готового
+    горячий: &temp-espresso
+      температура готового напитка: 85-95 градусов
+    капучино: &temp-cappuccino
+      температура готового напитка: 60-70 градусов
+
+
+  посуда-params:
+  - name: чашечка эспрессо
+    attrs:
+    - маленькая чашечка
+    - внутрия имеет форму яйца
+    - это позволяет максимально сохранить плотность и пенку при наливании в чашку.
+    - катекогрически не квадратная
+
+  - для латте:
+    - айриш бокал или большая чашка, стакан
+    - может надо разогреть
+
+  - name: просто чашка
+
+        
+
+name: Кофе
+default-target: вид
+rules:
+
+- then:
+  - вид: эспрессо
+  when: 
+    and: &espresso
+    - *based-on-self
+    - *with-none
+    - *penka-krema
+    - *cup-espresso
+    - *vol-espresso-shot
+    - *time-20-30-sec
+    - *temp-espresso 
+
+- then:
+  - вид: макиато
+  when: 
+    and: &macciato
+    - *based-on-espresso
+    - *with-milk-macciato
+    - *penka-macciato
+    - *vol-macciato
+    - *cup-espresso
+    - *temp-cappuccino
+    - *time-3-5-min 
+
+- name: сам себе основа => без добавок
+  when:
+    and: 
+    - *based-on-self
+  then:
+    - *with-none
+
+- then:
+  - вид: американо
+  when: 
+    and: &americano
+    - *based-on-double-espresso
+    - *with-hot-water
+    - *penka-krema
+    - *vol-americano
+    - *cup-simple-cup
+    - *temp-espresso
+    - *time-20-30-sec
+
+- then:
+  - вид: капучино
+  when: 
+    and: &cappuccino
+    - *based-on-any-black-coffe
+    - *with-milk-to-coffe
+    - *penka-cappuccino
+    - *vol-cappuccino
+    - *cup-warmed-up
+    - *time-1-2-min 
+    - *temp-cappuccino 
+
+
+- then:
+  - вид: латте
+  when:
+    and: &latte
+    - *based-on-any-black-coffe
+    - *with-milk-to-coffe
+    - *penka-latte
+    - *vol-latte
+    - *cup-irish-glass-or-large-cup
+    - *time-3-8-min 
+    - *temp-cappuccino
+
+- then:
+  - вид: флэт уайт
+  when: 
+    and: &flat-white
+    - *based-on-double-espresso
+    - *with-milk-to-coffe
+    - *penka-flat-white
+    - *vol-cappuccino
+    - *cup-warmed-up
+    - *time-5-min 
+    - *temp-cappuccino
+
+- then:
+  - вид: латте макиато
+  when: 
+    and: &latte-macciato
+    - *based-on-any-black-coffe
+    - *with-fat-milk-first-coffe-second
+    - *penka-latte-macciato
+    - *vol-latte
+    - *cup-irish-glass-or-large-cup 
+    - *time-3-8-min
+    - *temp-cappuccino
+
+- then:
+  - вид: ирландский кофе
+  when:
+    and: &irish-coffe
+    - *based-on-any-black-coffe
+    - *with-irish-whiskey-and-cream
+    - *penka-irish
+    - *vol-cappuccino 
+    - *cup-irish-glass-warmed-up 
+    - *time-7-10-min
+    - *temp-cappuccino
+
+# FIXME
+# - then:
+#   - вид: моккачино
+#   when: 
+#     and:
+#     - объём: 160-170 мл 
+#     - время приготовления: 15-20 минут 
+#     - температура: 50-60 градусов 
+#     - разновидность латте: да, с добавлением шоколада
+#     - шоколад: обычно порошок какао, можно и сироп
+#     - посуда: высокий прозрачный бокал, потому что красиво
+#     - приготовление: 
+#       - растопить 50г шоколада с ложкой молока, вылить в бокал 
+#       - сварить 50г кофе, перелить в бокал, не перемешивать
+#       - взбить холодное молоко капучинатором
+#       - перелить молоко по лезвию ножа в кофе 
+#       - взбить сливки в крутую пену, выложить
+#       - посыпать тёртым шоколадом 
+      
+
+# FIXME
+# - then:
+#   - вид: раф
+#   when:
+#     and:
+#     - сахар: ванильный
+#     - сливки: да, взбитые паром
+#     - эспрессо: в сливки (и сироп?) добавляют шот
+#     - придумали: в москве
+#     - посуда: прогрета, чашка или высокий бокал
+#     - пенка: воздушная, глянцевая
+#     - объём: 124-160 мл
+#     - время приготовления: 5-10 минут 
+#     - комфортная температура: 50-60 градусов
+#     - приготовление:
+#       - смешать сливки и сахар 
+#       - залить к ним кофе
+#       - взбить смесь пароотводом
+#       - перелить в посуду, украсить и подать
+
+# TODO: impl or
+# - name: вкус по кофе
+#   when:
+#     or:
+#     - вид: латте макиато
+#     - вид: моккачино
+#     - вид: ирландский кофе
+#     - вид: раф
+#   then:
+#     - вкус: пока не пробовал
+
+
+#################################
+# Rules to avoid dumb checkboxes
+#################################
+- name: all by two
+  when:
+    and: 
+    - *based-on-self
+    - *with-none
+  then: *espresso
+- name: all by two
+  when:
+    and: 
+    - *based-on-espresso
+    - *with-milk-macciato
+  then: *macciato
+- name: all by two
+  when:
+    and: 
+    - *based-on-double-espresso
+    - *with-hot-water
+  then: *americano
+- name: all by two
+  when:
+    and: 
+    - *based-on-any-black-coffe
+    - *with-milk-to-coffe
+    - *penka-cappuccino
+  then: *cappuccino
+- name: all by two
+  when:
+    and: 
+    - *based-on-any-black-coffe
+    - *with-milk-to-coffe
+    - *penka-latte
+  then: *latte
+- name: all by two
+  when:
+    and: 
+    - *based-on-any-black-coffe
+    - *with-fat-milk-first-coffe-second
+  then: *latte-macciato
+- name: all by two
+  when:
+    and: 
+    - *based-on-any-black-coffe
+    - *with-irish-whiskey-and-cream
+    - *penka-irish
+  then: *irish-coffe
+
+- name: вкус латте
+  when:
+    and:
+    - вид: латте
+  then:
+    - вкус: нежный, лёгкий, кофейно сливочный
+
+- name: вкус кофe
+  when:
+    and:
+    - вид: флэт уайт
+  then:
+    - вкус: яркий кофейный вкус
+
+- name: вкус кофe
+  when:
+    and:
+    - вид: капучино
+  then:
+    - вкус: идеальный баланс молока и кофе.
+
+- name: вкус кофe
+  when:
+    and:
+    - вид: американо
+  then:
+    - вкус: нерезкий, деликатный
+
+- name: вкус кофe
+  when:
+    and:
+    - вид: эспрессо
+  then:
+    - вкус: горкий, насыщенный
+  
+
