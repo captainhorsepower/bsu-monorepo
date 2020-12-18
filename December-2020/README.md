@@ -11,15 +11,15 @@
   - [x] akinator :heavy_check_mark:
   - [ ] laba 2
 - Иммитационное и статистическое моделирование
-  - [ ] lab 1
+  - [x] lab 1
   - [ ] lab 2
-  - [ ] lab 3
+  - [x] lab 3
   - [ ] lab 4
 - Параллельные и распределённые вычилсения
-  - [ ] перемножение матриц (доделать) :heavy_check_mark:
-  - [ ] lab 2
-  - [ ] lab 3
-- конечно же курсач 
-  - ....
+  - [x] перемножение матриц (доделать) :heavy_check_mark:
+  - [ ] ~~lab 2~~
+  - [ ] ~~lab 3~~
+  - [ ] spark (or hadoop) parallel jobs
+- :heavy_check_mark: конечно же курсач 
 
   
