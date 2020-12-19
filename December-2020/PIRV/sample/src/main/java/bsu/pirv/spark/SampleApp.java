@@ -1,4 +1,4 @@
-package bsu.pirv.spark.sample;
+package bsu.pirv.spark;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
