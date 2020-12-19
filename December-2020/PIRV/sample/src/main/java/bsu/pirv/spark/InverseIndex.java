@@ -58,7 +58,7 @@ public class InverseIndex {
             .stream(iterable.spliterator(), false)
             .collect(Collectors.toList()));
 
-        invIndexRDD.saveAsTextFile("../inv.out.txt");
+        invIndexRDD.saveAsTextFile("../inv-index-out");
 
 //        invIndexRDD.collect().forEach(tuple2 -> {
 //            var word = tuple2._1;
