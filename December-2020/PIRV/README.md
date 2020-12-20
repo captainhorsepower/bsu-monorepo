@@ -3,7 +3,7 @@
 Первую лабо кое-как сдали, в основоном копипаст с Drapegnik. 
 Нужно сделать ещё одну. 
 
-Мне понравилось условия 4й: 
+Мне понравилось условие 4й: 
 
 https://docviewer.yandex.ru/view/643359723/?*=VODtmjCq1oFiI5HfiTK0Fb1ZmXF7InVybCI6InlhLWRpc2stcHVibGljOi8vMHN4SGMxZnlRZTJycHZ4VFMzYTFnWk5vRDB3UWtjUmFzOUx2cVlaTXdRekZaZ21ERjA3V2FoVkpIdFFNb3ZLY3EvSjZicG1SeU9Kb25UM1ZvWG5EYWc9PSIsInRpdGxlIjoiTWFwUmVkdWNlLnppcCIsIm5vaWZyYW1lIjpmYWxzZSwidWlkIjoiNjQzMzU5NzIzIiwidHMiOjE2MDc3ODY5MTQxNjMsInl1IjoiNjk0NzMzOTc3MTU4MzMwNjI5NiJ9
 
@@ -21,6 +21,8 @@ Distributed (in-memory?) processing.
 Но можно и без этого, как оказалось. Надеюсь
 
 [programming guide](https://spark.apache.org/docs/latest/rdd-programming-guide.html#using-the-shell)
+
+
 
  ---
 useful links:

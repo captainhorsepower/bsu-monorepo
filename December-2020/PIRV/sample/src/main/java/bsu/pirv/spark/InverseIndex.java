@@ -1,39 +1,45 @@
 package bsu.pirv.spark;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.AbstractJavaRDDLike;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-/**
- * Usage:
- * ${SPARK_HOME}/bin/spark-submit \
- * --class=bsu.pirv.spark.InverseIndex \
- * path-to-jar path-to-wiki-folder
- */
 public class InverseIndex {
 
-//time ./bin/spark-submit  \
-//      --master=local \
-//      --class=bsu.pirv.spark.InverseIndex \
-//      ../sample/target/*.jar ../wiki -Dio.netty.tryReflectionSetAccessible=true
+//OUT="../inv-index-out"
+//IN="../wiki"
+//CORES=1
+//SLICES=1
+//rm -rf $OUT; time \
+//../**/spark-submit   \
+//  --master=local \
+//  --total-executor-cores=$CORES \
+//  --class=bsu.pirv.spark.InverseIndex \
+//  target/*.jar $IN $OUT $SLICES
 
     public static void main(String[] args) {
         SparkConf conf = new SparkConf().setAppName("InverseIndex");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        var fileContentPairRDD = sc.wholeTextFiles(args[0]);
-//        fileContentPairRDD.foreach(tuple2 -> {
-//            var ind = tuple2._2.indexOf('\n');
-//            System.out.printf("%s : %s%n",
-//                              tuple2._2.substring(0, ind),
-//                              tuple2._2.substring(ind + 1, ind + 30));
-//        });
+        System.out.println(List.of(args));
+
+        var inPath = args[0];
+        var outPath = args[1];
+        var slices = args.length == 3 ? Integer.parseInt(args[2]) : 1;
+
+        var fileContentPairRDD = sc.wholeTextFiles(inPath);
+
+        if (slices > 1) {
+            fileContentPairRDD = fileContentPairRDD.repartition(slices);
+        }
 
         var nameContentPairRDD = fileContentPairRDD
           .mapToPair(tuple2 -> {
@@ -56,9 +62,12 @@ public class InverseIndex {
           .groupByKey()
           .mapValues(iterable -> StreamSupport
             .stream(iterable.spliterator(), false)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList())
+          );
 
-        invIndexRDD.saveAsTextFile("../inv-index-out");
+        invIndexRDD
+          .filter(tuple -> tuple._2.size() > 10)
+          .saveAsTextFile(outPath);
 
 //        invIndexRDD.collect().forEach(tuple2 -> {
 //            var word = tuple2._1;
@@ -66,7 +75,6 @@ public class InverseIndex {
 //            System.out.printf("%s found in %d wikis: \n", word, wikis.size());
 //            wikis.forEach(wiki -> System.out.printf("\t%s%n", wiki));
 //        });
-
 
     }
 
