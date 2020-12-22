@@ -1,0 +1,359 @@
+1 cores 1 slices
+       27.76 real        23.17 user        11.53 sys
+       25.53 real        21.80 user        11.30 sys
+       26.17 real        23.57 user        11.42 sys
+       32.98 real        33.47 user        13.75 sys
+       29.94 real        29.61 user        13.26 sys
+1 cores 2 slices
+       28.92 real        26.28 user        12.72 sys
+       27.40 real        28.01 user        12.17 sys
+       26.71 real        25.30 user        11.67 sys
+       26.01 real        24.60 user        11.62 sys
+       28.08 real        24.61 user        12.29 sys
+1 cores 3 slices
+       27.58 real        24.22 user        12.19 sys
+       29.39 real        29.51 user        12.63 sys
+       27.43 real        24.31 user        12.05 sys
+       31.89 real        27.25 user        14.23 sys
+       27.66 real        24.19 user        12.09 sys
+1 cores 4 slices
+       27.91 real        25.29 user        12.43 sys
+       27.68 real        24.43 user        12.39 sys
+       27.06 real        24.45 user        11.91 sys
+       28.05 real        28.29 user        12.32 sys
+       28.10 real        30.56 user        12.25 sys
+1 cores 6 slices
+       30.42 real        31.94 user        13.68 sys
+       25.83 real        28.27 user        11.84 sys
+       26.60 real        29.10 user        11.55 sys
+       26.25 real        27.52 user        11.63 sys
+       26.10 real        26.17 user        11.89 sys
+1 cores 8 slices
+       24.65 real        24.72 user        11.17 sys
+       24.76 real        22.63 user        11.08 sys
+       24.70 real        21.29 user        11.06 sys
+       24.55 real        21.35 user        11.03 sys
+       24.72 real        21.18 user        11.08 sys
+1 cores 12 slices
+       24.78 real        21.42 user        11.06 sys
+       24.52 real        21.33 user        11.03 sys
+       28.61 real        25.74 user        13.21 sys
+       25.08 real        22.67 user        11.10 sys
+       27.86 real        24.86 user        12.38 sys
+1 cores 16 slices
+       25.79 real        25.24 user        11.40 sys
+       25.48 real        23.79 user        11.41 sys
+       25.19 real        23.01 user        11.20 sys
+       25.02 real        24.86 user        11.22 sys
+       24.99 real        25.31 user        11.26 sys
+1 cores 24 slices
+       30.64 real        26.30 user        13.44 sys
+       31.30 real        29.05 user        13.82 sys
+       29.62 real        33.33 user        13.16 sys
+       29.56 real        32.74 user        13.52 sys
+       28.94 real        33.29 user        13.06 sys
+2 cores 1 slices
+       25.23 real        28.54 user        11.31 sys
+       27.24 real        28.57 user        12.63 sys
+       25.51 real        28.82 user        11.46 sys
+        3.02 real         7.08 user         0.60 sys
+        0.42 real         0.63 user         0.12 sys
+2 cores 2 slices
+Command terminated abnormally.
+        0.05 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+2 cores 3 slices
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+2 cores 4 slices
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.07 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.02 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.01 sys
+2 cores 6 slices
+        0.35 real         0.43 user         0.12 sys
+        0.50 real         0.74 user         0.13 sys
+Command terminated abnormally.
+        0.06 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.02 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.01 sys
+2 cores 8 slices
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.01 sys
+Command terminated abnormally.
+        0.07 real         0.01 user         0.02 sys
+2 cores 12 slices
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+2 cores 16 slices
+Command terminated abnormally.
+        0.08 real         0.01 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.02 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.02 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.02 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.02 sys
+2 cores 24 slices
+Command terminated abnormally.
+        0.08 real         0.01 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.01 sys
+3 cores 1 slices
+Command terminated abnormally.
+        0.08 real         0.01 user         0.02 sys
+        0.27 real         0.22 user         0.10 sys
+        0.40 real         0.50 user         0.13 sys
+Command terminated abnormally.
+        0.15 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.15 real         0.00 user         0.01 sys
+3 cores 2 slices
+Command terminated abnormally.
+        0.14 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.15 real         0.01 user         0.01 sys
+        0.30 real         0.34 user         0.10 sys
+        0.22 real         0.21 user         0.08 sys
+        0.50 real         0.72 user         0.13 sys
+3 cores 3 slices
+Command terminated abnormally.
+        0.07 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+3 cores 4 slices
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+3 cores 6 slices
+Command terminated abnormally.
+        0.07 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+3 cores 8 slices
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.01 user         0.02 sys
+        0.28 real         0.27 user         0.11 sys
+3 cores 12 slices
+Command terminated abnormally.
+        0.17 real         0.17 user         0.06 sys
+        0.50 real         0.72 user         0.14 sys
+Command terminated abnormally.
+        0.06 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.07 real         0.00 user         0.01 sys
+3 cores 16 slices
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.08 real         0.00 user         0.01 sys
+        0.26 real         0.24 user         0.10 sys
+Command terminated abnormally.
+        0.17 real         0.17 user         0.06 sys
+3 cores 24 slices
+Command terminated abnormally.
+        0.16 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.16 real         0.15 user         0.06 sys
+Command terminated abnormally.
+        0.17 real         0.16 user         0.06 sys
+Command terminated abnormally.
+        0.19 real         0.17 user         0.07 sys
+        0.50 real         0.73 user         0.13 sys
+4 cores 1 slices
+       24.85 real        26.83 user        11.39 sys
+       30.10 real        32.45 user        13.80 sys
+       25.13 real        28.07 user        11.39 sys
+       24.98 real        25.96 user        11.27 sys
+       25.62 real        26.95 user        11.28 sys
+4 cores 2 slices
+       24.83 real        26.73 user        11.32 sys
+       25.13 real        28.29 user        11.36 sys
+       24.89 real        26.95 user        11.32 sys
+       25.03 real        27.62 user        11.38 sys
+       25.14 real        26.80 user        11.35 sys
+4 cores 3 slices
+       25.94 real        29.39 user        11.46 sys
+       26.61 real        29.49 user        11.75 sys
+       24.72 real        26.29 user        11.18 sys
+       24.72 real        26.46 user        11.22 sys
+       24.99 real        26.63 user        11.19 sys
+4 cores 4 slices
+       24.59 real        26.16 user        11.15 sys
+       24.78 real        26.94 user        11.21 sys
+       24.86 real        26.81 user        11.15 sys
+       24.67 real        26.50 user        11.20 sys
+       24.56 real        24.95 user        11.13 sys
+4 cores 6 slices
+       24.65 real        27.19 user        11.22 sys
+       24.76 real        26.55 user        11.18 sys
+       31.11 real        28.52 user        14.06 sys
+       27.91 real        26.20 user        12.67 sys
+       24.73 real        24.23 user        11.09 sys
+4 cores 8 slices
+       24.62 real        25.39 user        11.06 sys
+       24.51 real        25.51 user        11.05 sys
+       26.64 real        25.66 user        12.32 sys
+       25.08 real        26.43 user        11.07 sys
+       24.60 real        25.29 user        10.95 sys
+4 cores 12 slices
+       24.79 real        24.83 user        11.11 sys
+       24.46 real        23.74 user        11.03 sys
+       24.71 real        24.25 user        11.03 sys
+       24.56 real        23.88 user        11.05 sys
+       27.75 real        25.44 user        12.29 sys
+4 cores 16 slices
+       26.54 real        24.08 user        11.71 sys
+       24.85 real        25.63 user        11.09 sys
+       24.82 real        22.60 user        10.92 sys
+       25.74 real        24.03 user        11.21 sys
+       33.03 real        29.35 user        15.15 sys
+4 cores 24 slices
+       36.62 real        34.33 user        16.04 sys
+       29.12 real        30.44 user        12.75 sys
+       27.46 real        26.61 user        11.98 sys
+       31.26 real        33.66 user        14.14 sys
+       25.51 real        25.38 user        11.21 sys
+8 cores 1 slices
+        4.31 real         8.18 user         1.19 sys
+Command terminated abnormally.
+        0.09 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.18 real         0.17 user         0.07 sys
+Command terminated abnormally.
+        0.15 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.15 real         0.00 user         0.01 sys
+8 cores 2 slices
+Command terminated abnormally.
+        0.13 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.15 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.18 real         0.16 user         0.07 sys
+Command terminated abnormally.
+        0.12 real         0.00 user         0.01 sys
+Command terminated abnormally.
+        0.15 real         0.00 user         0.01 sys
+8 cores 3 slices
+Command terminated abnormally.
+        0.16 real         0.15 user         0.06 sys
+Command terminated abnormally.
+        0.16 real         0.16 user         0.06 sys
+Command terminated abnormally.
+        0.17 real         0.15 user         0.06 sys
+        0.38 real         0.56 user         0.12 sys
+        0.34 real         0.43 user         0.11 sys
+8 cores 4 slices
+        0.23 real         0.20 user         0.09 sys
+       27.36 real        23.99 user        12.39 sys
+       27.36 real        25.24 user        12.06 sys
+        6.42 real         8.07 user         2.54 sys
+        0.21 real         0.18 user         0.08 sys
+8 cores 6 slices
+        0.19 real         0.17 user         0.07 sys
+        0.50 real         0.74 user         0.13 sys
+        0.18 real         0.16 user         0.07 sys
+Command terminated abnormally.
+        0.15 real         0.14 user         0.06 sys
+Command terminated abnormally.
+        0.13 real         0.00 user         0.01 sys
+8 cores 8 slices
+Command terminated abnormally.
+        0.16 real         0.15 user         0.06 sys
+       24.74 real        22.62 user        11.13 sys
+       25.68 real        23.01 user        11.19 sys
+       28.87 real        25.39 user        12.88 sys
+       18.83 real        13.54 user         9.52 sys
+8 cores 12 slices
+        0.19 real         0.16 user         0.07 sys
+        0.39 real         0.53 user         0.11 sys
+        0.23 real         0.21 user         0.08 sys
+        0.24 real         0.23 user         0.09 sys
+        0.37 real         0.52 user         0.11 sys
+8 cores 16 slices
+       24.71 real        22.17 user        11.15 sys
+       30.91 real        28.25 user        14.68 sys
+       34.50 real        31.18 user        15.47 sys
+       28.26 real        27.65 user        12.67 sys
+       31.29 real        31.97 user        13.26 sys
+8 cores 24 slices
+       28.73 real        29.15 user        12.98 sys
+       24.74 real        24.71 user        11.21 sys
+       25.02 real        25.82 user        11.21 sys
+       25.46 real        24.92 user        11.50 sys
+       25.38 real        25.75 user        11.27 sys

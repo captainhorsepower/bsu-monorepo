@@ -37,9 +37,7 @@ public class InverseIndex {
 
         var fileContentPairRDD = sc.wholeTextFiles(inPath);
 
-        if (slices > 1) {
-            fileContentPairRDD = fileContentPairRDD.repartition(slices);
-        }
+        fileContentPairRDD = fileContentPairRDD.repartition(slices);
 
         var nameContentPairRDD = fileContentPairRDD
           .mapToPair(tuple2 -> {
