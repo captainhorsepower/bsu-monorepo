@@ -12,14 +12,14 @@
   - [x] ? laba 2
 - Иммитационное и статистическое моделирование
   - [x] lab 1
-  - [ ] ?? lab 2
+  - [x] lab 2
   - [x] lab 3
   - [ ] ?? lab 4
 - Параллельные и распределённые вычилсения
   - [x] перемножение матриц (доделать) :heavy_check_mark:
   - [ ] ~~lab 2~~
   - [ ] ~~lab 3~~
-  - [ ] spark (or hadoop) parallel jobs
+  - [x] spark (or hadoop) parallel jobs
 - :heavy_check_mark: конечно же курсач 
 
   
