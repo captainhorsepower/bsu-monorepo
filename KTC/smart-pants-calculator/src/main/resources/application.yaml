@@ -1,0 +1,70 @@
+calculator:
+  title: Smart Pants Calculator
+  width: 400
+  height: 450
+  components:
+    identity:
+      x: ${calculator.components.number-inputs[0].x}
+      y: 25
+      width: 350
+      height: 50
+    number-inputs:
+      - max-len: 28
+        label: ''
+        x: 25
+        y: 95
+        width: 250
+        height: 25
+        init-value: '0'
+      - max-len: ${calculator.components.number-inputs[0].max-len}
+        label: 'open ('
+        x: ${calculator.components.number-inputs[0].x}
+        y: 125
+        width: ${calculator.components.number-inputs[0].width}
+        height: ${calculator.components.number-inputs[0].height}
+        init-value: ${calculator.components.number-inputs[0].init-value}
+      - max-len: ${calculator.components.number-inputs[0].max-len}
+        label: 'close )'
+        x: ${calculator.components.number-inputs[0].x}
+        y: 155
+        width: ${calculator.components.number-inputs[0].width}
+        height: ${calculator.components.number-inputs[0].height}
+        init-value: ${calculator.components.number-inputs[0].init-value}
+      - max-len: ${calculator.components.number-inputs[0].max-len}
+        label: ''
+        x: ${calculator.components.number-inputs[0].x}
+        y: 185
+        width: ${calculator.components.number-inputs[0].width}
+        height: ${calculator.components.number-inputs[0].height}
+        init-value: ${calculator.components.number-inputs[0].init-value}
+    add-button:
+      title: add
+      x: 275
+      y: ${calculator.components.number-inputs[0].y}
+      width: 60
+      height: ${calculator.components.number-inputs[0].height}
+    sub-button:
+      title: sub
+      x: ${calculator.components.add-button.x}
+      y: ${calculator.components.number-inputs[1].y}
+      width: ${calculator.components.add-button.width}
+      height: ${calculator.components.add-button.height}
+    mult-button:
+      title: mult
+      x: 335
+      y: ${calculator.components.number-inputs[0].y}
+      width: ${calculator.components.add-button.width}
+      height: ${calculator.components.add-button.height}
+    div-button:
+      title: div
+      x: ${calculator.components.mult-button.x}
+      y: ${calculator.components.number-inputs[1].y}
+      width: ${calculator.components.add-button.width}
+      height: ${calculator.components.add-button.height}
+    result:
+      label: 'do calc'
+      init-value: 'press button for results...'
+      x: ${calculator.components.number-inputs[0].x}
+      y: 350
+      width: 350
+      height: 60
